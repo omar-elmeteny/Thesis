@@ -2,3 +2,16 @@ docs/*.swp
 docs/bachelor.pdf
 docs/bachelor.ps
 
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.bbl
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+docs/*.lof
+docs/*.fls
+docs/*.blg
+docs/GUC-logo-ss-eps-converted-to.pdf
+
+
