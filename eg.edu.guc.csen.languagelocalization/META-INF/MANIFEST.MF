@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Languagelocalization
+Bundle-SymbolicName: eg.edu.guc.csen.languagelocalization
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: eg.edu.guc.csen.languagelocalization
+Bundle-RequiredExecutionEnvironment: JavaSE-18
