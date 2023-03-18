@@ -1,0 +1,34 @@
+{
+	"languages": [
+		{
+			"key": "ar",
+			"name": "Arabic",
+			"nativeName": "العربية"
+		},
+		{
+			"key": "en",
+			"name": "English",
+			"nativeName": "English"
+		},
+		{
+			"key": "de",
+			"name": "German",
+			"nativeName": "Deutsch"
+		},
+		{
+			"key": "es",
+			"name": "Spanish",
+			"nativeName": "Español"
+		},
+		{
+			"key": "fr",
+			"name": "French",
+			"nativeName": "Français"
+		},
+		{
+			"key": "it",
+			"name": "Italian",
+			"nativeName": "Italiano"
+		}
+	]
+}

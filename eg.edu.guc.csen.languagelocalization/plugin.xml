@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+         <editor
+            id="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
+            name="Localized Language Editor"
+            icon="icons/localization.png"
+            extensions="guc"
+            class="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditor"
+            contributorClass="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditorContributor">
+      </editor>
+   </extension>
+</plugin>
