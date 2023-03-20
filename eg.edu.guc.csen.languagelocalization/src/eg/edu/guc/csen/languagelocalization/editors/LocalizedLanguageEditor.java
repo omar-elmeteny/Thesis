@@ -6,11 +6,14 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 import eg.edu.guc.csen.languagelocalization.translations.Helper;
+import eg.edu.guc.csen.languagelocalization.translations.KeywordTranslations;
 import eg.edu.guc.csen.languagelocalization.translations.Language;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.text.TableView.TableRow;
 
 //import eg.edu.guc.csen.languagelocalization.translations.Helper;
 //import eg.edu.guc.csen.languagelocalization.translations.Language;
@@ -21,12 +24,16 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -71,51 +78,64 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 		}
 		languageCombo.setItems(languageNames);
 
-		// Create the keyword table
-		Label keywordLabel = new Label(composite, SWT.NONE);
-		keywordLabel.setText("Keyword");
-
-		Label translationLabel = new Label(composite, SWT.NONE);
-		translationLabel.setText("Translation");
-
-		TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+		TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
+		//final KeywordsTableContentProvider contentProvider = new KeywordsTableContentProvider();
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		Table keywordTable = tableViewer.getTable();
+		GridData gridData = new GridData( SWT.NONE, SWT.FILL, true, true );
+		gridData.heightHint = 20 * keywordTable.getItemHeight();
+		keywordTable.setLayoutData(gridData);
 		keywordTable.setHeaderVisible(true);
 		keywordTable.setLinesVisible(true);
-
+		
 		// Define the table columns
 		TableLayout keywordTableLayout = new TableLayout();
 		keywordTable.setLayout(keywordTableLayout);
 
-		TableColumn keywordColumn = new TableColumn(keywordTable, SWT.NONE);
-		keywordColumn.setText("Keyword");
-		keywordColumn.setWidth(200);
-		keywordTableLayout.addColumnData(new ColumnWeightData(40));
-
-		TableColumn translationColumn = new TableColumn(keywordTable, SWT.NONE);
-		translationColumn.setText("Translation");
-		keywordTableLayout.addColumnData(new ColumnWeightData(60));
-
-		// Add a selection listener to the language dropdown
-		languageCombo.addSelectionListener(new SelectionAdapter() {
+		TableViewerColumn keywordColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		keywordColumn.getColumn().setText("Keyword");
+		keywordColumn.getColumn().setWidth(200);
+		keywordColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+		    public String getText(Object element) {
+		        String[] p = (String[]) element;
+		        return p[0];
+		    }
+		});
+		
+		TableViewerColumn translationColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		translationColumn.getColumn().setText("Translation");
+		translationColumn.getColumn().setWidth(200);
+		translationColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+		    public String getText(Object element) {
+		        String[] p = (String[]) element;
+		        return p[1];
+		    }
+		});
+		
+		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Get the selected language
-				int languageIndex = languageCombo.getSelectionIndex();
-
-				Language lang = languages.get(languageIndex);
-
-				Set<Map.Entry<String, String>> translations = Helper.getKeywordTranslations()
-						.getTranslationsByLanguage(lang.getKey());
+				Language lang = languages.get(languageCombo.getSelectionIndex());
+				KeywordTranslations keywordTranslations = Helper.getKeywordTranslations();
+				Set<Map.Entry<String, String>> translations = keywordTranslations.getTranslationsByLanguage(lang.getKey());
 				String[][] tableData = new String[translations.size()][];
 				int i = 0;
 				for (Map.Entry<String, String> entry : translations) {
 					tableData[i] = new String[] { entry.getKey(), entry.getValue() };
 					i++;
 				}
+				tableViewer.setInput(tableData);
 			}
-		});
+		};
+		
+		// Add a selection listener to the language dropdown
+		languageCombo.addSelectionListener(adapter);
 
+		languageCombo.select(0);
+		adapter.widgetSelected(null);
 		// Add the composite to the editor page
 		int index = addPage(composite);
 		setPageText(index, editor.getTitle()  + " - Keywords");
