@@ -8,7 +8,7 @@
             "type": "java",
             "name": "App",
             "request": "launch",
-            "mainClass": "eg.edu.guc.csen.localizedlanguageparser.App",
+            "mainClass": "eg.edu.guc.csen.localizedlanguage.App",
             "projectName": "localizedlanguageparser"
         }
     ]

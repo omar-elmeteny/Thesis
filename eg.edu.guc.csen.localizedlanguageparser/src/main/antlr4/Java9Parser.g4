@@ -69,6 +69,10 @@ options
    tokenVocab = Java9Lexer;
 }
 
+@header {
+package eg.edu.guc.csen.antlr4;
+}
+
 /*
  * Productions from §3 (Lexical Structure)
  */

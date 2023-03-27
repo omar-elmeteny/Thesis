@@ -62,11 +62,15 @@ Total lexer+parser time 3634ms.
 Total lexer+parser time 2497ms.
 
  */
+ 
 lexer grammar Java9Lexer;
 
 options
 {
-   superClass = Java9LexerBase;
+   superClass = eg.edu.guc.csen.antlr4.Java9LexerBase;
+}
+@header {
+package eg.edu.guc.csen.antlr4;
 }
 
 // LEXER
