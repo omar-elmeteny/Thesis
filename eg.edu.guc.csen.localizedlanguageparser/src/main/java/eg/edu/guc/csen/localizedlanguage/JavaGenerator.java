@@ -11,6 +11,21 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private int indentLevel = 0;
     private static final String INDENT = "    ";
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private final String targetLanguage;
+    private String sourceLanguage;
+
+    public JavaGenerator(String sourceLanguage, String targetLanguage) {
+        super();
+        this.sourceLanguage = sourceLanguage;
+        this.targetLanguage = targetLanguage;
+    }
+
+    public JavaGenerator() {
+        super();
+        this.targetLanguage = "en";
+        this.sourceLanguage = "en";
+    }
+    
 
     @Override
     public StringBuilder visitCompilationUnit(CompilationUnitContext ctx) {
@@ -38,7 +53,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     @Override
     public StringBuilder visitSingleTypeImportDeclaration(SingleTypeImportDeclarationContext ctx) {
-        builder.append("import ");
+        appendKeyword("import");
+        space();
         visit(ctx.typeName());
         builder.append(';');
         newLine();
@@ -47,7 +63,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     @Override
     public StringBuilder visitTypeImportOnDemandDeclaration(TypeImportOnDemandDeclarationContext ctx) {
-        builder.append("import ");
+        appendKeyword("import");
+        space();
         visit(ctx.packageOrTypeName());
         builder.append(".*;");
         newLine();
@@ -56,7 +73,10 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     @Override
     public StringBuilder visitSingleStaticImportDeclaration(SingleStaticImportDeclarationContext ctx) {
-        builder.append("import static ");
+        appendKeyword("import");
+        space();
+        appendKeyword("static");
+        space();
         visit(ctx.typeName());
         builder.append('.');
         visit(ctx.identifier());
@@ -67,7 +87,10 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     @Override
     public StringBuilder visitStaticImportOnDemandDeclaration(StaticImportOnDemandDeclarationContext ctx) {
-        builder.append("import static ");
+        appendKeyword("import");
+        space();
+        appendKeyword("static");
+        space();
         visit(ctx.typeName());
         builder.append(".*;");
         newLine();
@@ -81,7 +104,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
                 visit(child);
             }
         }
-        builder.append("package ");
+        appendKeyword("package");
+        space();
         visit(ctx.packageName());
         builder.append(';');
         newLine();
@@ -96,7 +120,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
                 space();
             }
         }
-        builder.append("class ");
+        appendKeyword("class");
+        space();
         visit(ctx.identifier());
 
         // TODO: Implement typeParameters
@@ -116,6 +141,20 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     @Override
+    public StringBuilder visitLiteral(LiteralContext ctx) {
+        if (ctx.BooleanLiteral() != null) {
+            String booleanLiteral = ctx.BooleanLiteral().getText();
+            String keyword = KeywordTranslator.translateKeyword(booleanLiteral, sourceLanguage, "en");
+            appendKeyword(keyword);
+        } else if (ctx.NullLiteral() != null) {
+            appendKeyword("null");
+        } else {
+            builder.append(ctx.getText());
+        }
+        return builder;
+    }
+
+    @Override
     public StringBuilder visitNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
         if (ctx.interfaceModifier() != null) {
             for (var child : ctx.interfaceModifier()) {
@@ -123,7 +162,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
                 space();
             }
         }
-        builder.append("interface ");
+        appendKeyword("interface");
+        space();
         visit(ctx.identifier());
         if (ctx.typeParameters() != null) {
             visit(ctx.typeParameters());
@@ -138,7 +178,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitExtendsInterfaces(ExtendsInterfacesContext ctx) {
         space();
-        builder.append("extends");
+        appendKeyword("extends");
         space();
         visit(ctx.interfaceTypeList());
         return builder;
@@ -164,7 +204,9 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
                 space();
             }
         }
-        builder.append("@interface ");
+        builder.append('@');
+        appendKeyword("interface");
+        space();
         visit(ctx.identifier());
         visit(ctx.annotationTypeBody());
         return builder;
@@ -188,22 +230,22 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             visit(ctx.annotation());
         }
         if (ctx.PUBLIC() != null) {
-            builder.append("public");
+            appendKeyword("public");
         }
         if (ctx.PRIVATE() != null) {
-            builder.append("private");
+            appendKeyword("private");
         }
         if (ctx.ABSTRACT() != null) {
-            builder.append("abstract");
+            appendKeyword("abstract");
         }
         if (ctx.PROTECTED() != null) {
-            builder.append("protected");
+            appendKeyword("protected");
         }
         if (ctx.STATIC() != null) {
-            builder.append("static");
+            appendKeyword("static");
         }
         if (ctx.STRICTFP() != null) {
-            builder.append("strictfp ");
+            appendKeyword("strictfp");
         }
         return builder;
     }
@@ -214,25 +256,25 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             visit(ctx.annotation());
         }
         if (ctx.PUBLIC() != null) {
-            builder.append("public");
+            appendKeyword("public");
         }
         if (ctx.PRIVATE() != null) {
-            builder.append("private");
+            appendKeyword("private");
         }
         if (ctx.ABSTRACT() != null) {
-            builder.append("abstract");
+            appendKeyword("abstract");
         }
         if (ctx.PROTECTED() != null) {
-            builder.append("protected");
+            appendKeyword("protected");
         }
         if (ctx.STATIC() != null) {
-            builder.append("static");
+            appendKeyword("static");
         }
         if (ctx.FINAL() != null) {
-            builder.append("final");
+            appendKeyword("final");
         }
         if (ctx.STRICTFP() != null) {
-            builder.append("strictfp ");
+            appendKeyword("strictfp");
         }
 
         return builder;
@@ -274,7 +316,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             if (ctx.annotation() != null) {
                 for (var child : ctx.annotation()) {
                     visit(child);
-                    builder.append(' ');
+                    space();
                 }
             }
         }
@@ -290,7 +332,9 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     @Override
     public StringBuilder visitThrows_(Throws_Context ctx) {
-        builder.append(" throws ");
+        space();
+        appendKeyword("throws");
+        space();
         visit(ctx.exceptionTypeList());
         return builder;
     }
@@ -342,6 +386,660 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             visit(ctx.typeArguments());
         }
         return builder;
+    }
+
+    @Override
+    public StringBuilder visitClassType_lf_classOrInterfaceType(ClassType_lf_classOrInterfaceTypeContext ctx) {
+        builder.append(".");
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.identifier());
+        if(ctx.typeArguments() != null) {
+            visit(ctx.typeArguments());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitClassType_lfno_classOrInterfaceType(ClassType_lfno_classOrInterfaceTypeContext ctx) {
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.identifier());
+        if(ctx.typeArguments() != null) {
+            visit(ctx.typeArguments());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitPrimitiveType(PrimitiveTypeContext ctx) {
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        if(ctx.numericType() != null) {
+            visit(ctx.numericType());
+        }
+        if(ctx.BOOLEAN() != null) {
+            appendKeyword("boolean");
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeParameter(TypeParameterContext ctx) {
+        if(ctx.typeParameterModifier() != null) {
+            for (var child : ctx.typeParameterModifier())
+            {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.identifier());
+        if(ctx.typeBound() != null) {
+            visit(ctx.typeBound());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeBound(TypeBoundContext ctx) {
+        space();
+        appendKeyword("extends");
+        space();
+        if(ctx.typeVariable() != null) {
+            visit(ctx.typeVariable());
+        }
+        else if(ctx.classOrInterfaceType() != null) {
+            visit(ctx.classOrInterfaceType());
+            if(ctx.additionalBound() != null) {
+                for(var child: ctx.additionalBound()) {
+                    visit(child);
+                    space();
+                }
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitAdditionalBound(AdditionalBoundContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            }
+            else if(child instanceof InterfaceTypeContext) {
+                visit(child);
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeArgument(TypeArgumentContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            } else if (child instanceof TypeArgumentListContext) {
+                visit(child);
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeArgumentList(TypeArgumentListContext ctx) {
+        if (ctx.typeArgument() != null) {
+            boolean addComma = false;
+            for (var child : ctx.typeArgument()) {
+                if (addComma) {
+                    builder.append(", ");
+                }
+                visit(child);
+                addComma = true;
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitWildcard(WildcardContext ctx) {
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        builder.append("?");
+        if(ctx.wildcardBounds() != null) {
+            visit(ctx.wildcardBounds());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitWildcardBounds(WildcardBoundsContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                appendKeyword(tn.getSymbol().getText());
+            } else if(child instanceof ReferenceTypeContext) {
+                visit(child);
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitModuleName(ModuleNameContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            } else if(child instanceof IdentifierContext) {
+                visit((IdentifierContext) child);
+                space();
+            } else if(child instanceof ModuleNameContext) {
+                visit((ModuleNameContext) child);
+                space();
+            }
+        }
+        return builder;
+    }
+    
+    @Override
+    public StringBuilder visitModularCompilation(ModularCompilationContext ctx) {
+        if(ctx.importDeclaration() != null) {
+            for(var child: ctx.importDeclaration()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.moduleDeclaration());
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeDeclaration(TypeDeclarationContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            } else if (child instanceof ClassDeclarationContext) {
+                visit((ClassDeclarationContext) child);
+                space();
+            } else if (child instanceof InterfaceDeclarationContext) {
+                visit((InterfaceDeclarationContext) child);
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitModuleDeclaration(ModuleDeclarationContext ctx) {
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        if(ctx.OPEN() != null) {
+            appendKeyword("open");
+            space();
+        }
+        appendKeyword("module");
+        space();
+        visit(ctx.moduleName());
+        builder.append("{");
+        newLine();
+        if(ctx.moduleDirective() != null) {
+            for(var child: ctx.moduleDirective()) {
+                visit(child);
+                space();
+            }
+        }
+        newLine();
+        builder.append("}");
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitModuleDirective(ModuleDirectiveContext ctx) {
+        if(ctx.REQUIRES() != null) {
+            space();
+            appendKeyword("reguires");
+            space();
+            if(ctx.requiresModifier() != null) {
+                for(var child: ctx.requiresModifier()) {
+                    visit(child);
+                    space();
+                }
+            }
+            for(var child: ctx.moduleName()) {
+                visit(child);
+                space();
+            }
+        } else if (ctx.EXPORTS() != null || ctx.OPERNS() != null) {
+            space();
+            if(ctx.EXPORTS() != null) {
+                appendKeyword("exports");
+            } else if(ctx.OPERNS() != null) {
+                appendKeyword("opens");
+            }
+            space();
+            visit(ctx.packageName());
+            if(ctx.moduleName() != null) {
+                boolean addComma = false;
+                for (var child : ctx.moduleName()) {
+                    if (addComma) {
+                        builder.append(", ");
+                    }
+                    visit(child);
+                    addComma = true;
+                }
+            }
+        } else if(ctx.USES() != null) {
+            space();
+            appendKeyword("uses");
+            space();
+            for(var child: ctx.typeName()) {
+                visit(child);
+                space();
+            }
+        } else if(ctx.PROVIDES() != null) {
+            space();
+            appendKeyword("provides");
+            space();
+            for(var child: ctx.typeName()) {
+                visit(child);
+                space();
+            }
+            appendKeyword("with");
+            space();
+            if (ctx.typeName() != null) {
+                boolean addComma = false;
+                for (var child : ctx.typeName()) {
+                    if (addComma) {
+                        builder.append(", ");
+                    }
+                    visit(child);
+                    addComma = true;
+                }
+            }
+        }
+        builder.append(";");
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitRequiresModifier(RequiresModifierContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                appendKeyword(tn.getSymbol().getText());
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeParameters(TypeParametersContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            } else if(child instanceof TypeParameterListContext) {
+                visit(child);
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitTypeParameterList(TypeParameterListContext ctx) {
+        if (ctx.typeParameter() != null) {
+            boolean addComma = false;
+            for (var child : ctx.typeParameter()) {
+                if (addComma) {
+                    builder.append(", ");
+                }
+                visit(child);
+                addComma = true;
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitSuperclass(SuperclassContext ctx) {
+        space();
+        appendKeyword("super");
+        space();
+        visit(ctx.classType());
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitSuperinterfaces(SuperinterfacesContext ctx) {
+        space();
+        appendKeyword("implements");
+        space();
+        visit(ctx.interfaceTypeList());
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitClassMemberDeclaration(ClassMemberDeclarationContext ctx) {
+        for(var child: ctx.children) {
+            if(child instanceof TerminalNode) {
+                TerminalNode tn = (TerminalNode) child;
+                builder.append(tn.getSymbol().getText());
+            } else {
+                visit(child);
+                space();
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitFieldDeclaration(FieldDeclarationContext ctx) {
+        if(ctx.fieldModifier() != null) {
+            for(var child: ctx.fieldModifier()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.unannType());
+        visit(ctx.variableDeclaratorList());
+        builder.append(";");
+        return super.visitFieldDeclaration(ctx);
+    }
+
+    @Override
+    public StringBuilder visitFieldModifier(FieldModifierContext ctx) {
+        if(ctx.annotation() != null) {
+            visit(ctx.annotation());
+        } else if(ctx.FINAL() != null) {
+            appendKeyword("final");
+            space();
+        } else if(ctx.PRIVATE() != null) {
+            appendKeyword("private");
+            space();
+        } else if(ctx.PROTECTED() != null) {
+            appendKeyword("protected");
+            space();
+        } else if(ctx.STATIC() != null) {
+            appendKeyword("static");
+            space();
+        } else if(ctx.TRANSIENT() != null) {
+            appendKeyword("transient");
+            space();
+        } else if(ctx.VOLATILE() != null) {
+            appendKeyword("volatile");
+            space();
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitVariableDeclaratorList(VariableDeclaratorListContext ctx) {
+        if (ctx.variableDeclarator() != null) {
+            boolean addComma = false;
+            for (var child : ctx.variableDeclarator()) {
+                if (addComma) {
+                    builder.append(", ");
+                }
+                visit(child);
+                addComma = true;
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitVariableDeclarator(VariableDeclaratorContext ctx) {
+        visit(ctx.variableDeclaratorId());
+        if(ctx.ASSIGN() != null) {
+            visit(ctx.variableInitializer());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+        visit(ctx.identifier());
+        if(ctx.dims() != null) {
+            visit(ctx.dims());
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitReceiverParameter(ReceiverParameterContext ctx) {
+        if(ctx.annotation() != null) {
+            for(var child: ctx.annotation()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.unannType());
+        if(ctx.identifier() != null) {
+            visit(ctx.identifier());
+            builder.append(".");
+        }
+        appendKeyword("this");
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitStaticInitializer(StaticInitializerContext ctx) {
+        appendKeyword("static");
+        visit(ctx.block());
+        return super.visitStaticInitializer(ctx);
+    }
+
+    @Override
+    public StringBuilder visitConstructorDeclaration(ConstructorDeclarationContext ctx) {
+        if(ctx.constructorModifier() != null) {
+            for(var child: ctx.constructorModifier()) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.constructorDeclarator());
+        if(ctx.throws_() != null) {
+            visit(ctx.throws_());
+            space();
+        }
+        visit(ctx.constructorBody());
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitConstructorModifier(ConstructorModifierContext ctx) {
+        if(ctx.annotation() != null) {
+            visit(ctx.annotation());
+        } else if(ctx.PRIVATE() != null) {
+            appendKeyword("private");
+        } else if(ctx.PROTECTED() != null) {
+            appendKeyword("protected");
+        } else if(ctx.PUBLIC() != null) {
+            appendKeyword("public");
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitConstructorDeclarator(ConstructorDeclaratorContext ctx) {
+        if(ctx.typeParameters() != null) {
+            visit(ctx.typeParameters());
+        }
+        visit(ctx.simpleTypeName());
+        builder.append("(");
+        if(ctx.formalParameterList() != null) {
+            visit(ctx.formalParameterList());
+        }
+        builder.append(")");
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitConstructorBody(ConstructorBodyContext ctx) {
+        builder.append("{");
+        newLine();
+        if(ctx.explicitConstructorInvocation() != null) {
+            visit(ctx.explicitConstructorInvocation());
+        }
+        if(ctx.blockStatements() != null) {
+            visit(ctx.blockStatements());
+        }
+        newLine();
+        builder.append("}");
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitExplicitConstructorInvocation(ExplicitConstructorInvocationContext ctx) {
+        if(ctx.typeArguments() != null) {
+            visit(ctx.typeArguments());
+            if(ctx.SUPER() != null) {
+                appendKeyword("super");
+            } else if(ctx.THIS() != null) {
+                appendKeyword("this");
+            }
+            builder.append("(");
+            if(ctx.argumentList() != null) {
+                visit(ctx.argumentList());
+            }
+            builder.append(")");
+            builder.append(";");
+        } else if(ctx.expressionName() != null) {
+            visit(ctx.expressionName());
+            builder.append(".");
+            appendKeyword("super");
+            builder.append("(");
+            if(ctx.argumentList() != null) {
+                visit(ctx.argumentList());
+            }
+            builder.append(")");
+            builder.append(";");
+        } else if(ctx.primary() != null) {
+            visit(ctx.primary());
+            builder.append(".");
+            appendKeyword("super");
+            builder.append("(");
+            if(ctx.argumentList() != null) {
+                visit(ctx.argumentList());
+            }
+            builder.append(")");
+            builder.append(";");
+        }
+        return super.visitExplicitConstructorInvocation(ctx);
+    }
+
+    @Override
+    public StringBuilder visitEnumDeclaration(EnumDeclarationContext ctx) {
+        if(ctx.classModifier() != null) {
+            for(var child: ctx.children) {
+                visit(child);
+                space();
+            }
+        }
+        appendKeyword("enum");
+        visit(ctx.identifier());
+        space();
+        if(ctx.superinterfaces() != null) {
+            visit(ctx.superinterfaces());
+            space();
+        }
+        visit(ctx.enumBody());
+        return super.visitEnumDeclaration(ctx);
+    }
+
+    @Override
+    public StringBuilder visitEnumBody(EnumBodyContext ctx) {
+        builder.append("{");
+        newLine();
+        if(ctx.enumConstantList() != null) {
+            visit(ctx.enumConstantList());
+            space();
+        }
+        if(ctx.COMMA() != null) {
+            builder.append(",");
+            space();
+        }
+        if(ctx.enumBodyDeclarations() != null) {
+            visit(ctx.enumBodyDeclarations());
+        }
+        newLine();
+        builder.append("}");
+        return super.visitEnumBody(ctx);
+    }
+
+    @Override
+    public StringBuilder visitEnumConstantList(EnumConstantListContext ctx) {
+        if (ctx.enumConstant() != null) {
+            boolean addComma = false;
+            for (var child : ctx.enumConstant()) {
+                if (addComma) {
+                    builder.append(", ");
+                }
+                visit(child);
+                addComma = true;
+            }
+        }
+        return builder;
+    }
+
+    @Override
+    public StringBuilder visitEnumConstant(EnumConstantContext ctx) {
+        if(ctx.enumConstantModifier() != null) {
+            for(var child: ctx.children) {
+                visit(child);
+                space();
+            }
+        }
+        visit(ctx.identifier());
+        space();
+        if(ctx.argumentList() != null) {
+            builder.append("(");
+            visit(ctx.argumentList());
+            builder.append(")");
+        }
+        if(ctx.classBody() != null) {
+            visit(ctx.classBody());
+        }
+        return super.visitEnumConstant(ctx);
+    }
+
+    @Override
+    public StringBuilder visitEnumBodyDeclarations(EnumBodyDeclarationsContext ctx) {
+        builder.append(";");
+        if(ctx.classBodyDeclaration() != null) {
+            for(var child: ctx.classBodyDeclaration()) {
+                visit(child);
+            }
+            space();
+        }
+        return super.visitEnumBodyDeclarations(ctx);
     }
 
     @Override
@@ -443,7 +1141,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitVariableModifier(VariableModifierContext ctx) {
         if (ctx.FINAL() != null) {
-            builder.append("final ");
+            appendKeyword("final");
         } else if (ctx.annotation() != null) {
             visit(ctx.annotation());
         }
@@ -467,7 +1165,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitResult(ResultContext ctx) {
         if (ctx.VOID() != null) {
-            builder.append("void");
+            appendKeyword("void");
         } else if (ctx.unannType() != null) {
             visit(ctx.unannType());
         }
@@ -477,7 +1175,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitUnannPrimitiveType(UnannPrimitiveTypeContext ctx) {
         if (ctx.BOOLEAN() != null) {
-            builder.append("boolean ");
+            appendKeyword("boolean");
         } else if (ctx.numericType() != null) {
             visit(ctx.numericType());
         }
@@ -487,19 +1185,19 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitIntegralType(IntegralTypeContext ctx) {
         if (ctx.BYTE() != null) {
-            builder.append("byte ");
+            appendKeyword("byte");
         }
         if (ctx.CHAR() != null) {
-            builder.append("char ");
+            appendKeyword("char");
         }
         if (ctx.INT() != null) {
-            builder.append("int ");
+            appendKeyword("int");
         }
         if (ctx.LONG() != null) {
-            builder.append("long ");
+            appendKeyword("long");
         }
         if (ctx.SHORT() != null) {
-            builder.append("short ");
+            appendKeyword("short");
         }
         return builder;
     }
@@ -507,10 +1205,10 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitFloatingPointType(FloatingPointTypeContext ctx) {
         if (ctx.DOUBLE() != null) {
-            builder.append("double");
+            appendKeyword("double");
         }
         if (ctx.FLOAT() != null) {
-            builder.append("float ");
+            appendKeyword("float");
         }
         return builder;
     }
@@ -574,31 +1272,31 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     @Override
     public StringBuilder visitMethodModifier(MethodModifierContext ctx) {
         if (ctx.PUBLIC() != null) {
-            builder.append("public");
+            appendKeyword("public");
         }
         if (ctx.PRIVATE() != null) {
-            builder.append("private");
+            appendKeyword("private");
         }
         if (ctx.ABSTRACT() != null) {
-            builder.append("abstract");
+            appendKeyword("abstract");
         }
         if (ctx.PROTECTED() != null) {
-            builder.append("protected");
+            appendKeyword("protected");
         }
         if (ctx.STATIC() != null) {
-            builder.append("static");
+            appendKeyword("static");
         }
         if (ctx.FINAL() != null) {
-            builder.append("final");
+            appendKeyword("final");
         }
         if (ctx.STRICTFP() != null) {
-            builder.append("strictfp");
+            appendKeyword("strictfp");
         }
         if (ctx.NATIVE() != null) {
-            builder.append("native");
+            appendKeyword("native");
         }
         if (ctx.SYNCHRONIZED() != null) {
-            builder.append("synchronized");
+            appendKeyword("synchronized");
         }
         return builder;
     }
@@ -724,7 +1422,9 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             } else if (ctx.LT() != null) {
                 builder.append(" < ");
             } else if (ctx.INSTANCEOF() != null) {
-                builder.append(" instanceof ");
+                space();
+                appendKeyword("instanceof");
+                space();
             }
             if (ctx.shiftExpression() != null) {
                 visit(ctx.shiftExpression());
@@ -975,4 +1675,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         builder.append(' ');
     }
 
+    private void appendKeyword(String keyword) {
+        builder.append(KeywordTranslator.translateKeyword(keyword, "en", targetLanguage));
+    }
 }
