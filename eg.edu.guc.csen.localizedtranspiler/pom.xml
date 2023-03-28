@@ -5,11 +5,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>eg.edu.guc.csen.localizedlanguageparser</groupId>
-  <artifactId>localizedlanguageparser</artifactId>
+  <groupId>eg.edu.guc.csen.localizedtranspiler</groupId>
+  <artifactId>localizedtranspiler</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>localizedlanguageparser</name>
+  <name>localizedtranspiler</name>
   <!-- FIXME change it to the project's website -->
   <url>https://github.com/omar-elmeteny/Thesis</url>
 
@@ -86,7 +86,7 @@
           <configuration>
             <visitor>true</visitor>
             <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
-            <outputDirectory>${project.build.directory}/generated-sources/annotations/eg/edu/guc/csen/antlr4</outputDirectory>
+            <outputDirectory>${project.build.directory}/generated-sources/annotations/eg/edu/guc/csen/localizedtranspiler</outputDirectory>
           </configuration>
           <executions>
             <execution>

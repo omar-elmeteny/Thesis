@@ -1,4 +1,4 @@
-package eg.edu.guc.csen.localizedlanguage;
+package eg.edu.guc.csen.localizedtranspiler;
 
 import java.util.Hashtable;
 
@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import eg.edu.guc.csen.antlr4.Java9Lexer;
 import eg.edu.guc.csen.antlr4.Java9ParserBaseVisitor;
-import eg.edu.guc.csen.antlr4.Java9Parser.*;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 

@@ -70,7 +70,7 @@ options
 }
 
 @header {
-package eg.edu.guc.csen.antlr4;
+package eg.edu.guc.csen.localizedtranspiler;
 }
 
 /*

@@ -67,10 +67,10 @@ lexer grammar Java9Lexer;
 
 options
 {
-   superClass = eg.edu.guc.csen.antlr4.Java9LexerBase;
+   superClass = eg.edu.guc.csen.localizedtranspiler.Java9LexerBase;
 }
 @header {
-package eg.edu.guc.csen.antlr4;
+package eg.edu.guc.csen.localizedtranspiler;
 }
 
 // LEXER

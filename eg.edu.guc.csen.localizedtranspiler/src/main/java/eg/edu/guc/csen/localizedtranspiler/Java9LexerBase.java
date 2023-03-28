@@ -1,4 +1,4 @@
-package eg.edu.guc.csen.antlr4;
+package eg.edu.guc.csen.localizedtranspiler;
 
 /*
  * [The "BSD license"]
@@ -32,8 +32,6 @@ package eg.edu.guc.csen.antlr4;
  */
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
-
-import eg.edu.guc.csen.localizedlanguage.KeywordTranslator;
 
 public abstract class Java9LexerBase extends Lexer {
     private String sourceLanguage = "en";

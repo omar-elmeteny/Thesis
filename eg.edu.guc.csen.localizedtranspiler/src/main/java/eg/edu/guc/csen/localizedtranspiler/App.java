@@ -1,11 +1,10 @@
-package eg.edu.guc.csen.localizedlanguage;
+package eg.edu.guc.csen.localizedtranspiler;
 
 import java.io.IOException;
 import java.lang.annotation.Repeatable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import eg.edu.guc.csen.antlr4.*;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
