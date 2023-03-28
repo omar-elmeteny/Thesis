@@ -8,8 +8,9 @@
             "type": "java",
             "name": "App",
             "request": "launch",
-            "mainClass": "eg.edu.guc.csen.localizedlanguage.App",
-            "projectName": "localizedlanguageparser"
+            "mainClass": "eg.edu.guc.csen.localizedtranspiler.App",
+            "projectName": "localizedtranspiler",
+            "cwd": "${workspaceFolder}/localizedtranspiler",
         }
     ]
 }

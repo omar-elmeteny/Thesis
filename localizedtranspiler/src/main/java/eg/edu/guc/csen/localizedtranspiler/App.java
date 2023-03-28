@@ -10,22 +10,12 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-@Repeatable(HelloValues.class)
-@interface Hello{
-}
-
-@interface HelloValues {
-    Hello[] value();
-}
 /**
  * Hello world!
  *
  */
 public class App 
 {
-    public static void test(int @Hello() [] @Hello @Hello[] numbers) {
-
-    }
     public static void main( String [] args ) throws IOException
     {
         String content = new String(Files.readAllBytes(Paths.get("test-files/test-inputs/test.guc")), StandardCharsets.UTF_8);
