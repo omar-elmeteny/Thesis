@@ -1,4 +1,4 @@
-package eg.edu.guc.csen.localizedlanguageparser;
+package eg.edu.guc.csen.localizedlanguage;
 
 import static org.junit.Assert.assertTrue;
 

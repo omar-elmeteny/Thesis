@@ -1,0 +1,17 @@
+@Test(true)
+public class test {
+
+    private String name;
+
+    public test(String name) {
+        this.name = name;
+    }
+
+    public static void test() {
+
+    }
+
+    public static void main(String[] args) {
+        
+    }
+}
