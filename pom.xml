@@ -8,8 +8,10 @@
     <artifactId>languagelocalization</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-
+    <name>languagelocalization</name>
+    <url>https://github.com/omar-elmeteny/Thesis</url>
     <modules>
         <module>localizedtranspiler</module>
+        <module>keywordtranslator</module>
     </modules>
 </project>

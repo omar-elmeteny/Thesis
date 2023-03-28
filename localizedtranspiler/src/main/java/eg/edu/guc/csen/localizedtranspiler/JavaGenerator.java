@@ -6,6 +6,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import eg.edu.guc.csen.keywordtranslator.KeywordTranslator;
+
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     private StringBuilder builder = new StringBuilder();
