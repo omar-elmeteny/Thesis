@@ -29,7 +29,7 @@ public class App
     }
     public static void main( String [] args ) throws IOException
     {
-        String content = new String(Files.readAllBytes(Paths.get("test-files/test.guc")), StandardCharsets.UTF_8);
+        String content = new String(Files.readAllBytes(Paths.get("test-files/test-inputs/test.guc")), StandardCharsets.UTF_8);
         Java9Lexer lexer = new Java9Lexer(CharStreams.fromString(content));
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);

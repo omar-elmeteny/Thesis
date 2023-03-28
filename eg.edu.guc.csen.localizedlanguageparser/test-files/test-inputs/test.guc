@@ -1,4 +1,4 @@
-@Test(true)
+@ Test(true)
 public class test {
 
     private String name;
