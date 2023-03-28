@@ -33,29 +33,55 @@ package eg.edu.guc.csen.antlr4;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 
-public abstract class Java9LexerBase extends Lexer
-{
+import eg.edu.guc.csen.localizedlanguage.KeywordTranslator;
+
+public abstract class Java9LexerBase extends Lexer {
+    private String sourceLanguage = "en";
+
     public Java9LexerBase(CharStream input) {
-	super(input);
+        super(input);
     }
 
-    public boolean Check1()
-    {
+    public boolean Check1() {
         return Character.isJavaIdentifierStart(_input.LA(-1));
     }
 
-    public boolean Check2()
-    {
-        return Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)));
+    public boolean Check2() {
+        return Character.isJavaIdentifierStart(Character.toCodePoint((char) _input.LA(-2), (char) _input.LA(-1)));
     }
 
-    public boolean Check3()
-    {
+    public boolean Check3() {
         return Character.isJavaIdentifierPart(_input.LA(-1));
     }
 
-    public boolean Check4()
-    {
-        return Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)));
+    public boolean Check4() {
+        return Character.isJavaIdentifierPart(Character.toCodePoint((char) _input.LA(-2), (char) _input.LA(-1)));
     }
+
+    public String getSourceLanguage() {
+        return sourceLanguage;
+    }
+
+    public void setSourceLanguage(String sourceLanguage) {
+        this.sourceLanguage = sourceLanguage;
+    }
+
+    public boolean CheckKeyword(String keyword) {
+        String translatedKeyword = KeywordTranslator.translateKeyword(keyword, "en", sourceLanguage);
+        // See if `translatedKeyword` is ahead in the CharStream.
+        for (int i = 0; i < translatedKeyword.length(); i++) {
+
+            if (_input.LA(i + 1) != translatedKeyword.charAt(i)) {
+
+                // Nope, we didn't find `translatedKeyword`.
+                return false;
+            }
+        }
+
+        // Since we found the translatedKeyword, increase the CharStream's index.
+        _input.seek(_input.index() + translatedKeyword.length() - 1);
+
+        return true;
+    }
+
 }

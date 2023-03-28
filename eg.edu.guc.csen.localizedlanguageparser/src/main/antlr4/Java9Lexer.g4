@@ -77,67 +77,70 @@ package eg.edu.guc.csen.antlr4;
 
 // §3.9 Keywords
 
-ABSTRACT : 'abstract';
-ASSERT : 'assert';
-BOOLEAN : 'boolean';
-BREAK : 'break';
-BYTE : 'byte';
-CASE : 'case';
-CATCH : 'catch';
-CHAR : 'char';
-CLASS : 'class';
-CONST : 'const';
-CONTINUE : 'continue';
-DEFAULT : 'default';
-DO : 'do';
-DOUBLE : 'double';
-ELSE : 'else';
-ENUM : 'enum';
-EXPORTS : 'exports';
-EXTENDS : 'extends';
-FINAL : 'final';
-FINALLY : 'finally';
-FLOAT : 'float';
-FOR : 'for';
-IF : 'if';
-GOTO : 'goto';
-IMPLEMENTS : 'implements';
-IMPORT : 'import';
-INSTANCEOF : 'instanceof';
-INT : 'int';
-INTERFACE : 'interface';
-LONG : 'long';
-MODULE : 'module';
-NATIVE : 'native';
-NEW : 'new';
-OPEN : 'open';
-OPERNS : 'opens';
-PACKAGE : 'package';
-PRIVATE : 'private';
-PROTECTED : 'protected';
-PROVIDES : 'provides';
-PUBLIC : 'public';
-REQUIRES : 'requires';
-RETURN : 'return';
-SHORT : 'short';
-STATIC : 'static';
-STRICTFP : 'strictfp';
-SUPER : 'super';
-SWITCH : 'switch';
-SYNCHRONIZED : 'synchronized';
-THIS : 'this';
-THROW : 'throw';
-THROWS : 'throws';
-TO : 'to';
-TRANSIENT : 'transient';
-TRANSITIVE : 'transitive';
-TRY : 'try';
-USES : 'uses';
-VOID : 'void';
-VOLATILE : 'volatile';
-WHILE : 'while';
-WITH : 'with';
+ABSTRACT : { CheckKeyword("abstract") }? .;
+ASSERT : { CheckKeyword("assert") }? .;
+BOOLEAN : { CheckKeyword("boolean") }? .;
+BREAK : { CheckKeyword("break") }? .;
+BYTE : { CheckKeyword("byte") }? .;
+CASE : { CheckKeyword("case") }? .;
+CATCH : { CheckKeyword("catch") }? .;
+CHAR : { CheckKeyword("char") }? .;
+CLASS : { CheckKeyword("class") }? . ;
+CONST : { CheckKeyword("const") }? .;
+CONTINUE : { CheckKeyword("continue") }? .;
+DEFAULT : { CheckKeyword("default") }? .;
+DO : { CheckKeyword("do") }? .;
+DOUBLE : { CheckKeyword("double") }? .;
+ELSE : { CheckKeyword("else") }? .;
+ENUM : { CheckKeyword("enum") }? .;
+EXPORTS : { CheckKeyword("exports") }? .;
+EXTENDS : { CheckKeyword("extends") }? .;
+FINAL : { CheckKeyword("final") }? .;
+FINALLY : { CheckKeyword("finally") }? .;
+FLOAT : { CheckKeyword("float") }? .;
+FOR : { CheckKeyword("for") }? .;
+IF : { CheckKeyword("if") }? .;
+GOTO : { CheckKeyword("goto") }? .;
+IMPLEMENTS : { CheckKeyword("implements") }? .;
+IMPORT : { CheckKeyword("import") }? .;
+INSTANCEOF : { CheckKeyword("instanceof") }? .;
+INT : { CheckKeyword("int") }? .;
+INTERFACE : { CheckKeyword("interface") }? .;
+LONG : { CheckKeyword("long") }? .;
+MODULE : { CheckKeyword("module") }? .;
+NATIVE : { CheckKeyword("native") }? .;
+NEW : { CheckKeyword("new") }? .;
+OPEN : { CheckKeyword("open") }? .;
+OPERNS : { CheckKeyword("opens") }? .;
+PACKAGE : { CheckKeyword("package") }? .;
+PRIVATE : { CheckKeyword("private") }? .;
+PROTECTED : { CheckKeyword("protected") }? .;
+PROVIDES : { CheckKeyword("provides") }? .;
+PUBLIC : { CheckKeyword("public") }? .;
+REQUIRES : { CheckKeyword("requires") }? .;
+RETURN : { CheckKeyword("return") }? .;
+SHORT : { CheckKeyword("short") }? .;
+STATIC : { CheckKeyword("static") }? .;
+STRICTFP : { CheckKeyword("strictfp") }? .;
+SUPER : { CheckKeyword("super") }? .;
+SWITCH : { CheckKeyword("switch") }? .;
+SYNCHRONIZED : { CheckKeyword("synchronized") }? .;
+THIS : { CheckKeyword("this") }? .;
+THROW : { CheckKeyword("throw") }? .;
+THROWS : { CheckKeyword("throws") }? .;
+TO : { CheckKeyword("to") }? .;
+TRANSIENT : { CheckKeyword("transient") }? .;
+TRANSITIVE : { CheckKeyword("transitive") }? .;
+TRY : { CheckKeyword("try") }? .;
+USES : { CheckKeyword("uses") }? .;
+VOID : { CheckKeyword("void") }? .;
+VOLATILE : { CheckKeyword("volatile") }? .;
+WHILE : { CheckKeyword("while") }? .;
+WITH : { CheckKeyword("with") }? .;
 UNDER_SCORE : '_';//Introduced in Java 9
+TRUE : { CheckKeyword("true") }? .;
+FALSE : { CheckKeyword("false") }? .;
+NULL : { CheckKeyword("null") }? .;
 
 // §3.10.1 Integer Literals
 
@@ -350,12 +353,6 @@ BinaryExponentIndicator
 	:	[pP]
 	;
 
-// §3.10.3 Boolean Literals
-
-BooleanLiteral
-	:	'true'
-	|	'false'
-	;
 
 // §3.10.4 Character Literals
 
@@ -412,12 +409,6 @@ fragment
 UnicodeEscape
     :   '\\' 'u'+ HexDigit HexDigit HexDigit HexDigit
     ;
-
-// §3.10.7 The Null Literal
-
-NullLiteral
-	:	'null'
-	;
 
 // §3.11 Separators
 

@@ -77,13 +77,27 @@ package eg.edu.guc.csen.antlr4;
  * Productions from §3 (Lexical Structure)
  */
 
+ // §3.10.3 Boolean Literals
+
+booleanLiteral
+	:	TRUE
+	|	FALSE
+	;
+
+// §3.10.7 The Null Literal
+
+nullLiteral
+	:	NULL
+	;
+
+
 literal
 	:	IntegerLiteral
 	|	FloatingPointLiteral
-	|	BooleanLiteral
+	|	booleanLiteral
 	|	CharacterLiteral
 	|	StringLiteral
-	|	NullLiteral
+	|	nullLiteral
 	;
 
 /*
@@ -92,7 +106,7 @@ literal
 
 primitiveType
 	:	annotation* numericType
-	|	annotation* 'boolean'
+	|	annotation* BOOLEAN
 	;
 
 numericType
@@ -101,16 +115,16 @@ numericType
 	;
 
 integralType
-	:	'byte'
-	|	'short'
-	|	'int'
-	|	'long'
-	|	'char'
+	:	BYTE
+	|	SHORT
+	|	INT
+	|	LONG
+	|	CHAR
 	;
 
 floatingPointType
-	:	'float'
-	|	'double'
+	:	FLOAT
+	|	DOUBLE
 	;
 
 referenceType
@@ -181,8 +195,8 @@ typeParameterModifier
 	;
 
 typeBound
-	:	'extends' typeVariable
-	|	'extends' classOrInterfaceType additionalBound*
+	:	EXTENDS typeVariable
+	|	EXTENDS classOrInterfaceType additionalBound*
 	;
 
 additionalBound
@@ -207,8 +221,8 @@ wildcard
 	;
 
 wildcardBounds
-	:	'extends' referenceType
-	|	'super' referenceType
+	:	EXTENDS referenceType
+	|	SUPER referenceType
 	;
 
 /*
@@ -266,7 +280,7 @@ modularCompilation
 	;
 
 packageDeclaration
-	:	packageModifier* 'package' packageName ';'
+	:	packageModifier* PACKAGE packageName ';'
 	;
 
 packageModifier
@@ -281,19 +295,19 @@ importDeclaration
 	;
 
 singleTypeImportDeclaration
-	:	'import' typeName ';'
+	:	IMPORT typeName ';'
 	;
 
 typeImportOnDemandDeclaration
-	:	'import' packageOrTypeName '.' '*' ';'
+	:	IMPORT packageOrTypeName '.' '*' ';'
 	;
 
 singleStaticImportDeclaration
-	:	'import' 'static' typeName '.' identifier ';'
+	:	IMPORT STATIC typeName '.' identifier ';'
 	;
 
 staticImportOnDemandDeclaration
-	:	'import' 'static' typeName '.' '*' ';'
+	:	IMPORT STATIC typeName '.' '*' ';'
 	;
 
 typeDeclaration
@@ -303,20 +317,20 @@ typeDeclaration
 	;
 
 moduleDeclaration
-	:	annotation* 'open'? 'module' moduleName '{' moduleDirective* '}'
+	:	annotation* OPEN? MODULE moduleName '{' moduleDirective* '}'
 	;
 
 moduleDirective
-	:	'requires' requiresModifier* moduleName ';'
-	|	'exports' packageName ('to' moduleName (',' moduleName)*)? ';'
-	|	'opens' packageName ('to' moduleName (',' moduleName)*)? ';'
-	|	'uses' typeName ';'
-	|	'provides' typeName 'with' typeName (',' typeName)* ';'
+	:	REQUIRES requiresModifier* moduleName ';'
+	|	EXPORTS packageName (TO moduleName (',' moduleName)*)? ';'
+	|	OPERNS packageName (TO moduleName (',' moduleName)*)? ';'
+	|	USES typeName ';'
+	|	PROVIDES typeName WITH typeName (',' typeName)* ';'
 	;
 
 requiresModifier
-	:	'transitive'
-	|	'static'
+	:	TRANSITIVE
+	|	STATIC
 	;
 
 /*
@@ -329,18 +343,18 @@ classDeclaration
 	;
 
 normalClassDeclaration
-	:	classModifier* 'class' identifier typeParameters? superclass? superinterfaces? classBody
+	:	classModifier* CLASS identifier typeParameters? superclass? superinterfaces? classBody
 	;
 
 classModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'final'
-	|	'strictfp'
+	|	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	ABSTRACT
+	|	STATIC
+	|	FINAL
+	|	STRICTFP
 	;
 
 typeParameters
@@ -352,11 +366,11 @@ typeParameterList
 	;
 
 superclass
-	:	'extends' classType
+	:	EXTENDS classType
 	;
 
 superinterfaces
-	:	'implements' interfaceTypeList
+	:	IMPLEMENTS interfaceTypeList
 	;
 
 interfaceTypeList
@@ -388,13 +402,13 @@ fieldDeclaration
 
 fieldModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'static'
-	|	'final'
-	|	'transient'
-	|	'volatile'
+	|	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	STATIC
+	|	FINAL
+	|	TRANSIENT
+	|	VOLATILE
 	;
 
 variableDeclaratorList
@@ -421,7 +435,7 @@ unannType
 
 unannPrimitiveType
 	:	numericType
-	|	'boolean'
+	|	BOOLEAN
 	;
 
 unannReferenceType
@@ -486,15 +500,15 @@ methodDeclaration
 
 methodModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'final'
-	|	'synchronized'
-	|	'native'
-	|	'strictfp'
+	|	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	ABSTRACT
+	|	STATIC
+	|	FINAL
+	|	SYNCHRONIZED
+	|	NATIVE
+	|	STRICTFP
 	;
 
 methodHeader
@@ -504,7 +518,7 @@ methodHeader
 
 result
 	:	unannType
-	|	'void'
+	|	VOID
 	;
 
 methodDeclarator
@@ -528,7 +542,7 @@ formalParameter
 
 variableModifier
 	:	annotation
-	|	'final'
+	|	FINAL
 	;
 
 lastFormalParameter
@@ -537,11 +551,11 @@ lastFormalParameter
 	;
 
 receiverParameter
-	:	annotation* unannType (identifier '.')? 'this'
+	:	annotation* unannType (identifier '.')? THIS
 	;
 
 throws_
-	:	'throws' exceptionTypeList
+	:	THROWS exceptionTypeList
 	;
 
 exceptionTypeList
@@ -563,7 +577,7 @@ instanceInitializer
 	;
 
 staticInitializer
-	:	'static' block
+	:	STATIC block
 	;
 
 constructorDeclaration
@@ -572,9 +586,9 @@ constructorDeclaration
 
 constructorModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
+	|	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
 	;
 
 constructorDeclarator
@@ -590,14 +604,14 @@ constructorBody
 	;
 
 explicitConstructorInvocation
-	:	typeArguments? 'this' '(' argumentList? ')' ';'
-	|	typeArguments? 'super' '(' argumentList? ')' ';'
-	|	expressionName '.' typeArguments? 'super' '(' argumentList? ')' ';'
-	|	primary '.' typeArguments? 'super' '(' argumentList? ')' ';'
+	:	typeArguments? THIS '(' argumentList? ')' ';'
+	|	typeArguments? SUPER '(' argumentList? ')' ';'
+	|	expressionName '.' typeArguments? SUPER '(' argumentList? ')' ';'
+	|	primary '.' typeArguments? SUPER '(' argumentList? ')' ';'
 	;
 
 enumDeclaration
-	:	classModifier* 'enum' identifier superinterfaces? enumBody
+	:	classModifier* ENUM identifier superinterfaces? enumBody
 	;
 
 enumBody
@@ -630,21 +644,21 @@ interfaceDeclaration
 	;
 
 normalInterfaceDeclaration
-	:	interfaceModifier* 'interface' identifier typeParameters? extendsInterfaces? interfaceBody
+	:	interfaceModifier* INTERFACE identifier typeParameters? extendsInterfaces? interfaceBody
 	;
 
 interfaceModifier
 	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'strictfp'
+	|	PUBLIC
+	|	PROTECTED
+	|	PRIVATE
+	|	ABSTRACT
+	|	STATIC
+	|	STRICTFP
 	;
 
 extendsInterfaces
-	:	'extends' interfaceTypeList
+	:	EXTENDS interfaceTypeList
 	;
 
 interfaceBody
@@ -665,9 +679,9 @@ constantDeclaration
 
 constantModifier
 	:	annotation
-	|	'public'
-	|	'static'
-	|	'final'
+	|	PUBLIC
+	|	STATIC
+	|	FINAL
 	;
 
 interfaceMethodDeclaration
@@ -676,16 +690,16 @@ interfaceMethodDeclaration
 
 interfaceMethodModifier
 	:	annotation
-	|	'public'
-	|	'private'//Introduced in Java 9
-	|	'abstract'
-	|	'default'
-	|	'static'
-	|	'strictfp'
+	|	PUBLIC
+	|	PRIVATE//Introduced in Java 9
+	|	ABSTRACT
+	|	DEFAULT
+	|	STATIC
+	|	STRICTFP
 	;
 
 annotationTypeDeclaration
-	:	interfaceModifier* '@' 'interface' identifier annotationTypeBody
+	:	interfaceModifier* '@' INTERFACE identifier annotationTypeBody
 	;
 
 annotationTypeBody
@@ -706,12 +720,12 @@ annotationTypeElementDeclaration
 
 annotationTypeElementModifier
 	:	annotation
-	|	'public'
-	|	'abstract'
+	|	PUBLIC
+	|	ABSTRACT
 	;
 
 defaultValue
-	:	'default' elementValue
+	:	DEFAULT elementValue
 	;
 
 annotation
@@ -851,24 +865,24 @@ statementExpression
 	;
 
 ifThenStatement
-	:	'if' '(' expression ')' statement
+	:	IF '(' expression ')' statement
 	;
 
 ifThenElseStatement
-	:	'if' '(' expression ')' statementNoShortIf 'else' statement
+	:	IF '(' expression ')' statementNoShortIf ELSE statement
 	;
 
 ifThenElseStatementNoShortIf
-	:	'if' '(' expression ')' statementNoShortIf 'else' statementNoShortIf
+	:	IF '(' expression ')' statementNoShortIf ELSE statementNoShortIf
 	;
 
 assertStatement
-	:	'assert' expression ';'
-	|	'assert' expression ':' expression ';'
+	:	ASSERT expression ';'
+	|	ASSERT expression ':' expression ';'
 	;
 
 switchStatement
-	:	'switch' '(' expression ')' switchBlock
+	:	SWITCH '(' expression ')' switchBlock
 	;
 
 switchBlock
@@ -884,9 +898,9 @@ switchLabels
 	;
 
 switchLabel
-	:	'case' constantExpression ':'
-	|	'case' enumConstantName ':'
-	|	'default' ':'
+	:	CASE constantExpression ':'
+	|	CASE enumConstantName ':'
+	|	DEFAULT ':'
 	;
 
 enumConstantName
@@ -894,15 +908,15 @@ enumConstantName
 	;
 
 whileStatement
-	:	'while' '(' expression ')' statement
+	:	WHILE '(' expression ')' statement
 	;
 
 whileStatementNoShortIf
-	:	'while' '(' expression ')' statementNoShortIf
+	:	WHILE '(' expression ')' statementNoShortIf
 	;
 
 doStatement
-	:	'do' statement 'while' '(' expression ')' ';'
+	:	DO statement WHILE '(' expression ')' ';'
 	;
 
 forStatement
@@ -916,11 +930,11 @@ forStatementNoShortIf
 	;
 
 basicForStatement
-	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
+	:	FOR '(' forInit? ';' expression? ';' forUpdate? ')' statement
 	;
 
 basicForStatementNoShortIf
-	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statementNoShortIf
+	:	FOR '(' forInit? ';' expression? ';' forUpdate? ')' statementNoShortIf
 	;
 
 forInit
@@ -937,36 +951,36 @@ statementExpressionList
 	;
 
 enhancedForStatement
-	:	'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
+	:	FOR '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
 	;
 
 enhancedForStatementNoShortIf
-	:	'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statementNoShortIf
+	:	FOR '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statementNoShortIf
 	;
 
 breakStatement
-	:	'break' identifier? ';'
+	:	BREAK identifier? ';'
 	;
 
 continueStatement
-	:	'continue' identifier? ';'
+	:	CONTINUE identifier? ';'
 	;
 
 returnStatement
-	:	'return' expression? ';'
+	:	RETURN expression? ';'
 	;
 
 throwStatement
-	:	'throw' expression ';'
+	:	THROW expression ';'
 	;
 
 synchronizedStatement
-	:	'synchronized' '(' expression ')' block
+	:	SYNCHRONIZED '(' expression ')' block
 	;
 
 tryStatement
-	:	'try' block catches
-	|	'try' block catches? finally_
+	:	TRY block catches
+	|	TRY block catches? finally_
 	|	tryWithResourcesStatement
 	;
 
@@ -975,7 +989,7 @@ catches
 	;
 
 catchClause
-	:	'catch' '(' catchFormalParameter ')' block
+	:	CATCH '(' catchFormalParameter ')' block
 	;
 
 catchFormalParameter
@@ -987,11 +1001,11 @@ catchType
 	;
 
 finally_
-	:	'finally' block
+	:	FINALLY block
 	;
 
 tryWithResourcesStatement
-	:	'try' resourceSpecification block catches? finally_?
+	:	TRY resourceSpecification block catches? finally_?
 	;
 
 resourceSpecification
@@ -1033,8 +1047,8 @@ primary
 primaryNoNewArray
 	:	literal
 	|	classLiteral
-	|	'this'
-	|	typeName '.' 'this'
+	|	THIS
+	|	typeName '.' THIS
 	|	'(' expression ')'
 	|	classInstanceCreationExpression
 	|	fieldAccess
@@ -1049,10 +1063,10 @@ primaryNoNewArray_lf_arrayAccess
 
 primaryNoNewArray_lfno_arrayAccess
 	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
+	|	typeName ('[' ']')* '.' CLASS
+	|	VOID '.' CLASS
+	|	THIS
+	|	typeName '.' THIS
 	|	'(' expression ')'
 	|	classInstanceCreationExpression
 	|	fieldAccess
@@ -1081,11 +1095,11 @@ primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary
 
 primaryNoNewArray_lfno_primary
 	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	unannPrimitiveType ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
+	|	typeName ('[' ']')* '.' CLASS
+	|	unannPrimitiveType ('[' ']')* '.' CLASS
+	|	VOID '.' CLASS
+	|	THIS
+	|	typeName '.' THIS
 	|	'(' expression ')'
 	|	classInstanceCreationExpression_lfno_primary
 	|	fieldAccess_lfno_primary
@@ -1100,11 +1114,11 @@ primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
 
 primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	unannPrimitiveType ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
+	|	typeName ('[' ']')* '.' CLASS
+	|	unannPrimitiveType ('[' ']')* '.' CLASS
+	|	VOID '.' CLASS
+	|	THIS
+	|	typeName '.' THIS
 	|	'(' expression ')'
 	|	classInstanceCreationExpression_lfno_primary
 	|	fieldAccess_lfno_primary
@@ -1113,23 +1127,23 @@ primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	;
 
 classLiteral
-	:	(typeName|numericType|'boolean') ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
+	:	(typeName|numericType|BOOLEAN) ('[' ']')* '.' CLASS
+	|	VOID '.' CLASS
 	;
 
 classInstanceCreationExpression
-	:	'new' typeArguments? annotation* identifier ('.' annotation* identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
-	|	expressionName '.' 'new' typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
-	|	primary '.' 'new' typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	:	NEW typeArguments? annotation* identifier ('.' annotation* identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	|	expressionName '.' NEW typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	|	primary '.' NEW typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 	;
 
 classInstanceCreationExpression_lf_primary
-	:	'.' 'new' typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	:	'.' NEW typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 	;
 
 classInstanceCreationExpression_lfno_primary
-	:	'new' typeArguments? annotation* identifier ('.' annotation* identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
-	|	expressionName '.' 'new' typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	:	NEW typeArguments? annotation* identifier ('.' annotation* identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	|	expressionName '.' NEW typeArguments? annotation* identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 	;
 
 typeArgumentsOrDiamond
@@ -1139,8 +1153,8 @@ typeArgumentsOrDiamond
 
 fieldAccess
 	:	primary '.' identifier
-	|	'super' '.' identifier
-	|	typeName '.' 'super' '.' identifier
+	|	SUPER '.' identifier
+	|	typeName '.' SUPER '.' identifier
 	;
 
 fieldAccess_lf_primary
@@ -1148,8 +1162,8 @@ fieldAccess_lf_primary
 	;
 
 fieldAccess_lfno_primary
-	:	'super' '.' identifier
-	|	typeName '.' 'super' '.' identifier
+	:	SUPER '.' identifier
+	|	typeName '.' SUPER '.' identifier
 	;
 
 /*arrayAccess
@@ -1187,8 +1201,8 @@ methodInvocation
 	|	typeName '.' typeArguments? identifier '(' argumentList? ')'
 	|	expressionName '.' typeArguments? identifier '(' argumentList? ')'
 	|	primary '.' typeArguments? identifier '(' argumentList? ')'
-	|	'super' '.' typeArguments? identifier '(' argumentList? ')'
-	|	typeName '.' 'super' '.' typeArguments? identifier '(' argumentList? ')'
+	|	SUPER '.' typeArguments? identifier '(' argumentList? ')'
+	|	typeName '.' SUPER '.' typeArguments? identifier '(' argumentList? ')'
 	;
 
 methodInvocation_lf_primary
@@ -1199,8 +1213,8 @@ methodInvocation_lfno_primary
 	:	methodName '(' argumentList? ')'
 	|	typeName '.' typeArguments? identifier '(' argumentList? ')'
 	|	expressionName '.' typeArguments? identifier '(' argumentList? ')'
-	|	'super' '.' typeArguments? identifier '(' argumentList? ')'
-	|	typeName '.' 'super' '.' typeArguments? identifier '(' argumentList? ')'
+	|	SUPER '.' typeArguments? identifier '(' argumentList? ')'
+	|	typeName '.' SUPER '.' typeArguments? identifier '(' argumentList? ')'
 	;
 
 argumentList
@@ -1211,10 +1225,10 @@ methodReference
 	:	expressionName '::' typeArguments? identifier
 	|	referenceType '::' typeArguments? identifier
 	|	primary '::' typeArguments? identifier
-	|	'super' '::' typeArguments? identifier
-	|	typeName '.' 'super' '::' typeArguments? identifier
-	|	classType '::' typeArguments? 'new'
-	|	arrayType '::' 'new'
+	|	SUPER '::' typeArguments? identifier
+	|	typeName '.' SUPER '::' typeArguments? identifier
+	|	classType '::' typeArguments? NEW
+	|	arrayType '::' NEW
 	;
 
 methodReference_lf_primary
@@ -1224,17 +1238,17 @@ methodReference_lf_primary
 methodReference_lfno_primary
 	:	expressionName '::' typeArguments? identifier
 	|	referenceType '::' typeArguments? identifier
-	|	'super' '::' typeArguments? identifier
-	|	typeName '.' 'super' '::' typeArguments? identifier
-	|	classType '::' typeArguments? 'new'
-	|	arrayType '::' 'new'
+	|	SUPER '::' typeArguments? identifier
+	|	typeName '.' SUPER '::' typeArguments? identifier
+	|	classType '::' typeArguments? NEW
+	|	arrayType '::' NEW
 	;
 
 arrayCreationExpression
-	:	'new' primitiveType dimExprs dims?
-	|	'new' classOrInterfaceType dimExprs dims?
-	|	'new' primitiveType dims arrayInitializer
-	|	'new' classOrInterfaceType dims arrayInitializer
+	:	NEW primitiveType dimExprs dims?
+	|	NEW classOrInterfaceType dimExprs dims?
+	|	NEW primitiveType dims arrayInitializer
+	|	NEW classOrInterfaceType dims arrayInitializer
 	;
 
 dimExprs
@@ -1345,7 +1359,7 @@ relationalExpression
 	|	relationalExpression '>' shiftExpression
 	|	relationalExpression '<=' shiftExpression
 	|	relationalExpression '>=' shiftExpression
-	|	relationalExpression 'instanceof' referenceType
+	|	relationalExpression INSTANCEOF referenceType
 	;
 
 shiftExpression
@@ -1430,4 +1444,4 @@ castExpression
 	|	'(' referenceType additionalBound* ')' lambdaExpression
 	;
 
-identifier : Identifier | 'to' | 'module' | 'open' | 'with' | 'provides' | 'uses' | 'opens' | 'requires' | 'exports';
+identifier : Identifier | TO | MODULE | OPEN | WITH | PROVIDES | USES | OPERNS | REQUIRES | EXPORTS;
