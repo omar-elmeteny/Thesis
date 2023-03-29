@@ -1,17 +1,18 @@
-@ Test(true)
-public class test {
+@ التجربة(حقيقي)
+/* كومنت */
+عام نوع تجربة {
 
-    private String name;
+    خاص String إسم;
 
-    public test(String name) {
-        this.name = name;
+    عام تجربة(String إسم) {
+        هذا.إسم = إسم;
     }
 
-    public static void test() {
+    عام محايد لاشئ تجربة() {
 
     }
 
-    public static void main(String[] args) {
+    عام محايد لاشئ main(String[] محددات) {
         
     }
 }

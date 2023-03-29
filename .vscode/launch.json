@@ -11,6 +11,7 @@
             "mainClass": "eg.edu.guc.csen.localizedtranspiler.App",
             "projectName": "localizedtranspiler",
             "cwd": "${workspaceFolder}/localizedtranspiler",
+            "console": "internalConsole"
         }
     ]
 }

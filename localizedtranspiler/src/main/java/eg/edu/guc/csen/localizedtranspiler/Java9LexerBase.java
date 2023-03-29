@@ -83,5 +83,4 @@ public abstract class Java9LexerBase extends Lexer {
 
         return true;
     }
-
 }
