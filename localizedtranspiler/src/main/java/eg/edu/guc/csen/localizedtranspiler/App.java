@@ -22,7 +22,7 @@ public class App
     {
         String content = new String(Files.readAllBytes(Paths.get("test-files/test-inputs/test.guc")), StandardCharsets.UTF_8);
         Java9Lexer lexer = new Java9Lexer(CharStreams.fromString(content));
-        lexer.setSourceLanguage("ar");
+        lexer.setSourceLanguage("de");
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Java9Parser parser = new Java9Parser(tokens);

@@ -1,18 +1,18 @@
-@ التجربة(حقيقي)
-/* كومنت */
-عام نوع تجربة {
+@ prüfen(wahr)
+/* kommentar */
+öffentlich klasse prüfen {
 
-    خاص String إسم;
+    privat String name;
 
-    عام تجربة(String إسم) {
-        هذا.إسم = إسم;
+    öffentlich prüfen(String name) {
+        dies.name = name;
     }
 
-    عام محايد لاشئ تجربة() {
+    öffentlich statisch leer prüfen() {
 
     }
 
-    عام محايد لاشئ main(String[] محددات) {
+    öffentlich statisch leer main(String[] argumente) {
         
     }
 }
