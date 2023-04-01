@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 public class Helper {
 	// TODO: this is hardcoded for now.
-	private static final String dataPath = "D:\\Projects\\Thesis\\work\\eg.edu.guc.csen.languagelocalization\\data";
+	private static final String dataPath = "D:\\Projects\\Thesis\\work\\eclipseplugin\\data";
 	
 	private static final KeywordTranslations keywordTranslations = initializeKeywordTranslations();
 	private static final Languages languages = initializeLanguages();

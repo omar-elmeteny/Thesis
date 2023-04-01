@@ -118,6 +118,10 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Get the selected language
+				int selectionIndex = languageCombo.getSelectionIndex();
+				if (selectionIndex == -1) {
+					return;
+				}
 				Language lang = languages.get(languageCombo.getSelectionIndex());
 				KeywordTranslations keywordTranslations = Helper.getKeywordTranslations();
 				Set<Map.Entry<String, String>> translations = keywordTranslations.getTranslationsByLanguage(lang.getKey());

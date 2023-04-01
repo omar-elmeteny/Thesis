@@ -13,5 +13,6 @@
     <modules>
         <module>localizedtranspiler</module>
         <module>keywordtranslator</module>
+        <module>eclipseplugin</module>
     </modules>
 </project>
