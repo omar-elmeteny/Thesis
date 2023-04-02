@@ -5,20 +5,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
-import eg.edu.guc.csen.languagelocalization.translations.Helper;
-import eg.edu.guc.csen.languagelocalization.translations.KeywordTranslations;
-import eg.edu.guc.csen.languagelocalization.translations.Language;
+import eg.edu.guc.csen.keywordtranslator.KeywordTranslations;
+import eg.edu.guc.csen.keywordtranslator.Language;
+import eg.edu.guc.csen.keywordtranslator.Languages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-//import eg.edu.guc.csen.languagelocalization.translations.Helper;
-//import eg.edu.guc.csen.languagelocalization.translations.Language;
-//
-//import java.util.ArrayList;
-//import java.util.Set;
-//import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -63,7 +56,7 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 		languageLabel.setText("Language:");
 
 		final Combo languageCombo = new Combo(composite, SWT.READ_ONLY);
-		final ArrayList<Language> languages = Helper.getLanguages().getLanguages();
+		final ArrayList<Language> languages = Languages.getLanguages();
 
 		String[] languageNames = new String[languages.size()];
 		for (int i = 0; i < languageNames.length; i++) {
@@ -119,11 +112,10 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 					return;
 				}
 				Language lang = languages.get(languageCombo.getSelectionIndex());
-				KeywordTranslations keywordTranslations = Helper.getKeywordTranslations();
-				Set<Map.Entry<String, String>> translations = keywordTranslations.getTranslationsByLanguage(lang.getKey());
+				HashMap<String, String> translations = KeywordTranslations.getLanguageTranslations(lang.getKey());
 				String[][] tableData = new String[translations.size()][];
 				int i = 0;
-				for (Map.Entry<String, String> entry : translations) {
+				for (Map.Entry<String, String> entry : translations.entrySet()) {
 					tableData[i] = new String[] { entry.getKey(), entry.getValue() };
 					i++;
 				}

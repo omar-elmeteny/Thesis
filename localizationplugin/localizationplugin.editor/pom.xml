@@ -51,6 +51,24 @@
           </artifactItems>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>copy-keywordtranslator-dep</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <sourceFile>${settings.localRepository}/eg/edu/guc/csen/keywordtranslator/1.0-SNAPSHOT/keywordtranslator-1.0-SNAPSHOT.jar</sourceFile>
+              <destinationFile>${project.basedir}/lib/keywordtranslator-1.0.jar</destinationFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

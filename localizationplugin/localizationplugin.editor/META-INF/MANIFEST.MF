@@ -13,5 +13,6 @@ Require-Bundle: org.eclipse.ui,
   org.eclipse.core.runtime,
   org.eclipse.lsp4e
 Bundle-ClassPath: lib/json-20230227.jar,
+  lib/keywordtranslator-1.0.jar
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-18

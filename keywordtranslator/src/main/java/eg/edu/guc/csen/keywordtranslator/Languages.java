@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class Languages {
     private final static Languages instance = new Languages("languages.json");
-    public static Languages getInstance() {
+    private static Languages getInstance() {
         return instance;
     }
 
@@ -38,8 +38,8 @@ public class Languages {
         }
     }
 
-    public ArrayList<Language> getLanguages() {
-        return languages;
+    public static ArrayList<Language> getLanguages() {
+        return getInstance().languages;
     }
 }
 

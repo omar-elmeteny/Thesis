@@ -71,5 +71,13 @@ public class KeywordTranslations {
         }
         return keyword;
     }
+
+    public static HashMap<String, String> getLanguageTranslations(String language) {
+        if (instance.languageToEnglishTranslations.containsKey(language)) {
+            HashMap<String, String> hashMap = instance.languageToEnglishTranslations.get(language);
+            return hashMap;
+        }
+        return new HashMap<>();
+    }
     
 }

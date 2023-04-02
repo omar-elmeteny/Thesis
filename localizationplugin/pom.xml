@@ -52,7 +52,7 @@
                     </executions>
                     <configuration>
                         <skip>false</skip>
-                        <outputDirectory>${basedir}/lib/</outputDirectory>
+                        <outputDirectory>${project.basedir}/lib/</outputDirectory>
                         <!-- baseVersion is to avoid SNAPSHOT dependencies being copied with
 							ever daily changing timestamp -->
                         <useBaseVersion>true</useBaseVersion>
