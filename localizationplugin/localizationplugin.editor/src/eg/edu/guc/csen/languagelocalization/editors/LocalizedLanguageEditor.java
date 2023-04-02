@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.text.TableView.TableRow;
-
 //import eg.edu.guc.csen.languagelocalization.translations.Helper;
 //import eg.edu.guc.csen.languagelocalization.translations.Language;
 //
@@ -26,7 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -39,7 +36,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * 

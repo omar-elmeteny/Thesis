@@ -3,7 +3,14 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: eg.edu.guc.csen.localizationplugin.editor
 Bundle-Name: Localization Plugin
 Bundle-SymbolicName: eg.edu.guc.csen.localizationplugin.editor;singleton:=true
+Bundle-Vendor: guc.edu.eg
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.ui
+Require-Bundle: org.eclipse.ui,
+  org.eclipse.core.resources,
+  org.eclipse.ui,
+  org.eclipse.ui.editors,
+  org.eclipse.ui.ide,
+  org.eclipse.core.runtime,
+  org.eclipse.lsp4e
 Bundle-RequiredExecutionEnvironment: JavaSE-18
-Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))
+Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_x64))

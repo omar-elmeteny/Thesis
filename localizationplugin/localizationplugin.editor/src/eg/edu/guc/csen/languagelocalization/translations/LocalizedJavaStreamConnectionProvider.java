@@ -3,9 +3,8 @@ package eg.edu.guc.csen.languagelocalization.translations;
 import java.util.ArrayList;
 
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
-import org.eclipse.lsp4e.server.StreamConnectionProvider;
 
-public class LocalizedJavaStreamConnectionProvider extends ProcessStreamConnectionProvider implements StreamConnectionProvider{
+public class LocalizedJavaStreamConnectionProvider extends ProcessStreamConnectionProvider {
 	public LocalizedJavaStreamConnectionProvider() {
 		String javaBinLocation = "\"C:\\Program Files\\Java\\jdk-19\\bin\\java.exe\"";
 		String lsInstallPath = "D:\\Projects\\Thesis\\javalanguageserver";
