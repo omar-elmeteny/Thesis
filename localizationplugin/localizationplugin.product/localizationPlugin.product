@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Language Localization Plugin" uid="localizationPlugin.product" id="eg.edu.guc.csen.languagelocalization.product" application="eg.edu.guc.csen.languagelocalization.id1" version="1.0.0" useFeatures="false" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
+   </launcherArgs>
+
+   <launcher>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+      <plugin id="org.eclipse.jface.text"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.editors"/>
+      <plugin id="org.eclipse.ui.ide"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.lsp4e"/>
+   </plugins>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+   </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
+
+</product>

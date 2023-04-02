@@ -6,13 +6,25 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eg.edu.guc.csen</groupId>
     <artifactId>languagelocalization</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <name>languagelocalization</name>
     <url>https://github.com/omar-elmeteny/Thesis</url>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>eclipse-oxygen</id>
+            <url>http://download.eclipse.org/releases/oxygen/</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
     <modules>
         <module>localizedtranspiler</module>
         <module>keywordtranslator</module>
-        <module>eclipseplugin</module>
+        <module>localizationplugin</module>
     </modules>
 </project>

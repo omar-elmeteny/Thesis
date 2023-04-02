@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target includeMode="feature" name="Language Localization" sequenceNumber="1">
+    <locations>
+        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner"
+            includeSource="true" type="InstallableUnit">
+            <unit id="org.osgi.annotation.versioning" version="1.1.2.202109301733" />
+            <unit id="org.osgi.annotation.bundle" version="2.0.0.202202082230" />
+            <unit id="org.osgi.service.component.annotations" version="1.5.0.202109301733" />
+            <unit id="org.osgi.service.metatype.annotations" version="1.4.1.202109301733" />
+            <unit id="org.eclipse.jface.text" version="3.22.0.v20221119-1047" />
+            <unit id="org.eclipse.text" version="3.12.300.v20220921-1010" />
+            <unit id="org.eclipse.core.resources" version="3.18.100.v20221025-2047" />
+            <unit id="org.eclipse.ui" version="3.201.200.v20221024-2137" />
+            <unit id="org.eclipse.ui.editors" version="3.14.400.v20220730-1844" />
+            <unit id="org.eclipse.swt" version="3.122.0.v20221123-2302" />
+            <unit id="org.eclipse.swt.win32.win32.x86_64" version="3.122.0.v20221123-2302" />
+            <unit id="org.eclipse.jface" version="3.28.0.v20221024-1426" />
+            <unit id="org.eclipse.core.commands" version="3.10.300.v20221024-2137" />
+            <unit id="org.eclipse.ui.workbench" version="3.127.0.v20221024-2137" />
+            <unit id="org.eclipse.e4.ui.workbench3" version="0.16.100.v20221024-2137" />
+            <unit id="org.eclipse.core.filebuffers" version="3.7.200.v20220202-1008" />
+            <unit id="org.eclipse.ui.ide" version="3.20.0.v20221027-2208" />
+            <unit id="org.eclipse.e4.ui.ide" version="3.16.200.v20221024-2137" />
+            <unit id="org.eclipse.core.runtime" version="3.26.100.v20221021-0005" />
+            <unit id="org.eclipse.osgi" version="3.18.200.v20221116-1324" />
+            <unit id="org.eclipse.osgi.compatibility.state" version="1.2.800.v20221116-1440" />
+            <unit id="org.eclipse.equinox.common" version="3.17.0.v20221108-1156" />
+            <unit id="org.eclipse.core.jobs" version="3.13.200.v20221102-1024" />
+            <unit id="org.eclipse.equinox.registry" version="3.11.200.v20220817-1601" />
+            <unit id="org.eclipse.equinox.preferences" version="3.10.100.v20220710-1223" />
+            <unit id="org.osgi.service.prefs" version="1.1.2.202109301733" />
+            <unit id="org.eclipse.core.contenttype" version="3.8.200.v20220817-1539" />
+            <unit id="org.eclipse.equinox.app" version="1.6.200.v20220720-2012" />
+            <unit id="org.eclipse.lsp4e" version="0.15.0.202211292024" />
+            <unit id="org.eclipse.lsp4e.source" version="0.15.0.202211292024" />
+            <unit id="org.eclipse.ui.views" version="3.11.300.v20221024-2137" />
+            <unit id="org.eclipse.ui.workbench.texteditor" version="3.16.600.v20220809-1658" />
+            <repository location="https://download.eclipse.org/releases/2022-12/"/>
+        </location>
+    </locations>
+    <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-18"/>
+</target>

@@ -1,0 +1,6 @@
+{
+    "project": [
+        "./localizationplugin/localizationplugin.editor"
+    ],
+    "targetPlatform": "localizationplugin/localizationplugin.target/localizationplugin.tp.target"
+}

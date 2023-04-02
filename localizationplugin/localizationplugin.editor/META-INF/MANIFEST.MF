@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Localization Plugin
+Bundle-SymbolicName: eg.edu.guc.csen.localizationplugin.editor;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-18

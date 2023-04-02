@@ -8,12 +8,11 @@
   <parent>
     <artifactId>languagelocalization</artifactId>
     <groupId>eg.edu.guc.csen</groupId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>eg.edu.guc.csen</groupId>
   <artifactId>localizedtranspiler</artifactId>
   <version>1.0-SNAPSHOT</version>
-
   <name>localizedtranspiler</name>
   <url>https://github.com/omar-elmeteny/Thesis</url>
 
@@ -43,9 +42,51 @@
   </dependencies>
 
   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/antlr4</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.12.0</version>
+        <configuration>
+          <visitor>true</visitor>
+          <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
+          <outputDirectory>
+            ${project.build.directory}/generated-sources/antlr4/eg/edu/guc/csen/localizedtranspiler</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>antlr4-generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to
       parent pom) -->
       <plugins>
+
         <!-- clean lifecycle, see
         https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
@@ -88,25 +129,37 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
-        <plugin>
-          <groupId>org.antlr</groupId>
-          <artifactId>antlr4-maven-plugin</artifactId>
-          <version>4.12.0</version>
-          <configuration>
-            <visitor>true</visitor>
-            <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
-            <outputDirectory>
-              ${project.build.directory}/generated-sources/annotations/eg/edu/guc/csen/localizedtranspiler</outputDirectory>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>antlr4</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>antlr4-generate-sources</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-maven-plugin</artifactId>
+            <version>4.12.0</version>
+            <configuration>
+              <visitor>true</visitor>
+              <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
+              <outputDirectory>
+                ${project.build.directory}/generated-sources/annotations/eg/edu/guc/csen/localizedtranspiler</outputDirectory>
+            </configuration>
+            <executions>
+              <execution>
+                <id>antlr4-generate-sources-execution</id>
+                <goals>
+                  <goal>antlr4</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
