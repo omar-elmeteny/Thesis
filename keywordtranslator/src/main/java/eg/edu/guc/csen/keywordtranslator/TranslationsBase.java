@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,9 +67,9 @@ public abstract class TranslationsBase {
         this.languageToEnglishTranslations.get(language).put(translated, word);
     }
 
-    public String translateFromEnglish(String word, String language) {
-        if (englishToLanguageTranslations.containsKey(language)) {
-            HashMap<String, String> hashMap = englishToLanguageTranslations.get(language);
+    public String translateFromEnglish(String word, String targetLanguage) {
+        if (englishToLanguageTranslations.containsKey(targetLanguage)) {
+            HashMap<String, String> hashMap = englishToLanguageTranslations.get(targetLanguage);
             if (hashMap.containsKey(word)) {
                 return hashMap.get(word);
             }
@@ -78,9 +77,9 @@ public abstract class TranslationsBase {
         return word;
     }
 
-    public String translateToEnglish(String word, String language) {
-        if (languageToEnglishTranslations.containsKey(language)) {
-            HashMap<String, String> hashMap = languageToEnglishTranslations.get(language);
+    public String translateToEnglish(String word, String sourceLanguage) {
+        if (languageToEnglishTranslations.containsKey(sourceLanguage)) {
+            HashMap<String, String> hashMap = languageToEnglishTranslations.get(sourceLanguage);
             if (hashMap.containsKey(word)) {
                 return hashMap.get(word);
             }
@@ -96,11 +95,18 @@ public abstract class TranslationsBase {
         return new HashMap<>();
     }
 
-    public boolean hasTranslation(String word, String language) {
-        if (!this.englishToLanguageTranslations.containsKey(language)) {
+    public boolean hasTranslationFromEnglish(String word, String targetLanguage) {
+        if (!this.englishToLanguageTranslations.containsKey(targetLanguage)) {
             return false;
         }
-        return this.englishToLanguageTranslations.get(language).containsKey(word);
+        return this.englishToLanguageTranslations.get(targetLanguage).containsKey(word);
+    }
+
+    public boolean hasTranslationToEnglish(String word, String sourceLanguage) {
+        if (!this.languageToEnglishTranslations.containsKey(sourceLanguage)) {
+            return false;
+        }
+        return this.languageToEnglishTranslations.get(sourceLanguage).containsKey(word);
     }
 
     public void save(File jsonFile) throws JSONException, IOException {
@@ -127,10 +133,6 @@ public abstract class TranslationsBase {
             }
         }
 
-        // get utf BOM
-        
-        byte[] utf8Bom = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
-        Files.write(jsonFile.toPath(), utf8Bom, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
-        Files.write(jsonFile.toPath(), jsonObject.toString(4).getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND, StandardOpenOption.WRITE);
+       Files.write(jsonFile.toPath(), jsonObject.toString(4).getBytes(StandardCharsets.UTF_8));
     }
 }

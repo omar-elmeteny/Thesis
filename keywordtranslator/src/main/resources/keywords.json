@@ -39,7 +39,7 @@
   "private": { "ar": "خاص", "de": "privat", "fr": "privé", "es": "privado", "it": "privato" },
   "protected": { "ar": "محمي", "de": "geschützt", "fr": "protégé", "es": "protegido", "it": "protetto" },
   "public": { "ar": "عام", "de": "öffentlich", "fr": "public", "es": "público", "it": "pubblico" },
-  "return": { "ar": "عود", "de": "zurückgeben", "fr": "retourner", "es": "regresar", "it": "ritornare" },
+  "return": { "ar": "إرجع", "de": "zurückgeben", "fr": "retourner", "es": "regresar", "it": "ritornare" },
   "requires": { "ar": "يتطلب", "de": "erfordert", "fr": "exige", "es": "requiere", "it": "richiede" },
   "short": { "ar": "قصير", "de": "kurz", "fr": "court", "es": "corto", "it": "corto" },
   "static": { "ar": "محايد", "de": "statisch", "fr": "statique", "es": "estático", "it": "statico" },

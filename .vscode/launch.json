@@ -20,7 +20,7 @@
             "type": "java",
             "name": "Demo Arabic",
             "request": "launch",
-            "mainClass": "تجربة",
+            "mainClass": "fwldr.tjrb_x1E97_",
             "projectName": "demo-ar",
             "cwd": "${workspaceFolder}/examples/demo-ar",
             "console": "internalConsole"

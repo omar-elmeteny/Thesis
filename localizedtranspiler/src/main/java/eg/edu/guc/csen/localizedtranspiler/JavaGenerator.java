@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import eg.edu.guc.csen.keywordtranslator.IdentifierTranslator;
 import eg.edu.guc.csen.keywordtranslator.KeywordTranslator;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
@@ -89,7 +90,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         keywords.put(Java9Lexer.FALSE, "false");
         keywords.put(Java9Lexer.NULL, "null");
         return keywords;
-        
+
     }
 
     public JavaGenerator() {
@@ -119,6 +120,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         int tokenType = token.getType();
         if (keywords.containsKey(tokenType)) {
             appendKeyword(keywords.get(tokenType));
+        } else if (tokenType == Java9Lexer.Identifier) {
+            appendIdentifier(token.getText());
         } else {
             builder.append(token.getText());
         }
@@ -140,4 +143,10 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private void appendKeyword(String keyword) {
         builder.append(KeywordTranslator.translateKeyword(keyword, "en", targetLanguage));
     }
+
+    private void appendIdentifier(String identifier) {
+        builder.append(IdentifierTranslator.translateIdentifier(identifier, sourceLanguage, targetLanguage));   
+    }
+
+    
 }

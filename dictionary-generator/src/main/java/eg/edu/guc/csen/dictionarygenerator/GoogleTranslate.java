@@ -22,7 +22,10 @@ public class GoogleTranslate {
         .setTargetLanguage("ar");
 
         var translate = builder.build().getService();
-        var translations = translate.translate(words, TranslateOption.sourceLanguage("en"), TranslateOption.targetLanguage(targetLanguage));
+        var translations = translate.translate(words, 
+            TranslateOption.sourceLanguage("en"), 
+            TranslateOption.targetLanguage(targetLanguage)
+        );
         var result = new ArrayList<String>();
         for (int i = 0; i < words.size(); i++) {
             Translation translation = translations.get(i);

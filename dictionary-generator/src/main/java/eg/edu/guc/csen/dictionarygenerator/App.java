@@ -95,7 +95,7 @@ public class App {
         for (String language : targetLanguages) {
             ArrayList<String> wordsToTranslate = new ArrayList<String>();
             for (String identifier : identifiers) {
-                if (!translations.hasTranslation(identifier, language)) {
+                if (!translations.hasTranslationFromEnglish(identifier, language)) {
                     addIdentifierToTranslate(identifier, wordsToTranslate);
                 }
             }
