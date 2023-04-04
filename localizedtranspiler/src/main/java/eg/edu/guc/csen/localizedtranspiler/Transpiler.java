@@ -1,6 +1,7 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -8,15 +9,20 @@ import java.nio.file.Files;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.io.input.BOMInputStream;
 
 public class Transpiler {
 
-    public static void transpile(File sourceFile, File targetFile, TranspilerOptions options) throws TranspilerException {
+    public static void transpile(File sourceFile, File targetFile, TranspilerOptions options)
+            throws TranspilerException {
         String content;
-        try{
-            content = new String(Files.readAllBytes(sourceFile.toPath()), Charset.forName(options.getSourceEncoding()));
-        }
-        catch(IOException e){
+        try {
+            try (FileInputStream fileInputStream = new FileInputStream(sourceFile.toString())) {
+                try (BOMInputStream bomInputStream = new BOMInputStream(fileInputStream)) {
+                    content = new String(bomInputStream.readAllBytes(), Charset.forName(options.getSourceEncoding()));
+                }
+            }
+        } catch (IOException e) {
             throw new TranspilerException("Error reading source file", e);
         }
         var res = transpile(options, content);

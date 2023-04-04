@@ -112,7 +112,7 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 					return;
 				}
 				Language lang = languages.get(languageCombo.getSelectionIndex());
-				HashMap<String, String> translations = KeywordTranslations.getLanguageTranslations(lang.getKey());
+				HashMap<String, String> translations = KeywordTranslations.getInstance().getLanguageTranslations(lang.getKey());
 				String[][] tableData = new String[translations.size()][];
 				int i = 0;
 				for (Map.Entry<String, String> entry : translations.entrySet()) {

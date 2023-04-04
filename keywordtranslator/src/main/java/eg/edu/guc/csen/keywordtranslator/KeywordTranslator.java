@@ -10,12 +10,12 @@ public class KeywordTranslator {
             return keyword;
         }
         if (fromLanguage.equals("en")) {
-            return KeywordTranslations.translateFromEnglish(keyword, toLanguage);
+            return KeywordTranslations.getInstance().translateFromEnglish(keyword, toLanguage);
         }
         if (toLanguage.equals("en")) {
-            return KeywordTranslations.translateToEnglish(keyword, fromLanguage);
+            return KeywordTranslations.getInstance().translateToEnglish(keyword, fromLanguage);
         }
-        String english = KeywordTranslations.translateToEnglish(keyword, fromLanguage);
-        return KeywordTranslations.translateFromEnglish(english, toLanguage);
+        String english = KeywordTranslations.getInstance().translateToEnglish(keyword, fromLanguage);
+        return KeywordTranslations.getInstance().translateFromEnglish(english, toLanguage);
     }
 }

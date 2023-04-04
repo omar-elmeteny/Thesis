@@ -6,21 +6,15 @@
     "configurations": [
         {
             "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "eg.edu.guc.csen.localizedtranspiler.App",
-            "projectName": "localizedtranspiler",
-            "cwd": "${workspaceFolder}/localizedtranspiler",
-            "console": "internalConsole"
-        },
-        {
-            "type": "java",
             "name": "Dictionary Generator",
             "request": "launch",
             "mainClass": "eg.edu.guc.csen.dictionarygenerator.App",
             "projectName": "dictionary-generator",
             "cwd": "${workspaceFolder}/dictionary-generator",
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "args": [
+                "${workspaceFolder}/keywordtranslator/src/main/resources/identifiers.json",
+            ]
         },
         {
             "type": "java",
