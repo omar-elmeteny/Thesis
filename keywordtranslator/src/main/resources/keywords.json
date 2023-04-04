@@ -42,7 +42,7 @@
   "return": { "ar": "عود", "de": "zurückgeben", "fr": "retourner", "es": "regresar", "it": "ritornare" },
   "requires": { "ar": "يتطلب", "de": "erfordert", "fr": "exige", "es": "requiere", "it": "richiede" },
   "short": { "ar": "قصير", "de": "kurz", "fr": "court", "es": "corto", "it": "corto" },
-  "static": { "ar": "ثابت", "de": "statisch", "fr": "statique", "es": "estático", "it": "statico" },
+  "static": { "ar": "محايد", "de": "statisch", "fr": "statique", "es": "estático", "it": "statico" },
   "strictfp": { "ar": "نقطة_ثابتة", "de": "strenge_gleitkommazahl", "fr": "strictfp", "es": "strictfp", "it": "strictfp" },
   "switch": { "ar": "حول", "de": "umschalten", "fr": "commutateur", "es": "interruptor", "it": "interruttore" },
   "super": { "ar": "أعلى", "de": "oberklasse", "fr": "super", "es": "super", "it": "super" },
