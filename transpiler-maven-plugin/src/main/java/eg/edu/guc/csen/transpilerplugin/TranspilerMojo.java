@@ -141,7 +141,8 @@ public class TranspilerMojo extends AbstractMojo {
         options.setTargetLanguage("en");
         options.setSourceLanguage(sourceLanguage);
         for (File gucFile : gucFiles) {
-            String javaFileName = gucFile.getName().split("\\.")[0] + ".java";
+            String javaFileName = getFileNameWithoutExtension(gucFile) + ".java";
+
             File outputFile = new File(outputDirectory, javaFileName);
             if ( (! outputFile.exists()) ||
                  outputFile.lastModified() <= gucFile.lastModified()) {
@@ -153,6 +154,22 @@ public class TranspilerMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private static String getFilePathRelativeToSourceDirectory(File file) {
+        // get the path of the file relative to the source directory
+        String filePath = file.getAbsolutePath();
+        String sourceDirectoryPath = file.getParentFile().getAbsolutePath();
+        return filePath.substring(sourceDirectoryPath.length() + 1);
+    }
+
+    private static String getFileNameWithoutExtension(File file) {
+        String fileName = file.getName();
+        int pos = fileName.lastIndexOf(".");
+        if (pos > 0) {
+            return fileName.substring(0, pos);
+        }
+        return fileName;
     }
 
     private Set<File> getGucFiles(File sourceDirectory) throws InclusionScanException

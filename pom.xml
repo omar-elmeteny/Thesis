@@ -10,7 +10,7 @@
   <url>https://github.com/omar-elmeteny/Thesis</url>
       
   <repositories>
-    <repository>  
+    <repository>
       <id>central</id>  
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
@@ -27,6 +27,7 @@
     <module>keywordtranslator</module>
     <module>localizationplugin</module>
     <module>transpiler-maven-plugin</module>
+    <module>examples</module>
   </modules>
       
   <build>  

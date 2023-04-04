@@ -1,4 +1,3 @@
-@ التجربة(حقيقي)
 /* كومنت */
 عام نوع تجربة {
 
@@ -13,6 +12,7 @@
     }
 
     عام محايد لاشئ main(String[] محددات) {
-        
+        System.out.println("Hello world!");
+        System.out.println("Hello world!");
     }
 }
