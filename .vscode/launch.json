@@ -15,6 +15,15 @@
         },
         {
             "type": "java",
+            "name": "Dictionary Generator",
+            "request": "launch",
+            "mainClass": "eg.edu.guc.csen.dictionarygenerator.App",
+            "projectName": "dictionary-generator",
+            "cwd": "${workspaceFolder}/dictionary-generator",
+            "console": "internalConsole"
+        },
+        {
+            "type": "java",
             "name": "Demo Arabic",
             "request": "launch",
             "mainClass": "تجربة",
