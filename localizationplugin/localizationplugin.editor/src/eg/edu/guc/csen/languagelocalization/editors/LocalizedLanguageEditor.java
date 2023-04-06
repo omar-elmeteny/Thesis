@@ -135,7 +135,8 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 
 	private void createTextEditorPage() {
 		try {
-			editor = new TextEditor();
+			editor = new BidiTextEditor();
+			
 			int index = addPage(editor, getEditorInput());
 			setPageText(index, editor.getTitle());
 		} catch (PartInitException e) {
