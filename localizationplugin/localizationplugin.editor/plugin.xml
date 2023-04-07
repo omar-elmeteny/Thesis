@@ -1,41 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.core.contenttype.contentTypes">
-         <content-type 
-			id="eg.edu.guc.csen.localizedlanguage" 
-			base-type="org.eclipse.core.runtime.text" 
-			file-extensions="guc" 
-			priority="normal"
-			name="Localized Java">
-	  </content-type>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-         <editor
-            id="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
-            name="Localized Language Editor"
-            icon="icons/localization.png"
-            extensions="guc"
-            class="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditor"
-            contributorClass="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditorContributor">
-      </editor>
-      <editorContentTypeBinding
-			editorId="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
-			contentTypeId="eg.edu.guc.csen.localizedlanguage">
-		 </editorContentTypeBinding>
-   </extension>
-   <extension
-         point="org.eclipse.lsp4e.languageServer">
-      <server
-            class="eg.edu.guc.csen.languagelocalization.translations.LocalizedJavaStreamConnectionProvider"
-            id="eg.edu.guc.csen.languagelocalization.server"
-            label="Localized Language Server">
-      </server>
-      <contentTypeMapping
-            id="eg.edu.guc.csen.languagelocalization.server"
-            contentType="eg.edu.guc.csen.localizedlanguage">
-      </contentTypeMapping>
-   </extension>
+      <extension
+            point="org.eclipse.ui.commands">
+            <category
+                  id="eg.edu.guc.csen.localizationplugin.commands.category"
+                  name="GUC Commands">
+            </category>
+            <command
+                  categoryId="eg.edu.guc.csen.localizationplugin.commands.category"
+                  name="Show Translations"
+                  id="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand">
+            </command>
+      </extension>
+      <extension
+            point="org.eclipse.ui.handlers">
+            <handler
+                  class="eg.edu.guc.csen.languagelocalization.handlers.TranslationsWindowHandler"
+                  commandId="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand">
+            </handler>
+      </extension>
+      <extension
+            point="org.eclipse.ui.bindings">
+            <key
+                  commandId="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand"
+                  schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+                  contextId="org.eclipse.ui.contexts.window"
+                  sequence="M1+G">
+            </key>
+      </extension>
+      <extension
+            point="org.eclipse.ui.menus">
+            <menuContribution
+                  locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+                  <menu
+                        id="eg.edu.guc.csen.localizationplugin.menus.gucMenu"
+                        label="GUC"
+                        mnemonic="G">
+                        <command
+                              commandId="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand"
+                              id="eg.edu.guc.csen.localizationplugin.menu.showTranslationsCommand"
+                              mnemonic="T">
+                        </command>
+                  </menu>
+            </menuContribution>
+      </extension>
+      <extension
+            point="org.eclipse.core.contenttype.contentTypes">
+            <content-type
+                  id="eg.edu.guc.csen.localizedlanguage"
+                  base-type="org.eclipse.core.runtime.text"
+                  file-extensions="guc"
+                  priority="normal"
+                  name="Localized Java">
+            </content-type>
+      </extension>
+      <extension
+            point="org.eclipse.ui.editors">
+            <editor
+                  id="eg.edu.guc.csen.languagelocalization.editors.TranslationsEditor"
+                  name="Translations Editor"
+                  icon="icons/localization.png"
+                  class="eg.edu.guc.csen.languagelocalization.editors.TranslationsEditor">
+            </editor>
+      </extension>
+      <extension
+            point="org.eclipse.ui.editors">
+            <editor
+                  id="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
+                  name="Localized Language Editor"
+                  icon="icons/localization.png"
+                  extensions="guc"
+                  class="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditor"
+                  contributorClass="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditorContributor">
+            </editor>
+            <editorContentTypeBinding
+                  editorId="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
+                  contentTypeId="eg.edu.guc.csen.localizedlanguage">
+            </editorContentTypeBinding>
+      </extension>
+      <extension
+            point="org.eclipse.lsp4e.languageServer">
+            <server
+                  class="eg.edu.guc.csen.languagelocalization.translations.LocalizedJavaStreamConnectionProvider"
+                  id="eg.edu.guc.csen.languagelocalization.server"
+                  label="Localized Language Server">
+            </server>
+            <contentTypeMapping
+                  id="eg.edu.guc.csen.languagelocalization.server"
+                  contentType="eg.edu.guc.csen.localizedlanguage">
+            </contentTypeMapping>
+      </extension>
 </plugin>
