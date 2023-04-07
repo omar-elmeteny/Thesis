@@ -3,8 +3,6 @@ package eg.edu.guc.csen.keywordtranslator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.json.JSONObject;
 
 public class IdentifierTranslations extends TranslationsBase {

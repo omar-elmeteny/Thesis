@@ -1,12 +1,21 @@
 package eg.edu.guc.csen.keywordtranslator;
 
 public class KeyValuePair implements Comparable<KeyValuePair> {
-    private final String key;
+    private String key;
+    
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String getKey() {
         return key;
     }
 
-    private final String value;
+    private String value;
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 
     public String getValue() {
         return value;

@@ -1,14 +1,14 @@
 package eg.edu.guc.csen.languagelocalization.editors;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,7 +43,8 @@ public class TranslationsPage extends Composite{
 		languageLabel.setText("Language:");
 
 		final Combo languageCombo = new Combo(this, SWT.READ_ONLY);
-		final ArrayList<Language> languages = Languages.getLanguages();
+		final ArrayList<Language> languages = new ArrayList<>(Languages.getLanguages());
+		languages.removeIf(l -> l.getKey().equals("en"));
 
 		String[] languageNames = new String[languages.size()];
 		for (int i = 0; i < languageNames.length; i++) {
@@ -55,7 +56,6 @@ public class TranslationsPage extends Composite{
 		languageCombo.setItems(languageNames);
 
 		TableViewer tableViewer = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
-		//final KeywordsTableContentProvider contentProvider = new KeywordsTableContentProvider();
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		Table wordTable = tableViewer.getTable();
@@ -75,8 +75,8 @@ public class TranslationsPage extends Composite{
 		wordColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 		    public String getText(Object element) {
-		        String[] p = (String[]) element;
-		        return p[0];
+		        KeyValuePair p = (KeyValuePair) element;
+		        return p.getKey();
 		    }
 		});
 		
@@ -86,10 +86,38 @@ public class TranslationsPage extends Composite{
 		translationColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 		    public String getText(Object element) {
-		        String[] p = (String[]) element;
-		        return p[1];
+		        KeyValuePair p = (KeyValuePair) element;
+		        return p.getValue();
 		    }
 		});
+
+		translationColumn.setEditingSupport(new EditingSupport(wordColumn.getViewer()) {
+			@Override
+			protected void setValue(Object element, Object value) {
+				KeyValuePair p = (KeyValuePair) element;
+				p.setValue((String) value);
+				tableViewer.update(element, null);
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				KeyValuePair p = (KeyValuePair) element;
+				return p.getValue();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				TextCellEditor textCellEditor = new TextCellEditor(tableViewer.getTable());
+				//textCellEditor.setValue(getValue(element));
+				return textCellEditor;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+		
 		TranslationsBase transl = translationsBase;
 		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -100,10 +128,10 @@ public class TranslationsPage extends Composite{
 				}
 				Language lang = languages.get(languageCombo.getSelectionIndex());
 				ArrayList<KeyValuePair> translations = transl.getLanguageTranslations(lang.getKey());
-				String[][] tableData = new String[translations.size()][];
+				KeyValuePair[] tableData = new KeyValuePair[translations.size()];
 				int i = 0;
 				for (KeyValuePair entry : translations) {
-					tableData[i] = new String[] { entry.getKey(), entry.getValue() };
+					tableData[i] = entry;
 					i++;
 				}
 				tableViewer.setInput(tableData);
