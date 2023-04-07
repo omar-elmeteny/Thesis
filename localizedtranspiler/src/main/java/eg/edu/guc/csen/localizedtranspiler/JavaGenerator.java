@@ -1,6 +1,6 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
@@ -16,7 +16,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private String sourceLanguage;
     private int lastTokenStop = -1;
 
-    private static Hashtable<Integer, String> keywords = initializeKeywords();
+    private static HashMap<Integer, String> keywords = initializeKeywords();
 
     public JavaGenerator(String sourceLanguage, String targetLanguage) {
         super();
@@ -24,8 +24,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         this.targetLanguage = targetLanguage;
     }
 
-    private static Hashtable<Integer, String> initializeKeywords() {
-        Hashtable<Integer, String> keywords = new Hashtable<>();
+    private static HashMap<Integer, String> initializeKeywords() {
+        HashMap<Integer, String> keywords = new HashMap<>();
         keywords.put(Java9Lexer.ABSTRACT, "abstract");
         keywords.put(Java9Lexer.ASSERT, "assert");
         keywords.put(Java9Lexer.BOOLEAN, "boolean");

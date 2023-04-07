@@ -1,21 +1,34 @@
 package eg.edu.guc.csen.languagelocalization.editors;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
+
+import eg.edu.guc.csen.keywordtranslator.Translations;
 
 public class TranslationsEditor extends MultiPageEditorPart{
 
     public TranslationsEditor() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     protected void createPages() {
-        Composite composite = new Composite(getContainer(), SWT.NONE);
-        int index = addPage(composite);
+        FileEditorInput input = (FileEditorInput) this.getEditorInput();
+        Translations translations;
+        try {
+            translations = new Translations(input.getFile().getFullPath().toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        TranslationsPage keywordPage = new TranslationsPage(getContainer(), translations.getKeywordTranslations());
+        TranslationsPage identifierPage = new TranslationsPage(getContainer(), translations.getIdentifierTranslations());
+        int index = addPage(keywordPage);
 		setPageText(index, "Keywords");
+        index = addPage(identifierPage);
+        setPageText(index, "Identifiers");
     }
 
     @Override

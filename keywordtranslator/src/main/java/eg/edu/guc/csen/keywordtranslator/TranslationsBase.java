@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +22,13 @@ public abstract class TranslationsBase {
     // "klasse") -> English keyword (e.g. "class")
     private final HashMap<String, HashMap<String, String>> languageToEnglishTranslations = new HashMap<>();
 
+    protected TranslationsBase() {
+    }
+
     protected TranslationsBase(String resourcePath) {
         try {
             String jsonString = ResourceHelper.readResourceFile(resourcePath);
-            loadFromJsonString(jsonString);
+            loadFromJSONString(jsonString);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -37,14 +41,21 @@ public abstract class TranslationsBase {
         try (FileInputStream fileInputStream = new FileInputStream(jsonFile)) {
             try (BOMInputStream bomInputStream = new BOMInputStream(fileInputStream)) {
                 String jsonString = new String(bomInputStream.readAllBytes(), StandardCharsets.UTF_8);
-                loadFromJsonString(jsonString);
+                loadFromJSONString(jsonString);
             }
         }
     }
 
-    private void loadFromJsonString(String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
+    protected TranslationsBase(JSONObject jsonObject) {
+        loadFromJSONObject(jsonObject);
+    }
 
+    private void loadFromJSONString(String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        loadFromJSONObject(jsonObject);
+    }
+
+    private void loadFromJSONObject(JSONObject jsonObject) {
         for (String item : jsonObject.keySet()) {
             JSONObject languageMap = jsonObject.getJSONObject(item);
 
@@ -87,12 +98,20 @@ public abstract class TranslationsBase {
         return word;
     }
 
-    public HashMap<String, String> getLanguageTranslations(String language) {
+    public ArrayList<KeyValuePair> getLanguageTranslations(String language) {
         if (languageToEnglishTranslations.containsKey(language)) {
             HashMap<String, String> hashMap = languageToEnglishTranslations.get(language);
-            return hashMap;
+            ArrayList<KeyValuePair> keyValuePairList = new ArrayList<>();
+            for (Map.Entry<String, String> entry : hashMap.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                KeyValuePair keyValuePair = new KeyValuePair(key, value);
+                keyValuePairList.add(keyValuePair);
+            }
+            keyValuePairList.sort(null);
+            return keyValuePairList;
         }
-        return new HashMap<>();
+        return new ArrayList<>();
     }
 
     public boolean hasTranslationFromEnglish(String word, String targetLanguage) {
@@ -110,6 +129,11 @@ public abstract class TranslationsBase {
     }
 
     public void save(File jsonFile) throws JSONException, IOException {
+        JSONObject jsonObject = toJSON();
+        Files.write(jsonFile.toPath(), jsonObject.toString(4).getBytes(StandardCharsets.UTF_8));
+    }
+
+    JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
 
         HashMap<String, JSONObject> itemMaps = new HashMap<>();
@@ -117,7 +141,7 @@ public abstract class TranslationsBase {
             String language = languageMap.getKey();
             HashMap<String, String> words = languageMap.getValue();
 
-            for (Map.Entry<String, String> translationEntry: words.entrySet()) {
+            for (Map.Entry<String, String> translationEntry : words.entrySet()) {
                 String word = translationEntry.getKey();
                 String translated = translationEntry.getValue();
 
@@ -132,7 +156,6 @@ public abstract class TranslationsBase {
                 wordObject.put(language, translated);
             }
         }
-
-       Files.write(jsonFile.toPath(), jsonObject.toString(4).getBytes(StandardCharsets.UTF_8));
+        return jsonObject;
     }
 }

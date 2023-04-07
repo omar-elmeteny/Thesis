@@ -18,6 +18,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
+import eg.edu.guc.csen.keywordtranslator.Translations;
+
 
 public class TranslationsWindowHandler extends AbstractHandler {
 
@@ -40,7 +42,7 @@ public class TranslationsWindowHandler extends AbstractHandler {
         IFile translationsFile = project.getFile("translations.guct");
         if (!translationsFile.exists()) {
             // create an InputStream from string content
-            String content = "{ \"keywords\"={}, \"identifiers\"={}, \"defaultLanguage\"=\"ar\" }";
+            String content = new Translations().toJSON().toString(4);
             try {
                 translationsFile.create(new ByteArrayInputStream(content.getBytes()), true, null);
             } catch (CoreException e) {
