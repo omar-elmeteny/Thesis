@@ -1,5 +1,7 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
+import eg.edu.guc.csen.keywordtranslator.Translations;
+
 public class TranspilerOptions {
 
     private String sourceLanguage;
@@ -41,4 +43,15 @@ public class TranspilerOptions {
     public void setSourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding;
     }
+
+    private Translations translations;
+
+    public Translations getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(Translations translations) {
+        this.translations = translations;
+    }
+    
 }

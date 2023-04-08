@@ -22,7 +22,7 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
-import eg.edu.guc.csen.keywordtranslator.IdentifierTranslator;
+import eg.edu.guc.csen.keywordtranslator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Transpiler;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerException;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
@@ -74,6 +74,12 @@ public class TranspilerMojo extends AbstractMojo {
      */
     @Parameter(property = "project.build.sourceEncoding")
     protected String outputEncoding;
+
+     /**
+     * Path of the translations file.
+     */
+    @Parameter(defaultValue = "${basedir}/translations.guct")
+    protected File translationsFile;
 
     /**
      * The directory where the guc files are located.
@@ -135,21 +141,31 @@ public class TranspilerMojo extends AbstractMojo {
                     "Fatal error occured while evaluating the names of the guc files to analyze", e);
         }
 
+        Translations translations;
+        try {
+            translations = new Translations(translationsFile);
+        } catch (IOException e) {
+            log.error(e);
+            throw new MojoExecutionException("Fatal error occured while loading the translations file", e);
+        }
+
         TranspilerOptions options = new TranspilerOptions();
         options.setOutputEncoding(outputEncoding);
         options.setSourceEncoding(inputEncoding);
         options.setTargetLanguage("en");
         options.setSourceLanguage(sourceLanguage);
+        options.setTranslations(translations);
+
         Set<File> generatedFiles = new HashSet<File>();
         for (File gucFile : gucFiles) {
-            String javaFileName = IdentifierTranslator.translateIdentifier(getFileNameWithoutExtension(gucFile),
+            String javaFileName = translations.translateIdentifier(getFileNameWithoutExtension(gucFile),
                     sourceLanguage, "en") + ".java";
             String relativePath = getFilePathRelativeToSourceDirectory(gucFile);
             String[] split = relativePath.split("\\//|\\\\");
 
             File outDir = outputDirectory;
             for (int i = 0; i < split.length; i++) {
-                split[i] = IdentifierTranslator.translateIdentifier(split[i], sourceLanguage, "en");
+                split[i] = translations.translateIdentifier(split[i], sourceLanguage, "en");
                 outDir = new File(outDir, split[i]);
             }
             if (!outDir.exists()) {

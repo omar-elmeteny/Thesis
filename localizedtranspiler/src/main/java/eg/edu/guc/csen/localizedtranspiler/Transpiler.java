@@ -36,14 +36,16 @@ public class Transpiler {
 
     public static String transpile(TranspilerOptions options, String content) {
         Java9Lexer lexer = new Java9Lexer(CharStreams.fromString(content));
+        lexer.setTranslations(options.getTranslations());
         lexer.setSourceLanguage(options.getSourceLanguage());
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Java9Parser parser = new Java9Parser(tokens);
         ParseTree tree = parser.compilationUnit();
 
+        
         // String code = tree.toStringTree(parser);
-        JavaGenerator generator = new JavaGenerator(options.getSourceLanguage(), options.getTargetLanguage());
+        JavaGenerator generator = new JavaGenerator(options.getSourceLanguage(), options.getTargetLanguage(), options.getTranslations());
         var res = generator.visit(tree);
         return res.toString();
     }

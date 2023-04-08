@@ -99,8 +99,8 @@ public abstract class TranslationsBase {
     }
 
     public ArrayList<KeyValuePair> getLanguageTranslations(String language) {
-        if (languageToEnglishTranslations.containsKey(language)) {
-            HashMap<String, String> hashMap = languageToEnglishTranslations.get(language);
+        if (englishToLanguageTranslations.containsKey(language)) {
+            HashMap<String, String> hashMap = englishToLanguageTranslations.get(language);
             ArrayList<KeyValuePair> keyValuePairList = new ArrayList<>();
             for (Map.Entry<String, String> entry : hashMap.entrySet()) {
                 String key = entry.getKey();

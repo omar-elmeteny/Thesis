@@ -33,10 +33,19 @@ package eg.edu.guc.csen.localizedtranspiler;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 
-import eg.edu.guc.csen.keywordtranslator.KeywordTranslator;
+import eg.edu.guc.csen.keywordtranslator.Translations;
 
 public abstract class Java9LexerBase extends Lexer {
     private String sourceLanguage = "en";
+    private Translations translations = new Translations();
+
+    public Translations getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(Translations translations) {
+        this.translations = translations;
+    }
 
     public Java9LexerBase(CharStream input) {
         super(input);
@@ -67,7 +76,7 @@ public abstract class Java9LexerBase extends Lexer {
     }
 
     public boolean CheckKeyword(String keyword) {
-        String translatedKeyword = KeywordTranslator.translateKeyword(keyword, "en", sourceLanguage);
+        String translatedKeyword = translations.translateKeyword(keyword, "en", sourceLanguage);
         // See if `translatedKeyword` is ahead in the CharStream.
         for (int i = 0; i < translatedKeyword.length(); i++) {
 

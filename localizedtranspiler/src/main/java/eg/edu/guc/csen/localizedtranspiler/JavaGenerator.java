@@ -6,8 +6,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import eg.edu.guc.csen.keywordtranslator.IdentifierTranslator;
-import eg.edu.guc.csen.keywordtranslator.KeywordTranslator;
+import eg.edu.guc.csen.keywordtranslator.Translations;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
@@ -17,11 +16,13 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private int lastTokenStop = -1;
 
     private static HashMap<Integer, String> keywords = initializeKeywords();
+    private final Translations translations;
 
-    public JavaGenerator(String sourceLanguage, String targetLanguage) {
+    public JavaGenerator(String sourceLanguage, String targetLanguage, Translations translations) {
         super();
         this.sourceLanguage = sourceLanguage;
         this.targetLanguage = targetLanguage;
+        this.translations = translations;
     }
 
     private static HashMap<Integer, String> initializeKeywords() {
@@ -93,12 +94,6 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     }
 
-    public JavaGenerator() {
-        super();
-        this.targetLanguage = "en";
-        this.sourceLanguage = "en";
-    }
-
     public String getSourceLanguage() {
         return sourceLanguage;
     }
@@ -141,11 +136,11 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     private void appendKeyword(String keyword) {
-        builder.append(KeywordTranslator.translateKeyword(keyword, "en", targetLanguage));
+        builder.append(translations.translateKeyword(keyword, "en", targetLanguage));
     }
 
     private void appendIdentifier(String identifier) {
-        builder.append(IdentifierTranslator.translateIdentifier(identifier, sourceLanguage, targetLanguage));   
+        builder.append(translations.translateIdentifier(identifier, sourceLanguage, targetLanguage));   
     }
 
     

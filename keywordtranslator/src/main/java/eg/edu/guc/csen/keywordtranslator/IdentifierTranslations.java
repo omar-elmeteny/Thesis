@@ -7,11 +7,11 @@ import org.json.JSONObject;
 
 public class IdentifierTranslations extends TranslationsBase {
 
-    private static final IdentifierTranslations instance = new IdentifierTranslations("identifiers.json");
+    // private static final IdentifierTranslations instance = new IdentifierTranslations("identifiers.json");
 
-    public static IdentifierTranslations getInstance() {
-        return instance;
-    }
+    // public static IdentifierTranslations getInstance() {
+    //     return instance;
+    // }
 
     public IdentifierTranslations() {
         super();

@@ -41,5 +41,4 @@ class Identifiers {
         commonIdentifiers.add("format");
         return commonIdentifiers;
     }
-    
 }

@@ -1,5 +1,6 @@
 package eg.edu.guc.csen.languagelocalization.editors;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -8,23 +9,45 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 
 import eg.edu.guc.csen.keywordtranslator.Translations;
 
-public class TranslationsEditor extends MultiPageEditorPart{
+public class TranslationsEditor extends MultiPageEditorPart {
+
+    private Translations translations;
+    private boolean isDirty;
 
     public TranslationsEditor() {
     }
 
+
+    private File getJsonFile() {
+        return ((FileEditorInput)this.getEditorInput()).getFile().getLocation().toFile();
+    }
+
+    public Translations getTranslations() {
+        if (translations == null) {
+            try {
+                translations = new Translations(getJsonFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return translations;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void setDirty(boolean isDirty) {
+        this.isDirty = isDirty;
+        firePropertyChange(PROP_DIRTY);
+    }
+
     @Override
     protected void createPages() {
-        FileEditorInput input = (FileEditorInput) this.getEditorInput();
-        Translations translations;
-        try {
-            translations = new Translations(input.getFile().getFullPath().toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        TranslationsPage keywordPage = new TranslationsPage(getContainer(), translations.getKeywordTranslations());
-        TranslationsPage identifierPage = new TranslationsPage(getContainer(), translations.getIdentifierTranslations());
+        TranslationsPage keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(), this);
+        TranslationsPage identifierPage = new TranslationsPage(getContainer(), getTranslations().getIdentifierTranslations(), this);
         int index = addPage(keywordPage);
 		setPageText(index, "Keywords");
         index = addPage(identifierPage);
@@ -33,7 +56,13 @@ public class TranslationsEditor extends MultiPageEditorPart{
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        // throw new UnsupportedOperationException("Unimplemented method 'doSave'");
+        
+        try {
+            getTranslations().save(getJsonFile());
+            setDirty(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -44,8 +73,5 @@ public class TranslationsEditor extends MultiPageEditorPart{
     @Override
     public boolean isSaveAsAllowed() {
         return true;
-    }
-
-    
-    
+    }   
 }
