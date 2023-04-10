@@ -109,7 +109,7 @@ class TranslationsPage extends Composite {
 				translationsBase.addTranslation(word, currentLanguage.getKey(), translation);
 				p.setValue(translation);
 				tableViewer.update(element, null);
-				parentEditor.setDirty(true);
+				parentEditor.updateEditor();
 			}
 
 			@Override

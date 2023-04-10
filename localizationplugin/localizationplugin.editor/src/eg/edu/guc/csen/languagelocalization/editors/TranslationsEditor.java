@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.FileEditorInput;
@@ -17,9 +19,10 @@ import eg.edu.guc.csen.keywordtranslator.Translations;
 public class TranslationsEditor extends MultiPageEditorPart {
 
     private Translations translations;
-    private boolean isDirty;
     /** The text editor used in page 2. */
-    private IEditorPart editor;
+    private TextEditor editor;
+    private TranslationsPage keywordPage;
+    private TranslationsPage identifierPage;
 
     public TranslationsEditor() {
     }
@@ -48,12 +51,25 @@ public class TranslationsEditor extends MultiPageEditorPart {
 
     @Override
     public boolean isDirty() {
-        return isDirty;
+        return editor.isDirty();
     }
 
-    public void setDirty(boolean isDirty) {
-        this.isDirty = isDirty;
-        firePropertyChange(PROP_DIRTY);
+    // public void setDirty(boolean isDirty) {
+    //     this.isDirty = isDirty;
+    //     firePropertyChange(PROP_DIRTY);
+    // }
+
+    void updateEditor() {
+        // Update the content of the text editor
+        IEditorPart activeEditor = getActiveEditor();
+        if (activeEditor instanceof TextEditor) {
+            TextEditor textEditor = (TextEditor) activeEditor;
+            textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput()).set(
+                getTranslations().toString());
+        }
+
+        IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+        document.set(getTranslations().toJSON().toString(4));
     }
 
     private void createTextEditorPage() {
@@ -63,6 +79,17 @@ public class TranslationsEditor extends MultiPageEditorPart {
             IEditorInput editorInput = getEditorInput();
             int index = addPage(editor, editorInput);
             setPageText(index, editorInput.getName());
+
+            // Add a property listener to the text editor page
+            editor.addPropertyListener(new IPropertyListener() {
+                @Override
+                public void propertyChanged(Object source, int propId) {
+                    // Set the isDirty flag and update the other pages
+                    translations.
+                    keywordPage.refreshTable();
+                    identifierPage.refreshTable();
+                }
+            });
         } catch (PartInitException e) {
             e.printStackTrace();
         }
@@ -71,9 +98,9 @@ public class TranslationsEditor extends MultiPageEditorPart {
 
     @Override
     protected void createPages() {
-        TranslationsPage keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(),
-                this);
-        TranslationsPage identifierPage = new TranslationsPage(getContainer(),
+        keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(),
+            this);
+        identifierPage = new TranslationsPage(getContainer(),
                 getTranslations().getIdentifierTranslations(), this);
         int index = addPage(keywordPage);
         setPageText(index, "Keywords");
@@ -86,21 +113,17 @@ public class TranslationsEditor extends MultiPageEditorPart {
     @Override
     public void doSave(IProgressMonitor monitor) {
 
-        try {
-            getTranslations().save(getJsonFile());
-            setDirty(false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        editor.doSave(monitor);
+        
     }
 
     @Override
     public void doSaveAs() {
-        // throw new UnsupportedOperationException("Unimplemented method 'doSaveAs'");
+        editor.doSaveAs();
     }
 
     @Override
     public boolean isSaveAsAllowed() {
-        return true;
+        return editor.isSaveAsAllowed();
     }
 }
