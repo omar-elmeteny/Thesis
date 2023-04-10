@@ -54,6 +54,13 @@
                   priority="normal"
                   name="Localized Java">
             </content-type>
+            <content-type
+                  id="eg.edu.guc.csen.localizedlanguagetranslations"
+                  base-type="org.eclipse.core.runtime.text"
+                  file-extensions="guct"
+                  priority="normal"
+                  name="Localized Java Translations">
+            </content-type>
       </extension>
       <extension
             point="org.eclipse.ui.editors">
@@ -61,11 +68,9 @@
                   id="eg.edu.guc.csen.languagelocalization.editors.TranslationsEditor"
                   name="Translations Editor"
                   icon="icons/localization.png"
+                  extensions="guct"
                   class="eg.edu.guc.csen.languagelocalization.editors.TranslationsEditor">
             </editor>
-      </extension>
-      <extension
-            point="org.eclipse.ui.editors">
             <editor
                   id="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
                   name="Localized Language Editor"
@@ -75,11 +80,16 @@
                   contributorClass="eg.edu.guc.csen.languagelocalization.editors.LocalizedLanguageEditorContributor">
             </editor>
             <editorContentTypeBinding
+                  editorId="eg.edu.guc.csen.languagelocalization.editors.TranslationsEditor"
+                  contentTypeId="eg.edu.guc.csen.localizedlanguagetranslations">
+            </editorContentTypeBinding>
+
+            <editorContentTypeBinding
                   editorId="eg.guc.edu.csen.languagelocalization.LocalizedLanguageEditor"
                   contentTypeId="eg.edu.guc.csen.localizedlanguage">
             </editorContentTypeBinding>
       </extension>
-      <extension
+      <!-- <extension
             point="org.eclipse.lsp4e.languageServer">
             <server
                   class="eg.edu.guc.csen.languagelocalization.translations.LocalizedJavaStreamConnectionProvider"
@@ -90,5 +100,5 @@
                   id="eg.edu.guc.csen.languagelocalization.server"
                   contentType="eg.edu.guc.csen.localizedlanguage">
             </contentTypeMapping>
-      </extension>
+      </extension> -->
 </plugin>

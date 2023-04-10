@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
@@ -13,13 +18,14 @@ public class TranslationsEditor extends MultiPageEditorPart {
 
     private Translations translations;
     private boolean isDirty;
+    /** The text editor used in page 2. */
+    private IEditorPart editor;
 
     public TranslationsEditor() {
     }
 
-
     private File getJsonFile() {
-        return ((FileEditorInput)this.getEditorInput()).getFile().getLocation().toFile();
+        return ((FileEditorInput) this.getEditorInput()).getFile().getLocation().toFile();
     }
 
     public Translations getTranslations() {
@@ -35,6 +41,12 @@ public class TranslationsEditor extends MultiPageEditorPart {
     }
 
     @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
+        setPartName(input.getToolTipText());
+    }
+
+    @Override
     public boolean isDirty() {
         return isDirty;
     }
@@ -44,19 +56,36 @@ public class TranslationsEditor extends MultiPageEditorPart {
         firePropertyChange(PROP_DIRTY);
     }
 
+    private void createTextEditorPage() {
+
+        editor = new TextEditor();
+        try {
+            IEditorInput editorInput = getEditorInput();
+            int index = addPage(editor, editorInput);
+            setPageText(index, editorInput.getName());
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     protected void createPages() {
-        TranslationsPage keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(), this);
-        TranslationsPage identifierPage = new TranslationsPage(getContainer(), getTranslations().getIdentifierTranslations(), this);
+        TranslationsPage keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(),
+                this);
+        TranslationsPage identifierPage = new TranslationsPage(getContainer(),
+                getTranslations().getIdentifierTranslations(), this);
         int index = addPage(keywordPage);
-		setPageText(index, "Keywords");
+        setPageText(index, "Keywords");
         index = addPage(identifierPage);
         setPageText(index, "Identifiers");
+
+        createTextEditorPage();
     }
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        
+
         try {
             getTranslations().save(getJsonFile());
             setDirty(false);
@@ -73,5 +102,5 @@ public class TranslationsEditor extends MultiPageEditorPart {
     @Override
     public boolean isSaveAsAllowed() {
         return true;
-    }   
+    }
 }

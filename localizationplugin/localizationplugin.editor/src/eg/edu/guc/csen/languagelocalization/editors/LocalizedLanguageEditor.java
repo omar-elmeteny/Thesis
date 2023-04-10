@@ -1,10 +1,11 @@
 package eg.edu.guc.csen.languagelocalization.editors;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 
@@ -35,6 +36,12 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 	}
 
 	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		setPartName(input.getName());
+	}
+
+	@Override
 	protected void createPages() {
 		createTextEditorPage();
 	}
@@ -50,7 +57,7 @@ public class LocalizedLanguageEditor extends MultiPageEditorPart {
 		editor.doSaveAs();
 		setPageText(0, editor.getTitle());
 		setInput(editor.getEditorInput());
-
+		
 	}
 
 	@Override
