@@ -7,11 +7,14 @@ import org.json.JSONObject;
 
 public class IdentifierTranslations extends TranslationsBase {
 
-    // private static final IdentifierTranslations instance = new IdentifierTranslations("identifiers.json");
+    private static IdentifierTranslations defaults;
 
-    // public static IdentifierTranslations getInstance() {
-    //     return instance;
-    // }
+    public synchronized static IdentifierTranslations getDefaults() {
+        if (defaults == null) {
+            defaults = new IdentifierTranslations("identifiers.json");
+        }
+        return defaults;
+    }
 
     public IdentifierTranslations() {
         super();

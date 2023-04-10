@@ -7,11 +7,14 @@ import org.json.JSONObject;
 
 public class KeywordTranslations extends TranslationsBase {
 
-    // private static final KeywordTranslations instance = new KeywordTranslations("keywords.json");
+    private static KeywordTranslations defaults;
 
-    // public static KeywordTranslations getInstance() {
-    //     return instance;
-    // }
+    public synchronized static KeywordTranslations getDefaults() {
+        if (defaults == null) {
+            defaults = new KeywordTranslations("keywords.json");
+        }
+        return defaults;
+    }
 
     public KeywordTranslations() {
         super();

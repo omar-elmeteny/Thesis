@@ -143,6 +143,13 @@ public class Translations {
         return new IdentifierValidator(identifier).isValid();
     }
 
+    public static boolean isKeyword(String word) {
+        return Keywords.keywords.contains(word);
+    }
+
+    public static boolean isCommonIdentifier(String word) {
+        return Identifiers.commonIdentifiers.contains(word);
+    }
     private static class IdentifierValidator {
         private int index;
         private String identifier;

@@ -16,6 +16,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.json.JSONException;
 
+import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
+import eg.edu.guc.csen.keywordtranslator.KeywordTranslations;
 import eg.edu.guc.csen.keywordtranslator.Translations;
 
 public class TranslationsEditor extends MultiPageEditorPart {
@@ -111,10 +113,10 @@ public class TranslationsEditor extends MultiPageEditorPart {
 
     @Override
     protected void createPages() {
-        keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(),
-            this);
+        keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(), KeywordTranslations.getDefaults(),
+            this, false);
         identifierPage = new TranslationsPage(getContainer(),
-                getTranslations().getIdentifierTranslations(), this);
+                getTranslations().getIdentifierTranslations(), IdentifierTranslations.getDefaults(), this, true);
         int index = addPage(keywordPage);
         setPageText(index, "Keywords");
         index = addPage(identifierPage);

@@ -120,6 +120,11 @@ public abstract class TranslationsBase {
         return new ArrayList<>();
     }
 
+    public boolean hasAnyTranslationsForLanguage(String language) {
+        return this.englishToLanguageTranslations.containsKey(language)
+            && this.englishToLanguageTranslations.get(language).size() > 0;
+    }
+
     public boolean hasTranslationFromEnglish(String word, String targetLanguage) {
         if (!this.englishToLanguageTranslations.containsKey(targetLanguage)) {
             return false;

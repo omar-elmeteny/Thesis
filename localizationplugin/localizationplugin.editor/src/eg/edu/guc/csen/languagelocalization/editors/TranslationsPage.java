@@ -12,13 +12,17 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.swt.widgets.Table;
 import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
 import eg.edu.guc.csen.keywordtranslator.Language;
@@ -34,22 +38,92 @@ class TranslationsPage extends Composite {
 	private final KeyValuePair currentLanguage;
 	private final TableViewer tableViewer;
 	private final TranslationsBase translationsBase;
-	public TranslationsPage(Composite parent, TranslationsBase translationsBase, TranslationsEditor parentEditor) {
+	private final Button addDefaultsButton;
+	private final TranslationsBase defaultTranslationsBase;
+
+	public TranslationsPage(Composite parent, 
+		TranslationsBase translationsBase, 
+		TranslationsBase defaultTranslationsBase,
+		TranslationsEditor parentEditor, boolean addIdentifier) {
 		super(parent, SWT.NONE);
 		this.translationsBase = translationsBase;
-		GridLayout layout = new GridLayout(2, false);
+		this.defaultTranslationsBase = defaultTranslationsBase;
+		currentLanguage = new KeyValuePair(languages.get(0).getKey(), languages.get(0).getName());
+
+		GridLayout layout = new GridLayout(1, false);
 		this.setLayout(layout);
 
 		// Create the language dropdown
-		Label languageLabel = new Label(this, SWT.NONE);
+		Composite languageComposite = new Composite(this, SWT.NONE);
+		languageComposite.setLayout(new GridLayout(3, false));
+		Label languageLabel = new Label(languageComposite, SWT.NONE);
 		languageLabel.setText("Language:");
-
-		languageCombo = new Combo(this, SWT.READ_ONLY);
-		
-		languages.removeIf(l -> l.getKey().equals("en"));
-
+		languageCombo = new Combo(languageComposite, SWT.READ_ONLY);
 		languageCombo.setItems(languageNames);
-		currentLanguage = new KeyValuePair(languages.get(0).getKey(), languages.get(0).getName());
+		addDefaultsButton = new Button(languageComposite, SWT.PUSH);
+		addDefaultsButton.setText("Add Defaults");
+		addDefaultsButton.setEnabled(false);
+
+		// Add click listener to the add defaults button
+		addDefaultsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(org.eclipse.swt.events.MouseEvent e) {
+				String lang = currentLanguage.getKey();
+				for (KeyValuePair pair : defaultTranslationsBase.getLanguageTranslations(lang)) {
+					String word = pair.getKey();
+					if (!translationsBase.hasTranslationFromEnglish(word, lang)
+						&& defaultTranslationsBase.hasTranslationFromEnglish(word, lang)) {
+						translationsBase.addTranslation(word, lang, defaultTranslationsBase.translateFromEnglish(word, lang));
+					}
+				}
+
+				updateTable();
+				parentEditor.updateEditor();
+			};
+		});
+
+		if (addIdentifier) {
+			Composite identifierComposite = new Composite(this, SWT.NONE);
+			identifierComposite.setLayout(new GridLayout(3, false));
+
+			Label identifierLabel = new Label(identifierComposite, SWT.NONE);
+			identifierLabel.setText("New identifier:");
+
+			Text identifierEditor = new Text(identifierComposite, SWT.BORDER);
+			identifierEditor.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+
+			Button addButton = new Button(identifierComposite, SWT.PUSH);
+			addButton.setText("Add Identifier");
+
+			// Add click listener to the add button
+			addButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseDown(org.eclipse.swt.events.MouseEvent e) {
+					String identifier = identifierEditor.getText();
+					if (!Translations.isValidIdentifier(identifier)) {
+						MessageDialog.openError(addButton.getShell(), "Error", "Invalid identifier.");
+						return;
+					}
+					if (Translations.isCommonIdentifier(identifier) || 
+							translationsBase.hasTranslationFromEnglish(identifier, currentLanguage.getKey())) {
+							MessageDialog.openError(addButton.getShell(), "Error", "This identifier is already added.");
+					}
+					if (Translations.isKeyword(identifier)) {
+						MessageDialog.openError(addButton.getShell(), "Error", "Cannot add a Java keyword.");
+					}
+					if (!parentEditor.getTranslations().canAddTranslation(identifier, currentLanguage.getKey(), identifier)) {
+						MessageDialog.openError(addButton.getShell(), "Error", "This identifier is already being used.");
+						return;
+					}
+					translationsBase.addTranslation(identifier, currentLanguage.getKey(), identifier);
+					updateTable();
+					identifierEditor.setText("");
+					parentEditor.updateEditor();
+				};
+			});
+		}
+
+
 
 		tableViewer = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -169,6 +243,8 @@ class TranslationsPage extends Composite {
 		currentLanguage.setKey(languages.get(selectionIndex).getKey());
 		currentLanguage.setValue(languages.get(selectionIndex).getName());
 		Language lang = languages.get(languageCombo.getSelectionIndex());
+
+		addDefaultsButton.setEnabled(defaultTranslationsBase.hasAnyTranslationsForLanguage(lang.getKey()));
 		ArrayList<KeyValuePair> translations = translationsBase.getLanguageTranslations(lang.getKey());
 		KeyValuePair[] tableData = new KeyValuePair[translations.size()];
 		int i = 0;

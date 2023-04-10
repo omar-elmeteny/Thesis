@@ -29,6 +29,252 @@
 			"key": "it",
 			"name": "Italian",
 			"nativeName": "Italiano"
-		}
+		},
+		{
+			"key": "ja",
+			"name": "Japanese",
+			"nativeName": "日本語"
+		},
+		{
+			"key": "ko",
+			"name": "Korean",
+			"nativeName": "한국어"
+		},
+		{
+			"key": "nl",
+			"name": "Dutch",
+			"nativeName": "Nederlands"
+		},
+		{
+			"key": "pl",
+			"name": "Polish",
+			"nativeName": "Polski"
+		},
+		{
+			"key": "pt",
+			"name": "Portuguese",
+			"nativeName": "Português"
+		},
+		{
+			"key": "ru",
+			"name": "Russian",
+			"nativeName": "Русский"
+		},
+		{
+			"key": "zh",
+			"name": "Chinese",
+			"nativeName": "中文"
+		},
+		{
+			"key": "zh-TW",
+			"name": "Chinese (Traditional)",
+			"nativeName": "中文（繁體）"
+		},
+		{
+			"key": "tr",
+			"name": "Turkish",
+			"nativeName": "Türkçe"
+		},
+		{
+			"key": "uk",
+			"name": "Ukrainian",
+			"nativeName": "Українська"
+		},
+		{
+			"key": "vi",
+			"name": "Vietnamese",
+			"nativeName": "Tiếng Việt"
+		},
+		{
+			"key": "el",
+			"name": "Greek",
+			"nativeName": "Ελληνικά"
+		},
+		{
+			"key": "bg",
+			"name": "Bulgarian",
+			"nativeName": "Български"
+		},
+		{
+			"key": "cs",
+			"name": "Czech",
+			"nativeName": "Čeština"
+		},
+		{
+			"key": "da",
+			"name": "Danish",
+			"nativeName": "Dansk"
+		},
+		{
+			"key": "et",
+			"name": "Estonian",
+			"nativeName": "Eesti"
+		},
+		{
+			"key": "fi",
+			"name": "Finnish",
+			"nativeName": "Suomi"
+		},
+		{
+			"key": "he",
+			"name": "Hebrew",
+			"nativeName": "עברית"
+		},
+		{
+			"key": "hi",
+			"name": "Hindi",
+			"nativeName": "हिन्दी"
+		},
+		{
+			"key": "hu",
+			"name": "Hungarian",
+			"nativeName": "Magyar"
+		},
+		{
+			"key": "id",
+			"name": "Indonesian",
+			"nativeName": "Bahasa Indonesia"
+		},
+		{
+			"key": "lt",
+			"name": "Lithuanian",
+			"nativeName": "Lietuvių"
+		},
+		{
+			"key": "lv",
+			"name": "Latvian",
+			"nativeName": "Latviešu"
+		},
+		{
+			"key": "no",
+			"name": "Norwegian",
+			"nativeName": "Norsk"
+		},
+		{
+			"key": "ro",
+			"name": "Romanian",
+			"nativeName": "Română"
+		},
+		{
+			"key": "sk",
+			"name": "Slovak",
+			"nativeName": "Slovenčina"
+		},
+		{
+            "key": "sl",
+            "name": "Slovenian",
+            "nativeName": "Slovenščina"
+        },
+        {
+            "key": "sr",
+            "name": "Serbian",
+            "nativeName": "Српски"
+        },
+        {
+            "key": "sv",
+            "name": "Swedish",
+            "nativeName": "Svenska"
+        },
+        {
+            "key": "th",
+            "name": "Thai",
+            "nativeName": "ไทย"
+        },
+        {
+            "key": "tl",
+            "name": "Tagalog",
+            "nativeName": "Tagalog"
+        },
+        {
+            "key": "ur",
+            "name": "Urdu",
+            "nativeName": "اردو"
+        },
+        {
+            "key": "uz",
+            "name": "Uzbek",
+            "nativeName": "O'zbek"
+        },
+        {
+            "key": "az",
+            "name": "Azerbaijani",
+            "nativeName": "Azərbaycan dili"
+        },
+        {
+            "key": "hy",
+            "name": "Armenian",
+            "nativeName": "Հայերեն"
+        },
+        {
+            "key": "eu",
+            "name": "Basque",
+            "nativeName": "Euskara"
+        },
+        {
+            "key": "be",
+            "name": "Belarusian",
+            "nativeName": "Беларуская"
+        },
+        {
+            "key": "bn",
+            "name": "Bengali",
+            "nativeName": "বাংলা"
+        },
+        {
+            "key": "bs",
+            "name": "Bosnian",
+            "nativeName": "Bosanski"
+        },
+        {
+            "key": "cy",
+            "name": "Welsh",
+            "nativeName": "Cymraeg"
+        },
+        {
+            "key": "eo",
+            "name": "Esperanto",
+            "nativeName": "Esperanto"
+        },
+        {
+            "key": "ga",
+            "name": "Irish",
+            "nativeName": "Gaeilge"
+        },
+        {
+            "key": "gd",
+            "name": "Scottish Gaelic",
+            "nativeName": "Gàidhlig"
+        },
+        {
+            "key": "gl",
+            "name": "Galician",
+            "nativeName": "Galego"
+        },
+        {
+            "key": "gu",
+            "name": "Gujarati",
+            "nativeName": "ગુજરાતી"
+        },
+        {
+            "key": "ht",
+            "name": "Haitian Creole",
+            "nativeName": "Kreyòl ayisyen"
+        },
+        {
+            "key": "hr",
+            "name": "Croatian",
+            "nativeName": "Hrvatski"
+        },
+        {
+            "key": "is",
+            "name": "Icelandic",
+            "nativeName": "Íslenska"
+        },
+        {
+            "key": "jv",
+            "name": "Javanese",
+            "nativeName": "Basa Jawa"
+        }
+			
 	]
 }
