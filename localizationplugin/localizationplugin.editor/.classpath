@@ -5,6 +5,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/json-20230227.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/keywordtranslator-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-model-3.9.1.jar"/>
 	<classpathentry kind="src" path="src/"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
