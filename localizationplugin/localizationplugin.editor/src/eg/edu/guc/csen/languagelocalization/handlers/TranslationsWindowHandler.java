@@ -33,7 +33,7 @@ public class TranslationsWindowHandler extends AbstractHandler {
         }
 
         // check if the project has maven nature
-        if (isMavenProject(project)) {
+        if (!isMavenProject(project)) {
             MessageDialog.openError(HandlerUtil.getActiveShell(event), "Error",
                     "Please select a maven project");
             return null;
@@ -65,16 +65,16 @@ public class TranslationsWindowHandler extends AbstractHandler {
         return null;
     }
 
-    private static boolean isMavenProject(IProject project) {
+    public static boolean isMavenProject(IProject project) {
         try {
-            return !project.hasNature("org.eclipse.m2e.core.maven2Nature");
+            return project.hasNature("org.eclipse.m2e.core.maven2Nature");
         } catch (CoreException e) {    
             e.printStackTrace();
-            return false;
+            return true;
         }
     }
 
-    private static IProject getSelectedProject(ExecutionEvent event) {
+    public static IProject getSelectedProject(ExecutionEvent event) {
         ISelection selection = HandlerUtil.getCurrentSelection(event);
         if (selection instanceof IStructuredSelection) {
             for (Iterator<?> it = ((IStructuredSelection) selection).iterator(); it

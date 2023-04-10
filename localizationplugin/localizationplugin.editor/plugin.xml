@@ -12,12 +12,21 @@
                   name="Show Translations"
                   id="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand">
             </command>
+            <command
+                  categoryId="eg.edu.guc.csen.localizationplugin.commands.category"
+                  name="Add Language Translation Support"
+                  id="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport">
+            </command>
       </extension>
       <extension
             point="org.eclipse.ui.handlers">
             <handler
                   class="eg.edu.guc.csen.languagelocalization.handlers.TranslationsWindowHandler"
                   commandId="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand">
+            </handler>
+            <handler
+                  class="eg.edu.guc.csen.languagelocalization.handlers.AddLanguageTranslationSupportHandler"
+                  commandId="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport">
             </handler>
       </extension>
       <extension
@@ -41,6 +50,11 @@
                               commandId="eg.edu.guc.csen.localizationplugin.commands.showTranslationsCommand"
                               id="eg.edu.guc.csen.localizationplugin.menu.showTranslationsCommand"
                               mnemonic="T">
+                        </command>
+                        <command
+                              commandId="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport"
+                              id="eg.edu.guc.csen.localizationplugin.menu.addLanguageTranslationSupport"
+                              mnemonic="L">
                         </command>
                   </menu>
             </menuContribution>
