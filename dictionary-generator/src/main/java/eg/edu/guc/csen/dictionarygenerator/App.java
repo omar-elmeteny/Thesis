@@ -2,18 +2,12 @@ package eg.edu.guc.csen.dictionarygenerator;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.List;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.apache.commons.text.StringEscapeUtils;
 
 import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
+import eg.edu.guc.csen.keywordtranslator.Identifiers;
 
 /**
  * Hello world!
@@ -22,73 +16,12 @@ import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
 public class App {
     public static void main(String[] args) throws IOException {
         String[] languages = new String[] { "ar", "de", "es", "fr", "it" };
-        String[] packagePaths = new String[] { "java.base/java/lang", "java.base/java/util", "java.base/java/io", "java.base/java/math" };
-
+        
         File dictionaryFile = new File(args.length == 0 ? "identifiers.json" : args[0]);
         IdentifierTranslations dictionary = new IdentifierTranslations(dictionaryFile);
-        String javaBaseLocation = System.getProperty("java.home");
-        String srcLocation = Path.of(javaBaseLocation, "lib", "src.zip").toString();
-
-        String regex = "(" + String.join("|", packagePaths)
-                .replaceAll("/", "\\\\/")
-                .replaceAll("\\.", "\\\\.") + ")"
-                + "\\/[A-Z][A-Za-z0-9]*\\.java";
-
-        ArrayList<String> builtInPackageIdentifiers = new ArrayList<>();
-        builtInPackageIdentifiers.add("java");
-        builtInPackageIdentifiers.add("io");
-        builtInPackageIdentifiers.add("util");
-        builtInPackageIdentifiers.add("math");
-        builtInPackageIdentifiers.add("lang");
-        translateIdentifiers(builtInPackageIdentifiers, dictionary, languages);
+        ArrayList<String> commonIdentifiers = Identifiers.getCommonIdentifiers();
+        translateIdentifiers(commonIdentifiers, dictionary, languages);
         dictionary.save(dictionaryFile);
-
-        try (ZipFile zipFile = new ZipFile(srcLocation)) {
-            var entries = zipFile.entries();
-
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-
-                if (entry.getName().matches(regex)) {
-                    ArrayList<String> identifiers = new ArrayList<>();
-
-                    String className = entry.getName().substring(entry.getName().lastIndexOf('/') + 1);
-                    className = className.substring(0, className.lastIndexOf('.'));
-                    String packageName = entry.getName().substring(10, entry.getName().lastIndexOf('/')).replace('/',
-                            '.');
-                    try {
-                        Class<?> cls = Class.forName(packageName + "." + className);
-                        identifiers.add(className);
-
-                        Method[] methods = cls.getDeclaredMethods();
-                        // Print the methods
-                        for (Method method : methods) {
-                            if ((method.getModifiers() & Modifier.PUBLIC) != 0) {
-                                if (!identifiers.contains(method.getName())) {
-                                    identifiers.add(method.getName());
-                                }
-                            }
-                        }
-
-                        Field[] fields = cls.getFields();
-                        for (Field field : fields) {
-                            if ((field.getModifiers() & Modifier.PUBLIC) != 0) {
-                                if (!identifiers.contains(field.getName())) {
-                                    identifiers.add(field.getName());
-                                }
-                            }
-                        }
-
-                        translateIdentifiers(identifiers, dictionary, languages);
-                        dictionary.save(dictionaryFile);
-
-                    } catch (ClassNotFoundException e) {
-                        continue;
-                    }
-
-                }
-            }
-        }
     }
 
     private static void translateIdentifiers(List<String> identifiers, IdentifierTranslations translations, String[] targetLanguages) {

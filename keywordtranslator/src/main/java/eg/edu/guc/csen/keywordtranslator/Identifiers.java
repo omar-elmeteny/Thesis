@@ -1,8 +1,9 @@
 package eg.edu.guc.csen.keywordtranslator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
-class Identifiers {
+public class Identifiers {
     public static final HashSet<String> commonIdentifiers = initializeCommonIdenfiers();
 
     private static HashSet<String> initializeCommonIdenfiers() {
@@ -57,5 +58,11 @@ class Identifiers {
         commonIdentifiers.add("nextByte");
         commonIdentifiers.add("nextBoolean");
         return commonIdentifiers;
+    }
+
+    public static ArrayList<String> getCommonIdentifiers() {
+        ArrayList<String> result = new ArrayList<>(commonIdentifiers);
+        result.sort(null);
+        return result;
     }
 }
