@@ -35,10 +35,27 @@ class Identifiers {
         commonIdentifiers.add("LinkedList");
         commonIdentifiers.add("HashMap");
         commonIdentifiers.add("HashSet");
+        commonIdentifiers.add("length");
+        commonIdentifiers.add("size");
+        commonIdentifiers.add("charAt");
+        commonIdentifiers.add("get");
+        commonIdentifiers.add("set");
+        commonIdentifiers.add("add");
+        commonIdentifiers.add("remove");
+        commonIdentifiers.add("contains");
+        commonIdentifiers.add("substring");
         commonIdentifiers.add("print");
         commonIdentifiers.add("println");
         commonIdentifiers.add("printf");
         commonIdentifiers.add("format");
+        commonIdentifiers.add("next");
+        commonIdentifiers.add("nextInt");
+        commonIdentifiers.add("nextDouble");
+        commonIdentifiers.add("nextFloat");
+        commonIdentifiers.add("nextLong");
+        commonIdentifiers.add("nextShort");
+        commonIdentifiers.add("nextByte");
+        commonIdentifiers.add("nextBoolean");
         return commonIdentifiers;
     }
 }
