@@ -39,7 +39,7 @@ public class Languages {
     }
 
     public static ArrayList<Language> getLanguages() {
-        return getInstance().languages;
+        return new ArrayList<>(getInstance().languages);
     }
 }
 

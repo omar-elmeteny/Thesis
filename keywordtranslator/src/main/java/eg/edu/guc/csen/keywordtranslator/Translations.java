@@ -13,40 +13,41 @@ import com.ibm.icu.text.Transliterator;
 
 public class Translations {
 
-    private final KeywordTranslations keywordTranslations;
-    private final IdentifierTranslations identifierTranslations;
+    private final KeywordTranslations keywordTranslations = new KeywordTranslations();
+    private final IdentifierTranslations identifierTranslations = new IdentifierTranslations();
     private String defaultLanguage = "ar";
 
     public Translations() {
-        keywordTranslations = new KeywordTranslations();
-        identifierTranslations = new IdentifierTranslations();
+        
     }
 
     public Translations(File jsonFile) throws IOException {
         super();
         if (jsonFile == null || !jsonFile.exists()) {
-            keywordTranslations = new KeywordTranslations();
-            identifierTranslations = new IdentifierTranslations();
             return;
         }
         try (FileInputStream fileInputStream = new FileInputStream(jsonFile)) {
             try (BOMInputStream bomInputStream = new BOMInputStream(fileInputStream)) {
                 String jsonString = new String(bomInputStream.readAllBytes(), StandardCharsets.UTF_8);
-                JSONObject jsonObject = new JSONObject(jsonString);
-                if (jsonObject.has("keywords")) {
-                    keywordTranslations = new KeywordTranslations(jsonObject.getJSONObject("keywords"));
-                } else {
-                    keywordTranslations = new KeywordTranslations();
-                }
-                if (jsonObject.has("identifiers")) {
-                    identifierTranslations = new IdentifierTranslations(jsonObject.getJSONObject("identifiers"));
-                } else {
-                    identifierTranslations = new IdentifierTranslations();
-                }
-                if (jsonObject.has("defaultLanguage")) {
-                    defaultLanguage = jsonObject.getString("defaultLanguage");
-                }
+                updateFromJSONString(jsonString);
             }
+        }
+    }
+
+    public void updateFromJSONString(String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        updateFromJSONObject(jsonObject);
+    }
+
+    private void updateFromJSONObject(JSONObject jsonObject) {
+        if (jsonObject.has("keywords")) {
+            keywordTranslations.updateFromJSONObject(jsonObject.getJSONObject("keywords"));
+        }
+        if (jsonObject.has("identifiers")) {
+            identifierTranslations.updateFromJSONObject(jsonObject.getJSONObject("identifiers"));
+        } 
+        if (jsonObject.has("defaultLanguage")) {
+            defaultLanguage = jsonObject.getString("defaultLanguage");
         }
     }
 

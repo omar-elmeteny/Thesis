@@ -50,6 +50,12 @@ public abstract class TranslationsBase {
         loadFromJSONObject(jsonObject);
     }
 
+    void updateFromJSONObject(JSONObject jsonObject) {
+        englishToLanguageTranslations.clear();
+        languageToEnglishTranslations.clear();
+        loadFromJSONObject(jsonObject);
+    }
+
     private void loadFromJSONString(String jsonString) {
         JSONObject jsonObject = new JSONObject(jsonString);
         loadFromJSONObject(jsonObject);

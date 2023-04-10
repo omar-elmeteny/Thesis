@@ -27,9 +27,16 @@ import eg.edu.guc.csen.keywordtranslator.Translations;
 import eg.edu.guc.csen.keywordtranslator.TranslationsBase;
 
 class TranslationsPage extends Composite {
+	private final static ArrayList<Language> languages = initializeLanguages();
+	private final static String[] languageNames = initializeLanguageNames(languages);
 
+	private final Combo languageCombo;
+	private final KeyValuePair currentLanguage;
+	private final TableViewer tableViewer;
+	private final TranslationsBase translationsBase;
 	public TranslationsPage(Composite parent, TranslationsBase translationsBase, TranslationsEditor parentEditor) {
 		super(parent, SWT.NONE);
+		this.translationsBase = translationsBase;
 		GridLayout layout = new GridLayout(2, false);
 		this.setLayout(layout);
 
@@ -37,21 +44,14 @@ class TranslationsPage extends Composite {
 		Label languageLabel = new Label(this, SWT.NONE);
 		languageLabel.setText("Language:");
 
-		final Combo languageCombo = new Combo(this, SWT.READ_ONLY);
-		final ArrayList<Language> languages = new ArrayList<>(Languages.getLanguages());
+		languageCombo = new Combo(this, SWT.READ_ONLY);
+		
 		languages.removeIf(l -> l.getKey().equals("en"));
 
-		String[] languageNames = new String[languages.size()];
-		for (int i = 0; i < languageNames.length; i++) {
-			Language lang = languages.get(i);
-
-			languageNames[i] = lang.getName().equals(lang.getNativeName()) ? lang.getName()
-					: lang.getName() + " (" + lang.getNativeName() + ")";
-		}
 		languageCombo.setItems(languageNames);
-		final KeyValuePair currentLanguage = new KeyValuePair(languages.get(0).getKey(), languages.get(0).getName());
+		currentLanguage = new KeyValuePair(languages.get(0).getKey(), languages.get(0).getName());
 
-		TableViewer tableViewer = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
+		tableViewer = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		Table wordTable = tableViewer.getTable();
@@ -131,25 +131,9 @@ class TranslationsPage extends Composite {
 			}
 		});
 
-		TranslationsBase transl = translationsBase;
 		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// Get the selected language
-				int selectionIndex = languageCombo.getSelectionIndex();
-				if (selectionIndex == -1) {
-					return;
-				}
-				currentLanguage.setKey(languages.get(selectionIndex).getKey());
-				currentLanguage.setValue(languages.get(selectionIndex).getName());
-				Language lang = languages.get(languageCombo.getSelectionIndex());
-				ArrayList<KeyValuePair> translations = transl.getLanguageTranslations(lang.getKey());
-				KeyValuePair[] tableData = new KeyValuePair[translations.size()];
-				int i = 0;
-				for (KeyValuePair entry : translations) {
-					tableData[i] = entry;
-					i++;
-				}
-				tableViewer.setInput(tableData);
+				updateTable();
 			}
 		};
 
@@ -158,5 +142,40 @@ class TranslationsPage extends Composite {
 
 		languageCombo.select(0);
 		adapter.widgetSelected(null);
+	}
+
+	private static ArrayList<Language> initializeLanguages() {
+		ArrayList<Language> languages = Languages.getLanguages();
+		languages.removeIf(l -> l.getKey().equals("en"));
+		return languages;
+	}
+
+	private static String[] initializeLanguageNames(ArrayList<Language> languages) {
+		String[] languageNames = new String[languages.size()];
+		for (int i = 0; i < languageNames.length; i++) {
+			Language lang = languages.get(i);
+
+			languageNames[i] = lang.getName().equals(lang.getNativeName()) ? lang.getName()
+					: lang.getName() + " (" + lang.getNativeName() + ")";
+		}
+		return languageNames;
+	}
+
+	void updateTable() {
+		int selectionIndex = languageCombo.getSelectionIndex();
+		if (selectionIndex == -1) {
+			return;
+		}
+		currentLanguage.setKey(languages.get(selectionIndex).getKey());
+		currentLanguage.setValue(languages.get(selectionIndex).getName());
+		Language lang = languages.get(languageCombo.getSelectionIndex());
+		ArrayList<KeyValuePair> translations = translationsBase.getLanguageTranslations(lang.getKey());
+		KeyValuePair[] tableData = new KeyValuePair[translations.size()];
+		int i = 0;
+		for (KeyValuePair entry : translations) {
+			tableData[i] = entry;
+			i++;
+		}
+		tableViewer.setInput(tableData);
 	}
 }

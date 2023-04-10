@@ -4,15 +4,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
+import org.json.JSONException;
 
 import eg.edu.guc.csen.keywordtranslator.Translations;
 
@@ -21,6 +23,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
     private Translations translations;
     /** The text editor used in page 2. */
     private TextEditor editor;
+    private IDocument document;
     private TranslationsPage keywordPage;
     private TranslationsPage identifierPage;
 
@@ -68,7 +71,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
                 getTranslations().toString());
         }
 
-        IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+        
         document.set(getTranslations().toJSON().toString(4));
     }
 
@@ -79,17 +82,27 @@ public class TranslationsEditor extends MultiPageEditorPart {
             IEditorInput editorInput = getEditorInput();
             int index = addPage(editor, editorInput);
             setPageText(index, editorInput.getName());
+            document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+        
+            document.addDocumentListener(new IDocumentListener() {
 
-            // Add a property listener to the text editor page
-            editor.addPropertyListener(new IPropertyListener() {
                 @Override
-                public void propertyChanged(Object source, int propId) {
-                    // Set the isDirty flag and update the other pages
-                    translations.
-                    keywordPage.refreshTable();
-                    identifierPage.refreshTable();
+                public void documentAboutToBeChanged(DocumentEvent event) {
+                    
                 }
+
+                @Override
+                public void documentChanged(DocumentEvent event) {
+                    try {
+                        getTranslations().updateFromJSONString(event.getDocument().get());
+                        keywordPage.updateTable();
+                        identifierPage.updateTable();
+                    } catch (JSONException e) {
+                    }
+                }
+                
             });
+            
         } catch (PartInitException e) {
             e.printStackTrace();
         }
