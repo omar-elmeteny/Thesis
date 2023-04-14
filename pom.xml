@@ -85,5 +85,16 @@
       </plugins>
     </pluginManagement>
   </build>
-
+  <distributionManagement>
+    <repository>
+      <id>linode-thesis-releases</id>
+      <name>Linode Omar Elmeteny Apache Maven Packages (Releases)</name>
+      <url>http://139.162.241.225:8080/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>linode-thesis-snapshots</id>
+      <name>Linode Omar Elmeteny Apache Maven Packages (Snapshots)</name>
+      <url>http://139.162.241.225:8080/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
