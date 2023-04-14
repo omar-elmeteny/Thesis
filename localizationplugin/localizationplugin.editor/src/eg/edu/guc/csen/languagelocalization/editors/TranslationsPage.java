@@ -31,8 +31,8 @@ import eg.edu.guc.csen.keywordtranslator.Translations;
 import eg.edu.guc.csen.keywordtranslator.TranslationsBase;
 
 class TranslationsPage extends Composite {
-	private final static ArrayList<Language> languages = initializeLanguages();
-	private final static String[] languageNames = initializeLanguageNames(languages);
+	final static ArrayList<Language> languages = initializeLanguages();
+	final static String[] languageNames = initializeLanguageNames(languages);
 
 	private final Combo languageCombo;
 	private final KeyValuePair currentLanguage;

@@ -27,7 +27,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
     private TextEditor editor;
     private IDocument document;
     private TranslationsPage keywordPage;
-    private TranslationsPage identifierPage;
+    private IdentifiersTranslationPage identifierPage;
 
     public TranslationsEditor() {
     }
@@ -98,7 +98,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
                     try {
                         getTranslations().updateFromJSONString(event.getDocument().get());
                         keywordPage.updateTable();
-                        identifierPage.updateTable();
+                        identifierPage.updateTree();
                     } catch (JSONException e) {
                     }
                 }
@@ -115,8 +115,8 @@ public class TranslationsEditor extends MultiPageEditorPart {
     protected void createPages() {
         keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(), KeywordTranslations.getDefaults(),
             this, false);
-        identifierPage = new TranslationsPage(getContainer(),
-                getTranslations().getIdentifierTranslations(), IdentifierTranslations.getDefaults(), this, true);
+        identifierPage = new IdentifiersTranslationPage(getContainer(),
+                getTranslations().getIdentifierTranslations(), IdentifierTranslations.getDefaults(), this);
         int index = addPage(keywordPage);
         setPageText(index, "Keywords");
         index = addPage(identifierPage);
