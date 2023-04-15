@@ -48,7 +48,14 @@ public class PomHelper {
             addBuildHelperPlugin(model);
             writeFile = true;
         }
-
+        if (!checkPluginRepository(model, "central", "https://repo1.maven.org/maven2")) {
+            writeFile = true;
+            addPluginRepository(model, "central", "https://repo1.maven.org/maven2", false);
+        }
+        if (!checkPluginRepository(model, "linode-thesis-snapshots", "http://139.162.241.225:8080/snapshots")) {
+            writeFile = true;
+            addPluginRepository(model, "linode-thesis-snapshots", "http://139.162.241.225:8080/snapshots", true);
+        }
         try {
             if (writeFile) {
                 writeMavenPomModelToPomXmlFile(model, pomXmlPath);
@@ -63,8 +70,8 @@ public class PomHelper {
     private static void writeMavenPomModelToPomXmlFile(Model model, String path) throws IOException {
         // write model to file
         MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
-		FileWriter writer = new FileWriter(path);
-		mavenWriter.write(writer, model);
+        FileWriter writer = new FileWriter(path);
+        mavenWriter.write(writer, model);
     }
 
     private static void addTranspilerPlugin(Model model) {
@@ -119,6 +126,32 @@ public class PomHelper {
         plugin.getExecutions().add(execution);
 
         model.getBuild().getPlugins().add(plugin);
+    }
+
+    private static void addPluginRepository(Model model, String id, String url, boolean snapshots) {
+        if (model.getPluginRepositories() == null) {
+            model.setPluginRepositories(new java.util.ArrayList<org.apache.maven.model.Repository>());
+        }
+        org.apache.maven.model.Repository repository = new org.apache.maven.model.Repository();
+        repository.setId(id);
+        repository.setUrl(url);
+        if (snapshots) {
+            repository.setSnapshots(new org.apache.maven.model.RepositoryPolicy());
+            repository.getSnapshots().setEnabled(true);
+        }
+        model.getPluginRepositories().add(repository);
+    }
+
+    private static boolean checkPluginRepository(Model model, String id, String url) {
+        if (model.getPluginRepositories() != null) {
+            for (int i = 0; i < model.getPluginRepositories().size(); i++) {
+                org.apache.maven.model.Repository repository = model.getPluginRepositories().get(i);
+                if (repository.getId().equals(id) && repository.getUrl().equals(url)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean isTranspilerPluginInstalled(Model model) {
