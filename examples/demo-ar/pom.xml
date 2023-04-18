@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.example</groupId>
   <artifactId>demo-ar</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version> 
 
   <name>demo-ar</name>
   <url>https://github.com/omar-elmeteny/Thesis</url>

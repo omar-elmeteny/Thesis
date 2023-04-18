@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -164,7 +166,18 @@ public class IdentifiersTranslationPage extends Composite {
 				return true;
 			}
         });
+        
+        SelectionAdapter adapter = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTree();
+			}
+		};
 
+		// Add a selection listener to the language dropdown
+		languageCombo.addSelectionListener(adapter);
+
+		languageCombo.select(0);
+		adapter.widgetSelected(null);
         treeViewer.setInput(new RootTreeObject());
 
     }

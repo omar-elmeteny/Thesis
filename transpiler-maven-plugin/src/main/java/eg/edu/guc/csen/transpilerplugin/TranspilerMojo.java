@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -60,7 +62,7 @@ public class TranspilerMojo extends AbstractMojo {
     /**
      * specify guc file encoding; e.g., euc-jp
      */
-    @Parameter(property = "project.build.sourceEncoding")
+    @Parameter(property = "project.build.sourceEncoding", defaultValue = "UTF-8")
     protected String inputEncoding;
 
     /**
@@ -81,15 +83,9 @@ public class TranspilerMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}/translations.guct")
     protected File translationsFile;
 
-    /**
-     * The directory where the guc files are located.
-     */
-    @Parameter(defaultValue = "${basedir}/src/main/guc")
-    private File sourceDirectory;
 
-    public File getSourceDirectory() {
-        return sourceDirectory;
-    }
+    @Parameter(property = "project.compileSourceRoots")
+    private List<String> compileSourceroots = new ArrayList<String>();
 
     /**
      * Specify output directory where the Java files are generated.
@@ -99,6 +95,13 @@ public class TranspilerMojo extends AbstractMojo {
 
     public File getOutputDirectory() {
         return outputDirectory;
+    }
+
+    @Parameter(defaultValue = "${project.build.directory}")
+    private File targetDirectory;
+
+    public File getTargetDirectory() {
+        return targetDirectory;
     }
 
     @Override
@@ -117,10 +120,35 @@ public class TranspilerMojo extends AbstractMojo {
 
             log.debug("GUC TRANSPILER: Output: " + outputDirectory);
         }
+        Set<File> generatedFiles = new HashSet<File>();
+        for(String sourceRoot : compileSourceroots) {
+            File sourceDirectory = new File(sourceRoot);
+            if(sourceDirectory.getAbsolutePath().startsWith(targetDirectory.getAbsolutePath())) {
+                continue;
+            }
+            log.info("GUC TRANSPILER: Processing " + sourceDirectory.getAbsolutePath() + "");
+            Set<File> files =  processSourceDirectory(sourceDirectory);
+            generatedFiles.addAll(files);
+        }
+        Set<File> filesInOutput;
+        try {
+            filesInOutput = getFilesInOutputFolder(outputDirectory);
+            for (File file : filesInOutput) {
+                if (!generatedFiles.contains(file)) {
+                    log.info("GUC TRANSPILER: Deleting " + file.getAbsolutePath());
+                    Files.delete(file.toPath());;
+                }
+            }
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error while cleaning up", e);
+        }
+    }
 
+    private Set<File> processSourceDirectory(File sourceDirectory) throws MojoExecutionException {
+        Log log = getLog();
         if (!sourceDirectory.isDirectory()) {
             log.info("No GUC files to compile in " + sourceDirectory.getAbsolutePath());
-            return;
+            return new HashSet<File>();
         }
 
         // Ensure that the output directory path is all in tact so that
@@ -160,7 +188,7 @@ public class TranspilerMojo extends AbstractMojo {
         for (File gucFile : gucFiles) {
             String javaFileName = translations.translateIdentifier(getFileNameWithoutExtension(gucFile),
                     sourceLanguage, "en") + ".java";
-            String relativePath = getFilePathRelativeToSourceDirectory(gucFile);
+            String relativePath = getFilePathRelativeToSourceDirectory(gucFile, sourceDirectory);
             String[] split = relativePath.split("\\//|\\\\");
 
             File outDir = outputDirectory;
@@ -182,23 +210,10 @@ public class TranspilerMojo extends AbstractMojo {
             }
             generatedFiles.add(outputFile);
         }
-
-        Set<File> filesInOutput;
-        try {
-            filesInOutput = getFilesInOutputFolder(outputDirectory);
-            for (File file : filesInOutput) {
-                if (!generatedFiles.contains(file)) {
-                    log.info("GUC TRANSPILER: Deleting " + file.getAbsolutePath());
-                    Files.delete(file.toPath());;
-                }
-            }
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error while cleaning up", e);
-        }
-
+        return generatedFiles;
     }
 
-    private String getFilePathRelativeToSourceDirectory(File file) {
+    private String getFilePathRelativeToSourceDirectory(File file, File sourceDirectory) {
         // get the path of the file relative to the source directory
         // example : if the file is /src/main/guc/com/example/Hello.guc
         String filePath = file.getParentFile().getAbsolutePath();

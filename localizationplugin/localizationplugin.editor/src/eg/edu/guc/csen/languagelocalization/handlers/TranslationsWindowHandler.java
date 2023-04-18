@@ -7,6 +7,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -41,7 +42,6 @@ public class TranslationsWindowHandler extends AbstractHandler {
         
         IFile translationsFile = project.getFile("translations.guct");
         if (!translationsFile.exists()) {
-            // create an InputStream from string content
             String content = new Translations().toJSON().toString(4);
             try {
                 translationsFile.create(new ByteArrayInputStream(content.getBytes()), true, null);
@@ -93,4 +93,45 @@ public class TranslationsWindowHandler extends AbstractHandler {
         }
         return null;
     }
+
+    public static IFolder getSelectedFolder(ExecutionEvent event) {
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
+        if (selection instanceof IStructuredSelection) {
+            for (Iterator<?> it = ((IStructuredSelection) selection).iterator(); it
+                    .hasNext();) {
+                Object element = it.next();
+                IFolder folder = null;
+                if (element instanceof IFolder) {
+                    folder = (IFolder) element;
+                } else if (element instanceof IAdaptable) {
+                    folder = ((IAdaptable) element).getAdapter(IFolder.class);
+                }
+                if (folder != null) {
+                    return folder;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static IFile getSelectedFile(ExecutionEvent event) {
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
+        if (selection instanceof IStructuredSelection) {
+            for (Iterator<?> it = ((IStructuredSelection) selection).iterator(); it
+                    .hasNext();) {
+                Object element = it.next();
+                IFile file = null;
+                if (element instanceof IFile) {
+                    file = (IFile) element;
+                } else if (element instanceof IAdaptable) {
+                    file = ((IAdaptable) element).getAdapter(IFile.class);
+                }
+                if (file != null) {
+                    return file;
+                }
+            }
+        }
+        return null;
+    }
+
 }

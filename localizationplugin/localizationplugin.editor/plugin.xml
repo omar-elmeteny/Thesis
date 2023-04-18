@@ -17,6 +17,11 @@
                   name="Add Language Translation Support"
                   id="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport">
             </command>
+            <command
+                  categoryId="eg.edu.guc.csen.localizationplugin.commands.category"
+                  name="Convert to Localized Language"
+                  id="eg.edu.guc.csen.localizationplugin.commands.convertToGuc">
+            </command>
       </extension>
       <extension
             point="org.eclipse.ui.handlers">
@@ -27,6 +32,10 @@
             <handler
                   class="eg.edu.guc.csen.languagelocalization.handlers.AddLanguageTranslationSupportHandler"
                   commandId="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport">
+            </handler>
+            <handler
+                  class="eg.edu.guc.csen.languagelocalization.handlers.ConvertToGucHandler"
+                  commandId="eg.edu.guc.csen.localizationplugin.commands.convertToGuc">
             </handler>
       </extension>
       <extension
@@ -55,6 +64,19 @@
                               commandId="eg.edu.guc.csen.localizationplugin.commands.addLanguageTranslationSupport"
                               id="eg.edu.guc.csen.localizationplugin.menu.addLanguageTranslationSupport"
                               mnemonic="L">
+                        </command>
+                  </menu>
+            </menuContribution>
+            <menuContribution
+                  locationURI="popup:org.eclipse.jdt.ui.packageExplorer?after=additions">
+                  <menu
+                        id="eg.edu.guc.csen.localizationplugin.menus.gucMenu"
+                        label="GUC"
+                        mnemonic="G">
+                        <command
+                              commandId="eg.edu.guc.csen.localizationplugin.commands.convertToGuc"
+                              id="eg.edu.guc.csen.localizationplugin.menu.convertToGuc"
+                              mnemonic="C">
                         </command>
                   </menu>
             </menuContribution>

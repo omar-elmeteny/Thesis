@@ -19,13 +19,6 @@
       <url>http://download.eclipse.org/releases/oxygen/</url>
       <layout>p2</layout>
     </repository>
-    <repository>
-      <id>github-omar-thesis</id>
-      <url>http://maven.pkg.github.com/omar-elmeteny/Thesis</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
   </repositories>
   <modules>
     <module>localizedtranspiler</module>
