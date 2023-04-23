@@ -177,6 +177,8 @@ public class TranspilerMojo extends AbstractMojo {
             throw new MojoExecutionException("Fatal error occured while loading the translations file", e);
         }
 
+        long translationsFileLastModified = translationsFile.lastModified();
+
         TranspilerOptions options = new TranspilerOptions();
         options.setOutputEncoding(outputEncoding);
         options.setSourceEncoding(inputEncoding);
@@ -200,7 +202,7 @@ public class TranspilerMojo extends AbstractMojo {
                 outDir.mkdirs();
             }
             File outputFile = new File(outDir, javaFileName);
-            if (!outputFile.exists() || outputFile.lastModified() <= gucFile.lastModified()) {
+            if (!outputFile.exists() || outputFile.lastModified() <= gucFile.lastModified() || outputFile.lastModified() <= translationsFileLastModified) {
                 log.info("GUC TRANSPILER: " + gucFile.getAbsolutePath() + " -> " + outputFile.getAbsolutePath());
                 try {
                     Transpiler.transpile(gucFile, outputFile, options);
