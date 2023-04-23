@@ -28,6 +28,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
     private IDocument document;
     private TranslationsPage keywordPage;
     private IdentifiersTranslationPage identifierPage;
+    private DefaultLanguagePage defaultLanguagePage;
 
     public TranslationsEditor() {
     }
@@ -99,6 +100,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
                         getTranslations().updateFromJSONString(event.getDocument().get());
                         keywordPage.updateTable();
                         identifierPage.updateTree();
+                        defaultLanguagePage.updateCombo();
                     } catch (JSONException e) {
                     }
                 }
@@ -121,6 +123,10 @@ public class TranslationsEditor extends MultiPageEditorPart {
         setPageText(index, "Keywords");
         index = addPage(identifierPage);
         setPageText(index, "Identifiers");
+
+        defaultLanguagePage = new DefaultLanguagePage(getContainer(), this);
+        index = addPage(defaultLanguagePage);
+        setPageText(index, "Project Language");
 
         createTextEditorPage();
     }

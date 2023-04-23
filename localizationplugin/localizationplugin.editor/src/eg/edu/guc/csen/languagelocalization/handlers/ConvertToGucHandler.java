@@ -50,57 +50,55 @@ public class ConvertToGucHandler extends AbstractHandler{
         }
         options.setTranslations(translationsObject);
         options.setTargetLanguage(translationsObject.getDefaultLanguage());
-        IFile file = TranslationsWindowHandler.getSelectedFile(event);
-        if(file != null) {
-            convertFile(file, options);
-            return null;
+        try {
+            IFile file = TranslationsWindowHandler.getSelectedFile(event);
+            if(file != null) {
+                convertFile(file, options);
+                return null;
+            }
+            IFolder folder = TranslationsWindowHandler.getSelectedFolder(event);
+            if(folder != null) {
+                convertFolder(folder, options);
+                return null;
+            }
+            convertProject(project, options);
+        } catch (IOException | CoreException e) {
+            MessageDialog.openError(HandlerUtil.getActiveShell(event), "Error",
+                "Failed to convert files: " + e.getMessage() + ".");
+            e.printStackTrace();
         }
-        IFolder folder = TranslationsWindowHandler.getSelectedFolder(event);
-        if(folder != null) {
-            convertFolder(folder, options);
-            return null;
-        }
-        convertProject(project, options);
         return null;
     }
 
-    private void convertProject(IProject project, TranspilerOptions options) {
-        try {
-            for(IResource resource: project.members()) {
-                if(resource instanceof IProject) {
-                    convertProject((IProject) resource, options);
-                }
-                if(resource instanceof IFile) {
-                    convertFile((IFile) resource, options);
-                }
-                if(resource instanceof IFolder) {
-                    convertFolder((IFolder) resource, options);
-                }
+    private void convertProject(IProject project, TranspilerOptions options) throws IOException, CoreException {
+        for(IResource resource: project.members()) {
+            if(resource instanceof IProject) {
+                convertProject((IProject) resource, options);
             }
-        } catch (CoreException e) {
-            e.printStackTrace();
+            if(resource instanceof IFile) {
+                convertFile((IFile) resource, options);
+            }
+            if(resource instanceof IFolder) {
+                convertFolder((IFolder) resource, options);
+            }
         }
     }
 
-    private void convertFolder(IFolder folder, TranspilerOptions options) {
-        try {
-            for(IResource resource: folder.members()) {
-                if(resource instanceof IProject) {
-                    convertProject((IProject) resource, options);
-                }
-                if(resource instanceof IFile) {
-                    convertFile((IFile) resource, options);
-                }
-                if(resource instanceof IFolder) {
-                    convertFolder((IFolder) resource, options);
-                }
+    private void convertFolder(IFolder folder, TranspilerOptions options) throws IOException, CoreException {
+        for(IResource resource: folder.members()) {
+            if(resource instanceof IProject) {
+                convertProject((IProject) resource, options);
             }
-        } catch (CoreException e) {
-            e.printStackTrace();
+            if(resource instanceof IFile) {
+                convertFile((IFile) resource, options);
+            }
+            if(resource instanceof IFolder) {
+                convertFolder((IFolder) resource, options);
+            }
         }
     }
 
-    private void convertFile(IFile file, TranspilerOptions options) {
+    private void convertFile(IFile file, TranspilerOptions options) throws IOException, CoreException {
         // ignore non java files
         if(!file.getName().endsWith(".java")) {
             return;
@@ -111,19 +109,14 @@ public class ConvertToGucHandler extends AbstractHandler{
         }
         IFile gucFile = file.getProject().getFile(file.getProjectRelativePath().toString().replaceAll("\\.java", ".guc"));
         // read the file
-        try {
-            try(InputStream inputStream = file.getContents()) {
-                String contents = new String(inputStream.readAllBytes(), options.getSourceEncoding());
-                String result = Transpiler.transpile(options, contents);
-                gucFile.create(new ByteArrayInputStream(result.getBytes()), true, null);
-            }
-            String backupPath = file.getProjectRelativePath().lastSegment().replaceAll("\\.java", ".java.bak");
-            file.copy(file.getFullPath().removeLastSegments(1).append(backupPath), true, null);
-            file.delete(true, true, null);
-        } catch (CoreException | IOException e) {
-            e.printStackTrace();
-            return;
+        try(InputStream inputStream = file.getContents()) {
+            String contents = new String(inputStream.readAllBytes(), options.getSourceEncoding());
+            String result = Transpiler.transpile(options, contents);
+            gucFile.create(new ByteArrayInputStream(result.getBytes()), true, null);
         }
+        String backupPath = file.getProjectRelativePath().lastSegment().replaceAll("\\.java", ".java.bak");
+        file.copy(file.getFullPath().removeLastSegments(1).append(backupPath), true, null);
+        file.delete(true, true, null);
     }
     
 }
