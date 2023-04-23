@@ -200,13 +200,11 @@ public class TranspilerMojo extends AbstractMojo {
                 outDir.mkdirs();
             }
             File outputFile = new File(outDir, javaFileName);
-            if (!outputFile.exists() || outputFile.lastModified() <= gucFile.lastModified()) {
-                log.info("GUC TRANSPILER: " + gucFile.getAbsolutePath() + " -> " + outputFile.getAbsolutePath());
-                try {
-                    Transpiler.transpile(gucFile, outputFile, options);
-                } catch (TranspilerException e) {
-                    throw new MojoExecutionException("Error while transpiling " + gucFile.getAbsolutePath(), e);
-                }
+            log.info("GUC TRANSPILER: " + gucFile.getAbsolutePath() + " -> " + outputFile.getAbsolutePath());
+            try {
+                Transpiler.transpile(gucFile, outputFile, options);
+            } catch (TranspilerException e) {
+                throw new MojoExecutionException("Error while transpiling " + gucFile.getAbsolutePath(), e);
             }
             generatedFiles.add(outputFile);
         }
