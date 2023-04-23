@@ -109,13 +109,17 @@ public class ConvertToGucHandler extends AbstractHandler{
         if(file.getProjectRelativePath().toString().startsWith("target")) {
             return;
         }
-        IFile gucFile = file.getProject().getFile(file.getProjectRelativePath().toString().replaceAll(".java", ".guc"));
+        IFile gucFile = file.getProject().getFile(file.getProjectRelativePath().toString().replaceAll("\\.java", ".guc"));
         // read the file
         try {
-            InputStream inputStream = file.getContents();
-            String contents = new String(inputStream.readAllBytes(), options.getSourceEncoding());
-            String result = Transpiler.transpile(options, contents);
-            gucFile.create(new ByteArrayInputStream(result.getBytes()), true, null);
+            try(InputStream inputStream = file.getContents()) {
+                String contents = new String(inputStream.readAllBytes(), options.getSourceEncoding());
+                String result = Transpiler.transpile(options, contents);
+                gucFile.create(new ByteArrayInputStream(result.getBytes()), true, null);
+            }
+            String backupPath = file.getProjectRelativePath().lastSegment().replaceAll("\\.java", ".java.bak");
+            file.copy(file.getFullPath().removeLastSegments(1).append(backupPath), true, null);
+            file.delete(true, true, null);
         } catch (CoreException | IOException e) {
             e.printStackTrace();
             return;

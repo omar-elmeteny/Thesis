@@ -3,6 +3,7 @@ package eg.edu.guc.csen.languagelocalization.pomutils;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 import org.apache.maven.model.Model;
@@ -52,9 +53,9 @@ public class PomHelper {
             writeFile = true;
             addPluginRepository(model, "central", "https://repo1.maven.org/maven2", false);
         }
-        if (!checkPluginRepository(model, "linode-thesis-snapshots", "http://139.162.241.225:8080/snapshots")) {
+        if (!checkPluginRepository(model, "linode-thesis-snapshots", "https://maven.languageslocalization.com/snapshots")) {
             writeFile = true;
-            addPluginRepository(model, "linode-thesis-snapshots", "http://139.162.241.225:8080/snapshots", true);
+            addPluginRepository(model, "linode-thesis-snapshots", "https://maven.languageslocalization.com/snapshots", true);
         }
         try {
             if (writeFile) {
@@ -70,8 +71,14 @@ public class PomHelper {
     private static void writeMavenPomModelToPomXmlFile(Model model, String path) throws IOException {
         // write model to file
         MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
-        FileWriter writer = new FileWriter(path);
-        mavenWriter.write(writer, model);
+        StringWriter contentWriter = new StringWriter();
+        mavenWriter.write(contentWriter, model);
+        String content = contentWriter.toString();
+        String toMatch = "(\\s*)(<id>transpiler-generate-sources</id>)";
+        content = content.replaceAll(toMatch, "$1<?m2e execute onConfiguration?>$1$2");
+        try(FileWriter writer = new FileWriter(path)) {
+            writer.write(content);
+        }
     }
 
     private static void addTranspilerPlugin(Model model) {
@@ -93,6 +100,7 @@ public class PomHelper {
         execution.setGoals(new ArrayList<>());
         execution.getGoals().add("transpile");
         plugin.getExecutions().add(execution);
+        // add <?m2e execute onConfiguration?>
 
         model.getBuild().getPlugins().add(plugin);
     }
@@ -175,9 +183,10 @@ public class PomHelper {
     }
 
     private static Model parsePomXml(String path) throws IOException, XmlPullParserException {
-        FileReader reader = new FileReader(path);
-        MavenXpp3Reader mavenreader = new MavenXpp3Reader();
-        Model model = mavenreader.read(reader);
-        return model;
+        try(FileReader reader = new FileReader(path)) {
+            MavenXpp3Reader mavenreader = new MavenXpp3Reader();
+            Model model = mavenreader.read(reader);
+            return model;
+        }
     }
 }
