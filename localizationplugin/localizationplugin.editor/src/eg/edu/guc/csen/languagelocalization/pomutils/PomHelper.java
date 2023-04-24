@@ -49,6 +49,10 @@ public class PomHelper {
             addBuildHelperPlugin(model);
             writeFile = true;
         }
+        if(!isPluginManagementInstalled(model)) {
+            addPluginManagement(model);
+            writeFile = true;
+        }
         if (!checkPluginRepository(model, "central", "https://repo1.maven.org/maven2")) {
             writeFile = true;
             addPluginRepository(model, "central", "https://repo1.maven.org/maven2", false);
@@ -79,6 +83,54 @@ public class PomHelper {
         try(FileWriter writer = new FileWriter(path)) {
             writer.write(content);
         }
+    }
+
+    public static void addPluginManagement(Model model) {
+        if (model.getBuild() == null) {
+            model.setBuild(new org.apache.maven.model.Build());
+        }
+        if (model.getBuild().getPluginManagement() == null) {
+            model.getBuild().setPluginManagement(new org.apache.maven.model.PluginManagement());
+        }
+        if (model.getBuild().getPluginManagement().getPlugins() == null) {
+            model.getBuild().getPluginManagement().setPlugins(new java.util.ArrayList<Plugin>());
+        }
+        Plugin plugin = new Plugin();
+        plugin.setGroupId("org.eclipse.m2e");
+        plugin.setArtifactId("lifecycle-mapping");
+        plugin.setVersion("1.0.0");
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom lifecycleMappingMetadata = new Xpp3Dom("lifecycleMappingMetadata");
+        Xpp3Dom pluginExecutions = new Xpp3Dom("pluginExecutions");
+        Xpp3Dom pluginExecution = new Xpp3Dom("pluginExecution");
+        Xpp3Dom pluginExecutionFilter = new Xpp3Dom("pluginExecutionFilter");
+        Xpp3Dom action = new Xpp3Dom("action");
+        Xpp3Dom groupId = new Xpp3Dom("groupId");
+        groupId.setValue("eg.edu.guc.csen");
+        Xpp3Dom artifactId = new Xpp3Dom("artifactId");
+        artifactId.setValue("transpiler-maven-plugin");
+        Xpp3Dom versionRange = new Xpp3Dom("versionRange");
+        versionRange.setValue("[1.0.0,)");
+        Xpp3Dom goals = new Xpp3Dom("goals");   
+        Xpp3Dom goal = new Xpp3Dom("goal");
+        goal.setValue("transpile");
+        Xpp3Dom execute = new Xpp3Dom("execute");
+        Xpp3Dom runOnIncremental = new Xpp3Dom("runOnIncremental");
+        runOnIncremental.setValue("true");
+        execute.addChild(runOnIncremental);
+        action.addChild(execute);
+        goals.addChild(goal);
+        pluginExecutionFilter.addChild(groupId);
+        pluginExecutionFilter.addChild(artifactId);
+        pluginExecutionFilter.addChild(versionRange);
+        pluginExecutionFilter.addChild(goals);
+        pluginExecution.addChild(pluginExecutionFilter);
+        pluginExecution.addChild(action);
+        pluginExecutions.addChild(pluginExecution);
+        lifecycleMappingMetadata.addChild(pluginExecutions);
+        configuration.addChild(lifecycleMappingMetadata);
+        plugin.setConfiguration(configuration);
+        model.getBuild().getPluginManagement().getPlugins().add(plugin);
     }
 
     private static void addTranspilerPlugin(Model model) {
@@ -168,6 +220,19 @@ public class PomHelper {
 
     private static boolean isBuildHelperPluginInstalled(Model model) {
         return isPluginInstalled("org.codehaus.mojo", "build-helper-maven-plugin", model);
+    }
+
+    
+    private static boolean isPluginManagementInstalled(Model model) {
+        if(model.getBuild() != null && model.getBuild().getPluginManagement() != null && model.getBuild().getPluginManagement().getPlugins() != null) {
+            for (int i = 0; i < model.getBuild().getPluginManagement().getPlugins().size(); i++) {
+                Plugin plugin = model.getBuild().getPluginManagement().getPlugins().get(i);
+                if (plugin.getGroupId().equals("org.eclipse.m2e") && plugin.getArtifactId().equals("lifecycle-mapping")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean isPluginInstalled(String groupId, String artifcatId, Model model) {

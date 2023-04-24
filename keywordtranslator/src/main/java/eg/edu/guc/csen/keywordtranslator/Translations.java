@@ -108,21 +108,27 @@ public class Translations {
         this.defaultLanguage = defaultLanguage;
     }
 
-    public String translateKeyword(String keyword, String fromLanguage, String toLanguage) {
-        if (fromLanguage.equals(toLanguage)) {
+    public String translateKeyword(String keyword, String sourceLanguage, String targetLanguage) {
+        if (sourceLanguage.equals(targetLanguage)) {
             return keyword;
         }
-        if (fromLanguage.equals("en")) {
-            return keywordTranslations.translateFromEnglish(keyword, toLanguage);
+        if (sourceLanguage.equals("en")) {
+            return keywordTranslations.translateFromEnglish(keyword, targetLanguage);
         }
-        if (toLanguage.equals("en")) {
-            return keywordTranslations.translateToEnglish(keyword, fromLanguage);
+        if (targetLanguage.equals("en")) {
+            return keywordTranslations.translateToEnglish(keyword, sourceLanguage);
         }
-        String english = keywordTranslations.translateToEnglish(keyword, fromLanguage);
-        return keywordTranslations.translateFromEnglish(english, toLanguage);
+        String english = keywordTranslations.translateToEnglish(keyword, sourceLanguage);
+        return keywordTranslations.translateFromEnglish(english, targetLanguage);
     }
 
     public String translateIdentifier(String identifier, String sourceLanguage, String targetLanguage) {
+        if (sourceLanguage.equals(targetLanguage)) {
+            return identifier;
+        }
+        if (sourceLanguage.equals("en")) {
+            return identifierTranslations.translateFromEnglish(identifier, targetLanguage);
+        }
         if(identifierTranslations.hasTranslationToEnglish(identifier, sourceLanguage)) {
             String englishTranslation = identifierTranslations.translateToEnglish(identifier, sourceLanguage);
             if(targetLanguage.equals("en")) {
