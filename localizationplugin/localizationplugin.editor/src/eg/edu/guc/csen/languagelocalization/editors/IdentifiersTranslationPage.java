@@ -16,16 +16,22 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
 import eg.edu.guc.csen.keywordtranslator.Language;
@@ -50,6 +56,52 @@ public class IdentifiersTranslationPage extends Composite {
         GridLayout layout = new GridLayout(1, false);
         this.setLayout(layout);
 
+        // Search composite
+        Composite searchComposite = new Composite(this, SWT.NONE);
+        searchComposite.setLayout(new GridLayout(4, false));
+        Label searchLabel = new Label(searchComposite, SWT.NONE);
+        searchLabel.setText("Search:");
+        final Text searchText = new Text(searchComposite, SWT.SEARCH);
+        searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        Button exactSearch = new Button(searchComposite, SWT.CHECK);
+        exactSearch.setText("Exact match");
+        exactSearch.setSelection(true);
+        Button caseSensitive = new Button(searchComposite, SWT.CHECK);
+        caseSensitive.setText("Case sensitive");
+        caseSensitive.setSelection(true);
+        
+        searchText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+            }
+        });
+
+        exactSearch.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+            }
+        });
+
+        caseSensitive.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+            }
+        });
+        
         // Create the language dropdown
         Composite languageComposite = new Composite(this, SWT.NONE);
         languageComposite.setLayout(new GridLayout(3, false));
@@ -182,6 +234,22 @@ public class IdentifiersTranslationPage extends Composite {
 
     }
 
+    private void updateSearch(String searchTerm, boolean exact, boolean caseSensitive) {
+        if (searchTerm.length() == 0) {
+            treeViewer.setFilters(new ViewerFilter[0]);
+            return;
+        }
+        final String searchTermFinal = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+        treeViewer.setFilters(new ViewerFilter() {
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                BaseTreeObject obj = (BaseTreeObject) element;
+                return obj.hasTerm(searchTermFinal, exact, caseSensitive);
+            }
+        });
+        treeViewer.expandAll();
+    }
+    
     public void updateTree() {
         int selectionIndex = languageCombo.getSelectionIndex();
 		if (selectionIndex == -1) {
@@ -235,6 +303,7 @@ public class IdentifiersTranslationPage extends Composite {
 
         private final BaseTreeObject parent;
         private final String name;
+        private final String lowerCaseName;
 
         public String getName() {
             return name;
@@ -248,6 +317,7 @@ public class IdentifiersTranslationPage extends Composite {
             super();
             this.parent = parent;
             this.name = name;
+            this.lowerCaseName = name.toLowerCase();
         }
 
         public String getFullName() {
@@ -263,6 +333,38 @@ public class IdentifiersTranslationPage extends Composite {
         }
 
         public abstract BaseTreeObject[] getChildren();
+
+        public boolean nameMatch(String term, boolean exact, boolean caseSensitive) {
+            if (term == null || term.isEmpty())
+                return true;
+            if (exact) {
+                if (caseSensitive) {
+                    return name.equals(term);
+                } else {
+                    return lowerCaseName.equals(term);
+                }
+            } else {
+                if (caseSensitive) {
+                    return name.contains(term);
+                } else {
+                    return lowerCaseName.contains(term);
+                }
+            }
+        }
+
+        public boolean hasTerm(String term, boolean exact, boolean caseSensitive) {
+            if (nameMatch(term, exact, caseSensitive))
+                return true;
+            if (this.getChildren() == null) {
+                return false;
+            }
+            for (BaseTreeObject child : getChildren()) {
+                if (child.hasTerm(term, exact, caseSensitive))
+                    return true;
+            }
+            return false;
+        }
+
     }
 
     private static ArrayList<String> srcZipEntries = initializeSrcZipEntries();
@@ -440,12 +542,16 @@ public class IdentifiersTranslationPage extends Composite {
     private static class TypeTreeObject extends BaseTreeObject {
 
         private MemberTreeObject[] children = null;
+        private boolean childrenInitialized;
 
         public TypeTreeObject(PackageTreeObject parent, String name) {
             super(parent, name);
         }
 
         public synchronized BaseTreeObject[] getChildren() {
+            if (childrenInitialized) {
+                return children;
+            }
             if (children == null) {
                 String fullName = this.getFullName();
                 String typeName = fullName.substring(fullName.indexOf('/') + 1).replace("/", ".");
@@ -477,9 +583,10 @@ public class IdentifiersTranslationPage extends Composite {
                         }
                     }
                     children = result.toArray(new MemberTreeObject[result.size()]);
-                } catch (ClassNotFoundException e) {
+                    childrenInitialized = true;
+                } catch (ClassNotFoundException|NoClassDefFoundError|ExceptionInInitializerError|UnsatisfiedLinkError e) {
                     // print stacktrace
-                    e.printStackTrace(System.err);
+                    
                 }
 
             }
