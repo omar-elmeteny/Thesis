@@ -53,5 +53,15 @@ public class TranspilerOptions {
     public void setTranslations(Translations translations) {
         this.translations = translations;
     }
+
+    private boolean generateSourcemap;
+
+    public boolean isGenerateSourcemap() {
+        return generateSourcemap;
+    }
+
+    public void setGenerateSourcemap(boolean generateSourcemap) {
+        this.generateSourcemap = generateSourcemap;
+    }
     
 }

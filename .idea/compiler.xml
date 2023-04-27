@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="demo-ar" />
+        <module name="dictionary-generator" />
+        <module name="localizationplugin.tp" />
+        <module name="transpiler-maven-plugin" />
+        <module name="localizedtranspiler" />
+        <module name="eg.edu.guc.csen.localizationplugin.editor" />
+        <module name="localizationplugin.product" />
+        <module name="keywordtranslator" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

@@ -18,6 +18,7 @@
         },
         {
             "type": "java",
+            "preLaunchTask": "",
             "name": "Demo Arabic",
             "request": "launch",
             "mainClass": "fwldr.tjrb_x1E97_",

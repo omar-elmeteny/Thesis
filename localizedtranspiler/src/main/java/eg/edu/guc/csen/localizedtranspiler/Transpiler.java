@@ -27,11 +27,64 @@ public class Transpiler {
         }
         var res = transpile(options, content);
 
+        if (options.isGenerateSourcemap()) {
+            StringBuilder sourceMap = new StringBuilder();
+            sourceMap.append("SMAP");
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append(targetFile.getName());
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("Java");
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("*S ");
+            sourceMap.append(getFileNameWithoutExtension(targetFile));
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("*F");
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("+ 1 ");
+            sourceMap.append(sourceFile.getName());
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append(sourceFile.getAbsoluteFile().toString());
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("*L");
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("1#1,");
+            sourceMap.append(countLines(content));
+            sourceMap.append(":1");
+            sourceMap.append(System.lineSeparator());
+            sourceMap.append("*E");
+            File sourcemapFile = new File(targetFile.getParentFile(), targetFile.getName() + ".smap");
+            try {
+                Files.write(sourcemapFile.toPath(), sourceMap.toString().getBytes(Charset.forName(options.getOutputEncoding())));
+            } catch (IOException e) {
+                // Ignore                
+            }
+        }
+
         try {
             Files.write(targetFile.toPath(), res.getBytes(Charset.forName(options.getOutputEncoding())));
         } catch (IOException e) {
             throw new TranspilerException("Error writing target file", e);
         }
+    }
+
+    private static String getFileNameWithoutExtension(File file) {
+        String fileName = file.getName();
+        int lastIndexOf = fileName.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return fileName;
+        }
+        return fileName.substring(0, lastIndexOf);
+    }
+
+    private static int countLines(String s) {
+        // count the number of lines in a string
+        int lines = 1;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\n') {
+                lines++;
+            }
+        }
+        return lines;
     }
 
     public static String transpile(TranspilerOptions options, String content) {
@@ -43,9 +96,9 @@ public class Transpiler {
         Java9Parser parser = new Java9Parser(tokens);
         ParseTree tree = parser.compilationUnit();
 
-        
         // String code = tree.toStringTree(parser);
-        JavaGenerator generator = new JavaGenerator(options.getSourceLanguage(), options.getTargetLanguage(), options.getTranslations());
+        JavaGenerator generator = new JavaGenerator(options.getSourceLanguage(), options.getTargetLanguage(),
+                options.getTranslations());
         var res = generator.visit(tree);
         return res.toString();
     }

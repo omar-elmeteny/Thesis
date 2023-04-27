@@ -14,6 +14,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -23,13 +24,14 @@ import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import eg.edu.guc.csen.keywordtranslator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Transpiler;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerException;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
 
-@Mojo(name = "transpile", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
+@Mojo(name = "transpile", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = false)
 public class TranspilerMojo extends AbstractMojo {
 
     /*
@@ -77,12 +79,14 @@ public class TranspilerMojo extends AbstractMojo {
     @Parameter(property = "project.build.sourceEncoding")
     protected String outputEncoding;
 
-     /**
+    @Component
+    private BuildContext buildContext;
+
+    /**
      * Path of the translations file.
      */
     @Parameter(defaultValue = "${basedir}/translations.guct")
     protected File translationsFile;
-
 
     @Parameter(property = "project.compileSourceRoots")
     private List<String> compileSourceroots = new ArrayList<String>();
@@ -104,6 +108,16 @@ public class TranspilerMojo extends AbstractMojo {
         return targetDirectory;
     }
 
+    /**
+     * Specify whether to generate source map files.
+     */
+    @Parameter(defaultValue = "true")
+    private boolean generateSourceMap;
+
+    public boolean isGenerateSourceMap() {
+        return generateSourceMap;
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
@@ -120,14 +134,46 @@ public class TranspilerMojo extends AbstractMojo {
 
             log.debug("GUC TRANSPILER: Output: " + outputDirectory);
         }
+
+        transpileIfModified(log);
+    }
+
+    private long translationsFileLastModified = 0;
+    private Translations translations;
+
+    private void loadTranslationsFile() throws MojoExecutionException {
+        long lastModified = translationsFile.lastModified();
+        if (translations != null
+                && !((buildContext != null && buildContext.hasDelta(translationsFile))
+                        || lastModified > translationsFileLastModified)) {
+            return;
+        }
+        translationsFileLastModified = lastModified;
+        try {
+            translations = new Translations(translationsFile);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Fatal error occured while loading the translations file", e);
+        }
+    }
+
+    private void transpileIfModified(Log log) throws MojoExecutionException {
+        loadTranslationsFile();
+        TranspilerOptions options = new TranspilerOptions();
+        options.setOutputEncoding(outputEncoding);
+        options.setSourceEncoding(inputEncoding);
+        options.setTargetLanguage("en");
+        options.setSourceLanguage(sourceLanguage);
+        options.setTranslations(translations);
+        options.setGenerateSourcemap(generateSourceMap);
+
         Set<File> generatedFiles = new HashSet<File>();
-        for(String sourceRoot : compileSourceroots) {
+        for (String sourceRoot : compileSourceroots) {
             File sourceDirectory = new File(sourceRoot);
-            if(sourceDirectory.getAbsolutePath().startsWith(targetDirectory.getAbsolutePath())) {
+            if (sourceDirectory.getAbsolutePath().startsWith(targetDirectory.getAbsolutePath())) {
                 continue;
             }
             log.info("GUC TRANSPILER: Processing " + sourceDirectory.getAbsolutePath() + "");
-            Set<File> files =  processSourceDirectory(sourceDirectory);
+            Set<File> files = processSourceDirectory(sourceDirectory, options);
             generatedFiles.addAll(files);
         }
         Set<File> filesInOutput;
@@ -136,7 +182,8 @@ public class TranspilerMojo extends AbstractMojo {
             for (File file : filesInOutput) {
                 if (!generatedFiles.contains(file)) {
                     log.info("GUC TRANSPILER: Deleting " + file.getAbsolutePath());
-                    Files.delete(file.toPath());;
+                    Files.delete(file.toPath());
+                    ;
                 }
             }
         } catch (IOException e) {
@@ -144,7 +191,8 @@ public class TranspilerMojo extends AbstractMojo {
         }
     }
 
-    private Set<File> processSourceDirectory(File sourceDirectory) throws MojoExecutionException {
+    private Set<File> processSourceDirectory(File sourceDirectory, TranspilerOptions options)
+            throws MojoExecutionException {
         Log log = getLog();
         if (!sourceDirectory.isDirectory()) {
             log.info("No GUC files to compile in " + sourceDirectory.getAbsolutePath());
@@ -169,46 +217,39 @@ public class TranspilerMojo extends AbstractMojo {
                     "Fatal error occured while evaluating the names of the guc files to analyze", e);
         }
 
-        Translations translations;
-        try {
-            translations = new Translations(translationsFile);
-        } catch (IOException e) {
-            log.error(e);
-            throw new MojoExecutionException("Fatal error occured while loading the translations file", e);
-        }
-
-        long translationsFileLastModified = translationsFile.lastModified();
-
-        TranspilerOptions options = new TranspilerOptions();
-        options.setOutputEncoding(outputEncoding);
-        options.setSourceEncoding(inputEncoding);
-        options.setTargetLanguage("en");
-        options.setSourceLanguage(sourceLanguage);
-        options.setTranslations(translations);
-
         Set<File> generatedFiles = new HashSet<File>();
         for (File gucFile : gucFiles) {
-            String javaFileName = translations.translateIdentifier(getFileNameWithoutExtension(gucFile),
+            String javaFileName = options.getTranslations().translateIdentifier(getFileNameWithoutExtension(gucFile),
                     sourceLanguage, "en") + ".java";
             String relativePath = getFilePathRelativeToSourceDirectory(gucFile, sourceDirectory);
             String[] split = relativePath.split("\\//|\\\\");
 
             File outDir = outputDirectory;
             for (int i = 0; i < split.length; i++) {
-                split[i] = translations.translateIdentifier(split[i], sourceLanguage, "en");
+                split[i] = options.getTranslations().translateIdentifier(split[i], sourceLanguage, "en");
                 outDir = new File(outDir, split[i]);
             }
             if (!outDir.exists()) {
                 outDir.mkdirs();
             }
             File outputFile = new File(outDir, javaFileName);
-            log.info("GUC TRANSPILER: " + gucFile.getAbsolutePath() + " -> " + outputFile.getAbsolutePath());
-            try {
-                Transpiler.transpile(gucFile, outputFile, options);
-            } catch (TranspilerException e) {
-                throw new MojoExecutionException("Error while transpiling " + gucFile.getAbsolutePath(), e);
+            if ((buildContext != null &&
+                    (buildContext.isUptodate(outputFile, gucFile)
+                            || buildContext.isUptodate(outputFile, translationsFile)))
+                    ||
+                    !outputFile.exists() || outputFile.lastModified() <= gucFile.lastModified()
+                    || outputFile.lastModified() <= translationsFileLastModified) {
+                log.info("GUC TRANSPILER: " + gucFile.getAbsolutePath() + " -> " + outputFile.getAbsolutePath());
+                try {
+                    Transpiler.transpile(gucFile, outputFile, options);
+                } catch (TranspilerException e) {
+                    throw new MojoExecutionException("Error while transpiling " + gucFile.getAbsolutePath(), e);
+                }
             }
             generatedFiles.add(outputFile);
+            if (generateSourceMap) {
+                generatedFiles.add(new File(outputFile.getParent(), outputFile.getName() + ".smap"));
+            }
         }
         return generatedFiles;
     }
@@ -250,23 +291,25 @@ public class TranspilerMojo extends AbstractMojo {
         return scan.getIncludedSources(sourceDirectory, null);
     }
 
-    public static Set<File> getFilesInOutputFolder(File outputDirectory){
+    public Set<File> getFilesInOutputFolder(File outputDirectory) {
         Set<File> javaFiles = new HashSet<>();
-        listJavaFilesRecursively(outputDirectory, javaFiles);
+        listJavaFilesRecursively(outputDirectory, javaFiles, generateSourceMap);
         return javaFiles;
     }
 
-    private static void listJavaFilesRecursively(File folder, Set<File> javaFiles) {
+    private static void listJavaFilesRecursively(File folder, Set<File> javaFiles, boolean includeSmap) {
         File[] files = folder.listFiles();
-        
+
         if (files == null) {
             return;
         }
-        
+
         for (File file : files) {
             if (file.isDirectory()) {
-                listJavaFilesRecursively(file, javaFiles);
+                listJavaFilesRecursively(file, javaFiles, includeSmap);
             } else if (file.getName().endsWith(".java")) {
+                javaFiles.add(file);
+            } else if (includeSmap && file.getName().endsWith(".java.smap")) {
                 javaFiles.add(file);
             }
         }

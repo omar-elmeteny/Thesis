@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/dictionary-generator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dictionary-generator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/demo-ar/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/demo-ar/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/demo-ar/target/generated-sources/guc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/keywordtranslator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/keywordtranslator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.editor/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.editor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.product/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.product/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.target/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/localizationplugin.target/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizationplugin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizedtranspiler/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/localizedtranspiler/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/transpiler-maven-plugin/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/transpiler-maven-plugin/src/main/java" charset="UTF-8" />
+  </component>
+</project>
