@@ -8,7 +8,6 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>localizationplugin.tp</artifactId>
-
     <name>${base.name} :: Target Platform</name>
     <packaging>eclipse-target-definition</packaging>
     <build>
