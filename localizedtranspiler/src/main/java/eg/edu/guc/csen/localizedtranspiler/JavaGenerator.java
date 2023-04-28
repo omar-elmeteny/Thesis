@@ -1,12 +1,17 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.BlockStatementsContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.LastFormalParameterContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.MethodDeclarationContext;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
@@ -100,6 +105,77 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     public void setSourceLanguage(String sourceLanguage) {
         this.sourceLanguage = sourceLanguage;
+    }
+
+    private boolean isInsideMain = false;
+    @Override
+    public StringBuilder visitMethodDeclaration(MethodDeclarationContext ctx) {
+        if (this.sourceLanguage.equals("en")) {
+            return super.visitMethodDeclaration(ctx);
+        }
+        if (isMainMethod(ctx)) {
+            isInsideMain = true;
+            StringBuilder result = super.visitMethodDeclaration(ctx);
+            isInsideMain = false;
+            return result;
+        }
+        return super.visitMethodDeclaration(ctx);
+    }
+
+    private String getStringTypeName() {
+        return this.translations.translateIdentifier("String", "en", sourceLanguage);
+    }
+
+    private boolean isPublicMethod(MethodDeclarationContext ctx) {
+        return ctx.methodModifier().stream().anyMatch(modifier -> modifier.PUBLIC() != null);
+    }
+    private boolean isStaticMethod(MethodDeclarationContext ctx) {
+        return ctx.methodModifier().stream().anyMatch(modifier -> modifier.STATIC() != null);
+    }
+    private  boolean isMainMethod(MethodDeclarationContext ctx) {
+        if (!isPublicMethod(ctx)) {
+            return false;
+        }
+        if (!isStaticMethod(ctx)) {
+            return false;
+        }
+        if (!ctx.methodHeader().methodDeclarator().identifier().getText().equals("main")) {
+            return false;
+        }
+
+        if (ctx.methodHeader().result().VOID() == null) {
+            return false;
+        }
+        List<ParseTree> parameters = ctx.methodHeader().methodDeclarator().formalParameterList().children;
+        if (parameters == null || parameters.size() != 1 || !(parameters.get(0) instanceof LastFormalParameterContext)) {
+            return false;
+        }
+        LastFormalParameterContext parameter = (LastFormalParameterContext) parameters.get(0);
+        String type = parameter.formalParameter().unannType().getText();
+        if (!type.equals(getStringTypeName() + "[]") && !type.equals("String[]")) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public StringBuilder visitBlockStatements(BlockStatementsContext ctx) {
+        if (this.sourceLanguage.equals("en")) {
+            return super.visitBlockStatements(ctx);
+        }
+        if (isInsideMain) {
+            builder.append("try {" 
+            + "java.io.PrintStream ps = new java.io.PrintStream(System.out, true, \"UTF-8\" );"
+            + "System.setOut(ps);" 
+            + "ps = new java.io.PrintStream(System.err, true, \"UTF-8\" );"
+            + "System.setErr(ps);"
+            + "} catch (java.io.UnsupportedEncodingException e) { }");
+            isInsideMain = false;            
+        }
+        builder.append("try {");
+        super.visitBlockStatements(ctx);
+        builder.append("} catch (RuntimeException e) { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedException(e, \"" + this.sourceLanguage + "\"); }");
+        return builder;
     }
 
     @Override

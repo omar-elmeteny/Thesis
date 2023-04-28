@@ -72,7 +72,7 @@ public class SourceMapMojo extends AbstractMojo {
         String debugInfo = Files.readString(sourcemapFile.toPath());
 
         // Create a ClassWriter to write the modified class file
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        ClassWriter classWriter = new ClassWriter(0);
         // Add the debug attribute to the class
         // classWriter.visitAttribute(debugAttribute);
         // classWriter.visitSource(debugInfo, debugInfo);

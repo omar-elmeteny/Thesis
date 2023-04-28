@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/dictionary-generator/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dictionary-generator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/demo-ar" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/demo-ar/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/demo-ar/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/demo-ar/target/generated-sources/guc" charset="UTF-8" />

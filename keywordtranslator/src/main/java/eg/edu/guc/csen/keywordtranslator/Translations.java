@@ -15,6 +15,7 @@ public class Translations {
 
     private final KeywordTranslations keywordTranslations = new KeywordTranslations();
     private final IdentifierTranslations identifierTranslations = new IdentifierTranslations();
+    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations();
     private String defaultLanguage = "ar";
 
     public Translations() {
@@ -45,7 +46,10 @@ public class Translations {
         }
         if (jsonObject.has("identifiers")) {
             identifierTranslations.updateFromJSONObject(jsonObject.getJSONObject("identifiers"));
-        } 
+        }
+        if (jsonObject.has("exceptions")) {
+            exceptionTranslations.updateFromJSONObject(jsonObject.getJSONObject("exceptions"));
+        }
         if (jsonObject.has("defaultLanguage")) {
             defaultLanguage = jsonObject.getString("defaultLanguage");
         }
@@ -88,6 +92,7 @@ public class Translations {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("keywords", keywordTranslations.toJSON());
         jsonObject.put("identifiers", identifierTranslations.toJSON());
+        jsonObject.put("exceptions", exceptionTranslations.toJSON());
         jsonObject.put("defaultLanguage", defaultLanguage);
         return jsonObject;
     }
@@ -98,6 +103,10 @@ public class Translations {
 
     public IdentifierTranslations getIdentifierTranslations() {
         return identifierTranslations;
+    }
+
+    public ExceptionTranslations getExceptionTranslations() {
+        return exceptionTranslations;
     }
 
     public String getDefaultLanguage() {
