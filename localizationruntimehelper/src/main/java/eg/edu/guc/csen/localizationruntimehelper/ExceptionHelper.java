@@ -15,10 +15,19 @@ public class ExceptionHelper {
 
     public static RuntimeException getLocalizedException(RuntimeException e, String language) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        if (stackTrace.length < 2) {
+        int index = -1;
+        for (int i = 0; i < stackTrace.length; i++) {
+            if (stackTrace[i].getClassName().equals(ExceptionHelper.class.getName())
+                    && stackTrace[i].getMethodName().equals("getLocalizedException")
+            ) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1 || stackTrace.length <= index + 1) {
             return e;
         }
-        StackTraceElement caller = stackTrace[1];
+        StackTraceElement caller = stackTrace[index + 1];
         try {
             Class<?> clazz = Class.forName(caller.getClassName());
             Translations translations = getTranslations(clazz);
