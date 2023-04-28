@@ -1,50 +1,25 @@
 package eg.edu.guc.csen.keywordtranslator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.input.BOMInputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ExceptionTranslations {
 
     private HashMap<String, ArrayList<ExceptionTranslationEntry>> exceptionTranslations = new HashMap<String, ArrayList<ExceptionTranslationEntry>>();
+    private final Translations translations;
 
-    public ExceptionTranslations() {
+    public ExceptionTranslations(Translations translations) {
         super();
-    }
-
-    public ExceptionTranslations(File jsonFile) throws IOException {
-        super();
-        if (!jsonFile.exists()) {
-            return;
-        }
-        try (FileInputStream fileInputStream = new FileInputStream(jsonFile)) {
-            try (BOMInputStream bomInputStream = new BOMInputStream(fileInputStream)) {
-                String jsonString = new String(bomInputStream.readAllBytes(), StandardCharsets.UTF_8);
-                loadFromJSONString(jsonString);
-            }
-        }
-    }
-
-    public ExceptionTranslations(JSONObject jsonObject) {
-        super();
+        this.translations = translations;
     }
 
     void updateFromJSONObject(JSONObject jsonObject) {
         exceptionTranslations.clear();
-        loadFromJSONObject(jsonObject);
-    }
-
-    private void loadFromJSONString(String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
         loadFromJSONObject(jsonObject);
     }
 
@@ -128,7 +103,7 @@ public class ExceptionTranslations {
             try {
                 Exception translatedException = (Exception) e.getClass().getConstructor(String.class, Throwable.class)
                         .newInstance(translatedMessage, e.getCause());
-                translatedException.setStackTrace(e.getStackTrace());
+                translatedException.setStackTrace(translateStackTraceElements(e.getStackTrace(), language));
                 return translatedException;
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
@@ -138,13 +113,36 @@ public class ExceptionTranslations {
         try {
             Exception translatedException = (Exception) e.getClass().getConstructor(String.class)
                     .newInstance(translatedMessage);
-            translatedException.setStackTrace(e.getStackTrace());
+            translatedException.setStackTrace(translateStackTraceElements(e.getStackTrace(), language));
             return translatedException;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
             return e;
-            
+
         }
+    }
+
+    private StackTraceElement[] translateStackTraceElements(StackTraceElement[] elements, String language) {
+        StackTraceElement[] translatedElements = new StackTraceElement[elements.length];
+        for (int i = 0; i < elements.length; i++) {
+            translatedElements[i] = translateStackTraceElement(elements[i], language);
+        }
+        return translatedElements;
+    }
+
+    private StackTraceElement translateStackTraceElement(StackTraceElement el, String language) {
+        String className = el.getClassName();
+        String methodName = el.getMethodName();
+
+        String[] classNameSplit = className.split("\\.");
+        for (int i = 0; i < classNameSplit.length; i++) {
+            classNameSplit[i] = translations.translateIdentifier(classNameSplit[i], "en", language);
+        }
+        methodName = translations.translateIdentifier(methodName, "en", language);
+
+        StackTraceElement translatedEl = new StackTraceElement(String.join(".", classNameSplit), el.getMethodName(),
+                el.getFileName(), el.getLineNumber());
+        return translatedEl;
     }
 
 }

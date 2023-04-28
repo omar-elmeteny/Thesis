@@ -1,37 +1,56 @@
 package eg.edu.guc.csen.keywordtranslator;
 
 public class Language {
-	private String key;
-	private String name;
-	private String nativeName;
+	private final String key;
+	private final String name;
+	private final String nativeName;
+	private final String script;
+	private final boolean rtl;
 
-	public Language(String key, String name, String nativeName) {
+	public Language(String key, String name, String nativeName, String script, boolean rtl) {
 		this.key = key;
 		this.name = name;
 		this.nativeName = nativeName;
+		this.script = script;
+		this.rtl = rtl;
 	}
 
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getNativeName() {
 		return nativeName;
 	}
 
-	public void setNativeName(String nativeName) {
-		this.nativeName = nativeName;
+	public String getScript() {
+		return script;
+	}
+
+	public boolean isRtl() {
+		return rtl;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Language) {
+			Language other = (Language) obj;
+			return key.equals(other.key);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.key.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return this.key;
 	}
 }

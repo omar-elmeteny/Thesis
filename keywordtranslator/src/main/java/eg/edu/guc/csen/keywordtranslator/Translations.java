@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.input.BOMInputStream;
 import org.json.JSONObject;
@@ -15,7 +17,7 @@ public class Translations {
 
     private final KeywordTranslations keywordTranslations = new KeywordTranslations();
     private final IdentifierTranslations identifierTranslations = new IdentifierTranslations();
-    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations();
+    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations(this);
     private String defaultLanguage = "ar";
 
     public Translations() {
@@ -136,22 +138,58 @@ public class Translations {
             return identifier;
         }
         if (sourceLanguage.equals("en")) {
-            return identifierTranslations.translateFromEnglish(identifier, targetLanguage);
+            identifier = restoreAlphaNumeric(identifier);
+            if (identifierTranslations.hasTranslationFromEnglish(identifier, targetLanguage)) {
+                return identifierTranslations.translateFromEnglish(identifier, targetLanguage);
+            }
+            identifier = transliterate(identifier, sourceLanguage, targetLanguage);
+            return identifier;
         }
         if(identifierTranslations.hasTranslationToEnglish(identifier, sourceLanguage)) {
             String englishTranslation = identifierTranslations.translateToEnglish(identifier, sourceLanguage);
             if(targetLanguage.equals("en")) {
                 return englishTranslation;
             }
+            identifier = englishTranslation;
+            sourceLanguage = "en";
             if(identifierTranslations.hasTranslationFromEnglish(englishTranslation, targetLanguage)) {
                 return identifierTranslations.translateFromEnglish(englishTranslation, targetLanguage);
             }
         }
-        if(sourceLanguage.equals("ar")) {
-            Transliterator transliterator = Transliterator.getInstance("Arabic-Latin");
-            identifier = transliterator.transliterate(identifier);
+        if (targetLanguage.equals("en")) {
+            identifier = replaceNonAlphaNumeric(identifier);
+            if (isKeyword(identifier)) {
+                return "_" + identifier;
+            }
         }
-        return replaceNonAlphaNumeric(identifier);
+        return identifier;
+    }
+
+    private static String transliterate(String word, String sourceLanguage, String targetLanguage) {
+        if (sourceLanguage.equals(targetLanguage)) {
+            return word;
+        }
+        Language source = Languages.getLanguage(sourceLanguage);
+        Language target = Languages.getLanguage(targetLanguage);
+        if (source == null || target == null) {
+            return word;
+        }
+        String sourceScript = source.getScript();
+        String targetScript = target.getScript();
+        if (sourceScript.equals(targetScript)) {
+            return word;
+        }
+        if (sourceScript.equals("Latin")) {
+            Transliterator transliterator = Transliterator.getInstance( "Latin-" + targetScript);
+            return transliterator.transliterate(word);
+        } else if (targetScript.equals("Latin")) {
+            Transliterator transliterator = Transliterator.getInstance(sourceScript + "-Latin");
+            return transliterator.transliterate(word);
+        } else {
+            Transliterator transliterator1 = Transliterator.getInstance(sourceScript + "-Latin");
+            Transliterator transliterator2 = Transliterator.getInstance( "Latin-" + targetScript);
+            return transliterator2.transliterate(transliterator1.transliterate(word));
+        }
     }
 
     public static boolean isValidIdentifier(String identifier) {
@@ -251,6 +289,26 @@ public class Translations {
     
             return false;
         }
+    }
+
+    private static final Pattern unicodePattern = Pattern.compile("_x([0-9A-Fa-f]{4})_");
+
+    private static String restoreAlphaNumeric(String input) {
+        StringBuilder result = new StringBuilder(input.length());
+        Matcher matcher = unicodePattern.matcher(input);
+        int lastEnd = 0;
+        while (matcher.find()) {
+            if (matcher.start() > lastEnd) {
+                result.append(input.substring(lastEnd, matcher.start()));
+            }
+            int codePoint = Integer.parseInt(matcher.group(1), 16);
+            result.appendCodePoint(codePoint);
+            lastEnd = matcher.end();
+        }
+        if (lastEnd < input.length()) {
+            result.append(input.substring(lastEnd));
+        }
+        return result.toString();
     }
 
     private static String replaceNonAlphaNumeric(String input) {

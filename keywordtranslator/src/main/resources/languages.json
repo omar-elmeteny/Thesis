@@ -3,278 +3,395 @@
 		{
 			"key": "ar",
 			"name": "Arabic",
-			"nativeName": "العربية"
+			"nativeName": "العربية",
+			"script": "Arabic",
+			"rtl": true
 		},
 		{
 			"key": "en",
 			"name": "English",
-			"nativeName": "English"
+			"nativeName": "English",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "de",
 			"name": "German",
-			"nativeName": "Deutsch"
+			"nativeName": "Deutsch",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "es",
 			"name": "Spanish",
-			"nativeName": "Español"
+			"nativeName": "Español",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "fr",
 			"name": "French",
-			"nativeName": "Français"
+			"nativeName": "Français",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "it",
 			"name": "Italian",
-			"nativeName": "Italiano"
+			"nativeName": "Italiano",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "ja",
 			"name": "Japanese",
-			"nativeName": "日本語"
+			"nativeName": "日本語",
+			"script": "Hira",
+			"rtl": false
 		},
 		{
 			"key": "ko",
 			"name": "Korean",
-			"nativeName": "한국어"
+			"nativeName": "한국어",
+			"script": "Hang",
+			"rtl": false
 		},
 		{
 			"key": "nl",
 			"name": "Dutch",
-			"nativeName": "Nederlands"
+			"nativeName": "Nederlands",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "pl",
 			"name": "Polish",
-			"nativeName": "Polski"
+			"nativeName": "Polski",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "pt",
 			"name": "Portuguese",
-			"nativeName": "Português"
+			"nativeName": "Português",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "ru",
 			"name": "Russian",
-			"nativeName": "Русский"
+			"nativeName": "Русский",
+			"script": "Cyrl",
+			"rtl": false
 		},
 		{
 			"key": "zh",
 			"name": "Chinese",
-			"nativeName": "中文"
+			"nativeName": "中文",
+			"script": "Hans",
+			"rtl": false
 		},
 		{
 			"key": "zh-TW",
 			"name": "Chinese (Traditional)",
-			"nativeName": "中文（繁體）"
+			"nativeName": "中文（繁體）",
+			"script": "Hant",
+			"rtl": false
 		},
 		{
 			"key": "tr",
 			"name": "Turkish",
-			"nativeName": "Türkçe"
+			"nativeName": "Türkçe",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "uk",
 			"name": "Ukrainian",
-			"nativeName": "Українська"
+			"nativeName": "Українська",
+			"script": "Cyrl",
+			"rtl": false
 		},
 		{
 			"key": "vi",
 			"name": "Vietnamese",
-			"nativeName": "Tiếng Việt"
+			"nativeName": "Tiếng Việt",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "el",
 			"name": "Greek",
-			"nativeName": "Ελληνικά"
+			"nativeName": "Ελληνικά",
+			"script": "Greek",
+			"rtl": false
 		},
 		{
 			"key": "bg",
 			"name": "Bulgarian",
-			"nativeName": "Български"
+			"nativeName": "Български",
+			"script": "Cyrl",
+			"rtl": false
 		},
 		{
 			"key": "cs",
 			"name": "Czech",
-			"nativeName": "Čeština"
+			"nativeName": "Čeština",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "da",
 			"name": "Danish",
-			"nativeName": "Dansk"
+			"nativeName": "Dansk",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "et",
 			"name": "Estonian",
-			"nativeName": "Eesti"
+			"nativeName": "Eesti",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "fi",
 			"name": "Finnish",
-			"nativeName": "Suomi"
+			"nativeName": "Suomi",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "he",
 			"name": "Hebrew",
-			"nativeName": "עברית"
+			"nativeName": "עברית",
+			"script": "Hebr",
+			"rtl": true
+
 		},
 		{
 			"key": "hi",
 			"name": "Hindi",
-			"nativeName": "हिन्दी"
+			"nativeName": "हिन्दी",
+			"script": "Deva",
+			"rtl": false
 		},
 		{
 			"key": "hu",
 			"name": "Hungarian",
-			"nativeName": "Magyar"
+			"nativeName": "Magyar",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "id",
 			"name": "Indonesian",
-			"nativeName": "Bahasa Indonesia"
+			"nativeName": "Bahasa Indonesia",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "lt",
 			"name": "Lithuanian",
-			"nativeName": "Lietuvių"
+			"nativeName": "Lietuvių",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "lv",
 			"name": "Latvian",
-			"nativeName": "Latviešu"
+			"nativeName": "Latviešu",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "no",
 			"name": "Norwegian",
-			"nativeName": "Norsk"
+			"nativeName": "Norsk",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "ro",
 			"name": "Romanian",
-			"nativeName": "Română"
+			"nativeName": "Română",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
 			"key": "sk",
 			"name": "Slovak",
-			"nativeName": "Slovenčina"
+			"nativeName": "Slovenčina",
+			"script": "Latin",
+			"rtl": false
 		},
 		{
             "key": "sl",
             "name": "Slovenian",
-            "nativeName": "Slovenščina"
+            "nativeName": "Slovenščina",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "sr",
             "name": "Serbian",
-            "nativeName": "Српски"
-        },
+            "nativeName": "Српски",
+			"script": "Cyrl",
+			"rtl": false
+		},
         {
             "key": "sv",
             "name": "Swedish",
-            "nativeName": "Svenska"
+            "nativeName": "Svenska",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "th",
             "name": "Thai",
-            "nativeName": "ไทย"
-        },
-        {
+            "nativeName": "ไทย",
+			"script": "Thai",
+			"rtl": false
+		},
+		{
             "key": "tl",
             "name": "Tagalog",
-            "nativeName": "Tagalog"
+            "nativeName": "Tagalog",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "ur",
             "name": "Urdu",
-            "nativeName": "اردو"
+            "nativeName": "اردو",
+			"script": "Arabic",
+			"rtl": true
+        },
+		{
+            "key": "fa",
+			"name": "Persian",
+			"nativeName": "فارسی",
+			"script": "Arabic",
+			"rtl": true
         },
         {
             "key": "uz",
             "name": "Uzbek",
-            "nativeName": "O'zbek"
-        },
-        {
+            "nativeName": "O'zbek",
+			"script": "Cyrl",
+			"rtl": false
+		},
+		{
             "key": "az",
             "name": "Azerbaijani",
-            "nativeName": "Azərbaycan dili"
-        },
-        {
+            "nativeName": "Azərbaycan dili",
+			"script": "Latin",
+			"rtl": false
+		},
+		{
             "key": "hy",
             "name": "Armenian",
-            "nativeName": "Հայերեն"
+            "nativeName": "Հայերեն",
+			"script": "Armn",
+			"rtl": false
         },
         {
             "key": "eu",
             "name": "Basque",
-            "nativeName": "Euskara"
+            "nativeName": "Euskara",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "be",
             "name": "Belarusian",
-            "nativeName": "Беларуская"
+            "nativeName": "Беларуская",
+			"script": "Cyrl",
+			"rtl": false
         },
         {
             "key": "bn",
             "name": "Bengali",
-            "nativeName": "বাংলা"
-        },
-        {
+            "nativeName": "বাংলা",
+			"script": "Beng",
+			"rtl": false
+		},
+		{
             "key": "bs",
             "name": "Bosnian",
-            "nativeName": "Bosanski"
+            "nativeName": "Bosanski",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "cy",
             "name": "Welsh",
-            "nativeName": "Cymraeg"
+            "nativeName": "Cymraeg",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "eo",
             "name": "Esperanto",
-            "nativeName": "Esperanto"
+            "nativeName": "Esperanto",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "ga",
             "name": "Irish",
-            "nativeName": "Gaeilge"
+            "nativeName": "Gaeilge",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "gd",
             "name": "Scottish Gaelic",
-            "nativeName": "Gàidhlig"
+            "nativeName": "Gàidhlig",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "gl",
             "name": "Galician",
-            "nativeName": "Galego"
+            "nativeName": "Galego",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "gu",
             "name": "Gujarati",
-            "nativeName": "ગુજરાતી"
-        },
-        {
+            "nativeName": "ગુજરાતી",
+			"script": "Gujr",
+			"rtl": false
+		},
+		{
             "key": "ht",
             "name": "Haitian Creole",
-            "nativeName": "Kreyòl ayisyen"
-        },
-        {
+            "nativeName": "Kreyòl ayisyen",
+			"script": "Latin",
+			"rtl": false
+		},
+		{
             "key": "hr",
             "name": "Croatian",
-            "nativeName": "Hrvatski"
+            "nativeName": "Hrvatski",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "is",
             "name": "Icelandic",
-            "nativeName": "Íslenska"
+            "nativeName": "Íslenska",
+			"script": "Latin",
+			"rtl": false
         },
         {
             "key": "jv",
             "name": "Javanese",
-            "nativeName": "Basa Jawa"
+            "nativeName": "Basa Jawa",
+			"script": "Latin",
+			"rtl": false
         }
-			
 	]
 }

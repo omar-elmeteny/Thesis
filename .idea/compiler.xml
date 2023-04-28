@@ -10,6 +10,7 @@
         <module name="dictionary-generator" />
         <module name="localizationplugin.tp" />
         <module name="transpiler-maven-plugin" />
+        <module name="localizationruntimehelper" />
         <module name="localizedtranspiler" />
         <module name="eg.edu.guc.csen.localizationplugin.editor" />
         <module name="localizationplugin.product" />
