@@ -169,12 +169,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             return super.visitBlockStatements(ctx);
         }
         if (isInsideMain) {
-            builder.append("try {" 
-            + "java.io.PrintStream ps = new java.io.PrintStream(System.out, true, \"UTF-8\" );"
-            + "System.setOut(ps);" 
-            + "ps = new java.io.PrintStream(System.err, true, \"UTF-8\" );"
-            + "System.setErr(ps);"
-            + "} catch (java.io.UnsupportedEncodingException e) { }");
+            builder.append("eg.edu.guc.csen.localizationruntimehelper.Startup.initializeApplication();");
             isInsideMain = false;            
         }
         builder.append("try {");
