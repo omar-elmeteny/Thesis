@@ -139,7 +139,7 @@
           <execution>
             <?m2e execute onConfiguration?>
             <id>sourcemap-postprocess</id>
-            <phase>process-classes</phase>
+            <phase>compile</phase>
             <goals>
               <goal>sourcemap-postprocessor</goal>
             </goals>

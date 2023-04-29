@@ -30,8 +30,9 @@ public class ExceptionHelper {
         StackTraceElement caller = stackTrace[index + 1];
         try {
             Class<?> clazz = Class.forName(caller.getClassName());
+            HashMap<String, String> idenfitiersDictionary = IdentifiersHelper.getIdentifiersDictionary(clazz);
             Translations translations = getTranslations(clazz);
-            return (RuntimeException)translations.getExceptionTranslations().translateException(e, language);
+            return (RuntimeException)translations.getExceptionTranslations().translateException(e, language, idenfitiersDictionary);
         } catch (ClassNotFoundException e1) {
             return e;
         }

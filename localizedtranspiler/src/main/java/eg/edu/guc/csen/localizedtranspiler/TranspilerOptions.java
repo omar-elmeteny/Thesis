@@ -4,6 +4,16 @@ import eg.edu.guc.csen.keywordtranslator.Translations;
 
 public class TranspilerOptions {
 
+    private boolean writeIdentifiersDictionary;
+
+    public boolean isWriteIdentifiersDictionary() {
+        return writeIdentifiersDictionary;
+    }
+
+    public void setWriteIdentifiersDictionary(boolean writeIdentifiersDictionary) {
+        this.writeIdentifiersDictionary = writeIdentifiersDictionary;
+    }
+
     private String sourceLanguage;
 
     public String getSourceLanguage() {

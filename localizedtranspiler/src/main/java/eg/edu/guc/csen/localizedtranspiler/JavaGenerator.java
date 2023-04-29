@@ -22,6 +22,11 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     private static HashMap<Integer, String> keywords = initializeKeywords();
     private final Translations translations;
+    private final HashMap<String,String> translatedIdentifiers = new HashMap<String,String>();
+
+    public HashMap<String, String> getTranslatedIdentifiers() {
+        return translatedIdentifiers;
+    }
 
     public JavaGenerator(String sourceLanguage, String targetLanguage, Translations translations) {
         super();
@@ -216,7 +221,9 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     private void appendIdentifier(String identifier) {
-        builder.append(translations.translateIdentifier(identifier, sourceLanguage, targetLanguage));   
+        String translateIdentifier = translations.translateIdentifier(identifier, sourceLanguage, targetLanguage);
+        builder.append(translateIdentifier);
+        translatedIdentifiers.put(translateIdentifier, identifier);
     }
 
     

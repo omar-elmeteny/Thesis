@@ -17,7 +17,7 @@ public class Translations {
 
     private final KeywordTranslations keywordTranslations = new KeywordTranslations();
     private final IdentifierTranslations identifierTranslations = new IdentifierTranslations();
-    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations(this);
+    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations();
     private String defaultLanguage = "ar";
 
     public Translations() {
@@ -156,6 +156,7 @@ public class Translations {
                 return identifierTranslations.translateFromEnglish(englishTranslation, targetLanguage);
             }
         }
+        identifier = transliterate(identifier, sourceLanguage, targetLanguage);
         if (targetLanguage.equals("en")) {
             identifier = replaceNonAlphaNumeric(identifier);
             if (isKeyword(identifier)) {
@@ -186,9 +187,8 @@ public class Translations {
             Transliterator transliterator = Transliterator.getInstance(sourceScript + "-Latin");
             return transliterator.transliterate(word);
         } else {
-            Transliterator transliterator1 = Transliterator.getInstance(sourceScript + "-Latin");
-            Transliterator transliterator2 = Transliterator.getInstance( "Latin-" + targetScript);
-            return transliterator2.transliterate(transliterator1.transliterate(word));
+            Transliterator transliterator = Transliterator.getInstance(sourceScript + "-Latin; Latin-" + targetScript);
+            return transliterator.transliterate(word);
         }
     }
 

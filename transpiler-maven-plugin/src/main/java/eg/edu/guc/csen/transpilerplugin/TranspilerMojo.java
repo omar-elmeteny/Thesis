@@ -67,6 +67,9 @@ public class TranspilerMojo extends AbstractMojo {
     @Parameter(property = "project.build.sourceEncoding", defaultValue = "UTF-8")
     protected String inputEncoding;
 
+    @Parameter(defaultValue = "true")
+    protected boolean writeIdentifiersDictionary;
+
     /**
      * Specify the source language; defaults to "ar"
      */
@@ -165,6 +168,7 @@ public class TranspilerMojo extends AbstractMojo {
         options.setSourceLanguage(sourceLanguage);
         options.setTranslations(translations);
         options.setGenerateSourcemap(generateSourceMap);
+        options.setWriteIdentifiersDictionary(writeIdentifiersDictionary);
 
         Set<File> generatedFiles = new HashSet<File>();
         for (String sourceRoot : compileSourceroots) {

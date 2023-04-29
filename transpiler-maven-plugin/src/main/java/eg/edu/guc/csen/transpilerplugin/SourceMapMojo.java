@@ -17,12 +17,14 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.objectweb.asm.Attribute;
+import org.objectweb.asm.ByteVector;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
-@Mojo(name = "sourcemap-postprocessor", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = false)
+@Mojo(name = "sourcemap-postprocessor", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = false)
 public class SourceMapMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.directory}")
@@ -54,8 +56,10 @@ public class SourceMapMojo extends AbstractMojo {
     private void processFile(File file) throws IOException {
         getLog().info("Processing file: " + file.getAbsolutePath());
         File sourcemapFile = new File(file.getAbsolutePath().replaceAll("\\.class", ".java.smap"));
-        if (!sourcemapFile.exists()) {
-            getLog().info("No sourcemap file: " + sourcemapFile.getAbsolutePath() + " found for file: "
+
+        File identifiersFile = new File(file.getAbsolutePath().replaceAll("\\.class", ".java.identifiers"));
+        if (!sourcemapFile.exists() && !identifiersFile.exists()) {
+            getLog().info("No sourcemap file or identifiers file found for file: "
                     + file.getAbsolutePath());
             return;
         }
@@ -69,15 +73,18 @@ public class SourceMapMojo extends AbstractMojo {
 
         // Create a custom attribute to hold the debug information
         // read ths sourcemapFile
-        String debugInfo = Files.readString(sourcemapFile.toPath());
-
+        String debugInfo = sourcemapFile.exists() ? Files.readString(sourcemapFile.toPath()) : null;
+        String identifiersDictionary = identifiersFile.exists() ? Files.readString(identifiersFile.toPath()) : null;
         // Create a ClassWriter to write the modified class file
         ClassWriter classWriter = new ClassWriter(0);
         // Add the debug attribute to the class
         // classWriter.visitAttribute(debugAttribute);
         // classWriter.visitSource(debugInfo, debugInfo);
         SourceClassVisitor visitor = new SourceClassVisitor(classWriter, debugInfo, getLog());
-
+        if (identifiersDictionary != null) {
+            IdentifiersDictionaryAttribute attribute = new IdentifiersDictionaryAttribute(identifiersDictionary);
+            visitor.visitAttribute(attribute);
+        }
         // Copy the original class into the ClassWriter
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES);
 
@@ -115,13 +122,35 @@ public class SourceMapMojo extends AbstractMojo {
         public void visitSource(String source, String debug) {
             log.info("Visiting source: " + source + " debug: " + debug);
             if (sourceFile == null) {
-                //log.info("Setting debug to: " + debugInfo);
+                // log.info("Setting debug to: " + debugInfo);
                 super.visitSource(source, debugInfo);
             } else {
                 log.info("Setting source to: " + sourceFile);
-                //log.info("Setting debug to: " + debugInfo);
+                // log.info("Setting debug to: " + debugInfo);
                 super.visitSource(sourceFile, debugInfo);
             }
+        }
+    }
+
+    private static class IdentifiersDictionaryAttribute extends Attribute {
+
+        private final String identifiersDictionary;
+
+        public IdentifiersDictionaryAttribute(String identifiersDictionary) {
+            super("IdentifiersDictionary");
+            this.identifiersDictionary = identifiersDictionary;
+        }
+
+        public IdentifiersDictionaryAttribute() {
+            super("IdentifiersDictionary");
+            this.identifiersDictionary = null;
+        }
+
+        @Override
+        protected ByteVector write(ClassWriter classWriter, byte[] code, int codeLength, int maxStack, int maxLocals) {
+            ByteVector byteVector = new ByteVector();
+            byteVector.putUTF8(identifiersDictionary);
+            return byteVector;
         }
     }
 
