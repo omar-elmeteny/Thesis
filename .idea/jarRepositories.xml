@@ -37,14 +37,14 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="github-omar-thesis" />
-      <option name="name" value="github-omar-thesis" />
-      <option name="url" value="https://maven.pkg.github.com/omar-elmeteny/Thesis" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="eclipse-oxygen" />
       <option name="name" value="eclipse-oxygen" />
       <option name="url" value="http://download.eclipse.org/releases/oxygen/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="github-omar-thesis" />
+      <option name="name" value="github-omar-thesis" />
+      <option name="url" value="https://maven.pkg.github.com/omar-elmeteny/Thesis" />
     </remote-repository>
   </component>
 </project>

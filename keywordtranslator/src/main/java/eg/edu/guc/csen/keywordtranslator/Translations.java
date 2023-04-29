@@ -17,7 +17,7 @@ public class Translations {
 
     private final KeywordTranslations keywordTranslations = new KeywordTranslations();
     private final IdentifierTranslations identifierTranslations = new IdentifierTranslations();
-    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations();
+    private final ExceptionTranslations exceptionTranslations = new ExceptionTranslations(this);
     private String defaultLanguage = "ar";
 
     public Translations() {

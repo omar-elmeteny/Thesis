@@ -1,5 +1,6 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,9 +10,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.AnnotationContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.BlockStatementsContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ClassTypeContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ExceptionTypeContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.LastFormalParameterContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.MethodDeclarationContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.Throws_Context;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
@@ -22,7 +27,7 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
     private static HashMap<Integer, String> keywords = initializeKeywords();
     private final Translations translations;
-    private final HashMap<String,String> translatedIdentifiers = new HashMap<String,String>();
+    private final HashMap<String, String> translatedIdentifiers = new HashMap<String, String>();
 
     public HashMap<String, String> getTranslatedIdentifiers() {
         return translatedIdentifiers;
@@ -113,18 +118,47 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     private boolean isInsideMain = false;
+    ArrayList<String> methodThrownExceptions = new ArrayList<>();
+
     @Override
     public StringBuilder visitMethodDeclaration(MethodDeclarationContext ctx) {
         if (this.sourceLanguage.equals("en")) {
             return super.visitMethodDeclaration(ctx);
         }
-        if (isMainMethod(ctx)) {
-            isInsideMain = true;
-            StringBuilder result = super.visitMethodDeclaration(ctx);
-            isInsideMain = false;
-            return result;
+        methodThrownExceptions = getThrownExceptions(ctx);
+        isInsideMain = isMainMethod(ctx);
+        StringBuilder result = super.visitMethodDeclaration(ctx);
+        isInsideMain = false;
+        methodThrownExceptions = null;
+        return result;
+        
+    }
+
+    private ArrayList<String> getThrownExceptions(Throws_Context ctx) {
+        if (ctx.exceptionTypeList() == null || ctx.exceptionTypeList().exceptionType() == null) {
+            return null;
         }
-        return super.visitMethodDeclaration(ctx);
+        ArrayList<String> result = new ArrayList<>();
+        for (ExceptionTypeContext exceptionTypeContext : ctx.exceptionTypeList().exceptionType()) {
+            if (exceptionTypeContext.typeVariable() != null) {
+                result.add(exceptionTypeContext.typeVariable().identifier().getText());
+            } else {
+                result.add(getClassFullName(exceptionTypeContext.classType()));
+            }
+        }
+        return result;
+    }
+
+    private String getClassFullName(ClassTypeContext ctx) {
+        TypeNameVisitor visitor = new TypeNameVisitor();
+        return visitor.visitClassType(ctx).toString();
+    }
+
+    private ArrayList<String> getThrownExceptions(MethodDeclarationContext ctx) {
+        if (ctx.methodHeader() != null && ctx.methodHeader().throws_() != null) {
+            return getThrownExceptions(ctx.methodHeader().throws_());
+        }
+        return null;
     }
 
     private String getStringTypeName() {
@@ -134,10 +168,12 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private boolean isPublicMethod(MethodDeclarationContext ctx) {
         return ctx.methodModifier().stream().anyMatch(modifier -> modifier.PUBLIC() != null);
     }
+
     private boolean isStaticMethod(MethodDeclarationContext ctx) {
         return ctx.methodModifier().stream().anyMatch(modifier -> modifier.STATIC() != null);
     }
-    private  boolean isMainMethod(MethodDeclarationContext ctx) {
+
+    private boolean isMainMethod(MethodDeclarationContext ctx) {
         if (!isPublicMethod(ctx)) {
             return false;
         }
@@ -152,7 +188,8 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
             return false;
         }
         List<ParseTree> parameters = ctx.methodHeader().methodDeclarator().formalParameterList().children;
-        if (parameters == null || parameters.size() != 1 || !(parameters.get(0) instanceof LastFormalParameterContext)) {
+        if (parameters == null || parameters.size() != 1
+                || !(parameters.get(0) instanceof LastFormalParameterContext)) {
             return false;
         }
         LastFormalParameterContext parameter = (LastFormalParameterContext) parameters.get(0);
@@ -163,18 +200,58 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         return true;
     }
 
+    private int exceptionVariableIndex = 0;
+    private String getExceptionVariableName() {
+        return "______e" + exceptionVariableIndex++;
+    }
+
     @Override
     public StringBuilder visitBlockStatements(BlockStatementsContext ctx) {
+        ArrayList<String> thrownExceptions = methodThrownExceptions;
+        if (thrownExceptions != null  && thrownExceptions.size() > 0) {
+            builder.append("try {");
+            methodThrownExceptions = null;
+            for (String exceptionType : thrownExceptions) {
+                builder.append("if ((Object)Class.class == Object.class) throw new ");
+                builder.append(exceptionType);
+                builder.append("();");
+            }
+        }
         if (this.sourceLanguage.equals("en")) {
             return super.visitBlockStatements(ctx);
         }
         if (isInsideMain) {
             builder.append("eg.edu.guc.csen.localizationruntimehelper.Startup.initializeApplication();");
-            isInsideMain = false;            
+            isInsideMain = false;
         }
         builder.append("try {");
         super.visitBlockStatements(ctx);
-        builder.append("} catch (RuntimeException e) { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedException(e, \"" + this.sourceLanguage + "\"); }");
+        builder.append(
+                "} catch (RuntimeException ");
+        String exceptionVariableName = getExceptionVariableName();
+        builder.append(exceptionVariableName);
+        builder.append(") { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedException(");
+        builder.append(exceptionVariableName);
+        builder.append(", \"");
+        builder.append(this.sourceLanguage);
+        builder.append("\"); }");
+        if (thrownExceptions != null && thrownExceptions.size() > 0) {
+            exceptionVariableName = getExceptionVariableName();
+            builder.append("} catch (");
+            for (int i = 0; i < thrownExceptions.size(); i++) {
+                if (i > 0) {
+                    builder.append(" | ");
+                }
+                builder.append(thrownExceptions.get(i));
+            }
+            builder.append(" ");
+            builder.append(exceptionVariableName);
+            builder.append(") { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedException(");
+            builder.append(exceptionVariableName);
+            builder.append(", \"");
+            builder.append(this.sourceLanguage);
+            builder.append("\"); }");
+        }
         return builder;
     }
 
@@ -216,10 +293,46 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     private void appendIdentifier(String identifier) {
-        String translateIdentifier = translations.translateIdentifier(identifier, sourceLanguage, targetLanguage);
+        String translateIdentifier = translateIdentifier(identifier);
         builder.append(translateIdentifier);
-        translatedIdentifiers.put(translateIdentifier, identifier);
+
     }
 
-    
+    private String translateIdentifier(String identifier) {
+        String translateIdentifier = translations.translateIdentifier(identifier, sourceLanguage, targetLanguage);
+        translatedIdentifiers.put(translateIdentifier, identifier);
+        return translateIdentifier;
+    }
+
+    private class TypeNameVisitor extends Java9ParserBaseVisitor<StringBuilder> {
+        StringBuilder innerBuilder = new StringBuilder();
+
+        public TypeNameVisitor() {
+            super();
+        }
+
+        @Override
+        public StringBuilder visitAnnotation(AnnotationContext ctx) {
+            return innerBuilder;
+        }
+
+        @Override
+        public StringBuilder visitTerminal(TerminalNode node) {
+            var token = node.getSymbol();
+            if (token.getType() == Java9Lexer.EOF) {
+                return builder;
+            }
+            int tokenType = token.getType();
+
+            if (tokenType == Java9Lexer.Identifier) {
+                innerBuilder.append(translateIdentifier(token.getText()));
+
+            } else {
+                innerBuilder.append(token.getText());
+            }
+            return innerBuilder;
+        }
+
+    }
+
 }

@@ -11,9 +11,11 @@ import org.json.JSONObject;
 public class ExceptionTranslations {
 
     private HashMap<String, ArrayList<ExceptionTranslationEntry>> exceptionTranslations = new HashMap<String, ArrayList<ExceptionTranslationEntry>>();
+    private Translations translations;
 
-    public ExceptionTranslations() {
+    public ExceptionTranslations(Translations translations) {
         super();
+        this.translations = translations;
     }
 
     void updateFromJSONObject(JSONObject jsonObject) {
@@ -74,19 +76,21 @@ public class ExceptionTranslations {
         ArrayList<ExceptionTranslationEntry> translationEntries = this.exceptionTranslations.get(className);
         String message = e.getMessage();
         String translatedMessage = message;
-        for (ExceptionTranslationEntry translationEntry : translationEntries) {
-            if (!translationEntry.getMessages().containsKey(language)) {
-                continue;
-            }
-            String translation = translationEntry.getMessages().get(language);
-            String regex = translationEntry.getRegex();
-            if (regex == null || regex.length() == 0) {
-                translatedMessage = translation;
-                break;
-            }
-            if (Pattern.matches(regex, message)) {
-                translatedMessage = message.replaceAll(regex, translation);
-                break;
+        if (translationEntries != null) {
+            for (ExceptionTranslationEntry translationEntry : translationEntries) {
+                if (!translationEntry.getMessages().containsKey(language)) {
+                    continue;
+                }
+                String translation = translationEntry.getMessages().get(language);
+                String regex = translationEntry.getRegex();
+                if (regex == null || regex.length() == 0) {
+                    translatedMessage = translation;
+                    break;
+                }
+                if (Pattern.matches(regex, message)) {
+                    translatedMessage = message.replaceAll(regex, translation);
+                    break;
+                }
             }
         }
         // if exception has cause, create a new exception with translatedMessage and
@@ -95,7 +99,8 @@ public class ExceptionTranslations {
             try {
                 Exception translatedException = (Exception) e.getClass().getConstructor(String.class, Throwable.class)
                         .newInstance(translatedMessage, e.getCause());
-                translatedException.setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
+                translatedException
+                        .setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
                 return translatedException;
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
@@ -105,7 +110,8 @@ public class ExceptionTranslations {
         try {
             Exception translatedException = (Exception) e.getClass().getConstructor(String.class)
                     .newInstance(translatedMessage);
-            translatedException.setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
+            translatedException
+                    .setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
             return translatedException;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
@@ -113,7 +119,8 @@ public class ExceptionTranslations {
         }
     }
 
-    private StackTraceElement[] translateStackTraceElements(StackTraceElement[] elements, String language, HashMap<String, String> identifiersDictionary) {
+    private StackTraceElement[] translateStackTraceElements(StackTraceElement[] elements, String language,
+            HashMap<String, String> identifiersDictionary) {
         StackTraceElement[] translatedElements = new StackTraceElement[elements.length];
         for (int i = 0; i < elements.length; i++) {
             translatedElements[i] = translateStackTraceElement(elements[i], language, identifiersDictionary);
@@ -121,22 +128,33 @@ public class ExceptionTranslations {
         return translatedElements;
     }
 
-    private StackTraceElement translateStackTraceElement(StackTraceElement el, String language, HashMap<String, String> identifiersDictionary) {
+    private StackTraceElement translateStackTraceElement(StackTraceElement el, String language,
+            HashMap<String, String> identifiersDictionary) {
         String className = el.getClassName();
         String methodName = el.getMethodName();
 
         String[] classNameSplit = className.split("\\.");
         for (int i = 0; i < classNameSplit.length; i++) {
             if (identifiersDictionary.containsKey(classNameSplit[i])) {
-                classNameSplit[i] = identifiersDictionary.get(classNameSplit[i]);
+                classNameSplit[i] = translateIdentifier(classNameSplit[i], language, identifiersDictionary);
             }
         }
         if (identifiersDictionary.containsKey(methodName)) {
-            methodName = identifiersDictionary.get(methodName);
+            methodName = translateIdentifier(methodName, language, identifiersDictionary);
         }
         StackTraceElement translatedEl = new StackTraceElement(String.join(".", classNameSplit), methodName,
                 el.getFileName(), el.getLineNumber());
         return translatedEl;
+    }
+
+    private String translateIdentifier(String identifier, String language, HashMap<String, String> identifiersDictionary) {
+        if (identifiersDictionary.containsKey(identifier)) {
+            return identifiersDictionary.get(identifier);
+        }
+        if (translations.getIdentifierTranslations().hasTranslationFromEnglish(identifier, language)) {
+            return translations.getIdentifierTranslations().translateFromEnglish(identifier, language);
+        }
+        return identifier;
     }
 
 }

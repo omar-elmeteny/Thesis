@@ -38,6 +38,32 @@ public class ExceptionHelper {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Exception> T getLocalizedCheckedException(T e, String language) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        int index = -1;
+        for (int i = 0; i < stackTrace.length; i++) {
+            if (stackTrace[i].getClassName().equals(ExceptionHelper.class.getName())
+                    && stackTrace[i].getMethodName().equals("getLocalizedCheckedException")
+            ) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1 || stackTrace.length <= index + 1) {
+            return e;
+        }
+        StackTraceElement caller = stackTrace[index + 1];
+        try {
+            Class<?> clazz = Class.forName(caller.getClassName());
+            HashMap<String, String> idenfitiersDictionary = IdentifiersHelper.getIdentifiersDictionary(clazz);
+            Translations translations = getTranslations(clazz);
+            return (T) translations.getExceptionTranslations().translateException(e, language, idenfitiersDictionary);
+        } catch (ClassNotFoundException e1) {
+            return e;
+        }
+    }
+
     private static Translations getTranslations(Class<?> clazz) {
         synchronized (translationsMap) {
             if (translationsMap.containsKey(clazz.getClassLoader())) {

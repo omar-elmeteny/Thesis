@@ -29,13 +29,16 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- To add -->
     <dependency>
       <groupId>eg.edu.guc.csen</groupId>
       <artifactId>localizationruntimehelper</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
+    <!-- end To add -->
   </dependencies>
   <build>
+  <!-- To add -->
     <resources>
       <resource>
         <directory>${basedir}</directory>
@@ -47,6 +50,7 @@
         </excludes>
       </resource>
     </resources>
+    <!-- end to add -->
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to
       parent pom) -->
       <plugins>
