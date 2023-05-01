@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -41,6 +43,14 @@ public class PomHelper {
         }
 
         boolean writeFile = false;
+        if(!isDependencyAdded(model)) {
+            addDependency(model);
+            writeFile = true;
+        }
+        if(!isResourceAdded(model)) {
+            addResource(model);
+            writeFile = true;
+        }
         if (!isTranspilerPluginInstalled(model)) {
             addTranspilerPlugin(model);
             writeFile = true;
@@ -85,7 +95,61 @@ public class PomHelper {
         }
     }
 
-    public static void addPluginManagement(Model model) {
+    private static void addDependency(Model model) {
+        if(model.getDependencies() == null) {
+            model.setDependencies(new ArrayList<>());
+        }
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("eg.edu.guc.csen");
+        dependency.setArtifactId("localizationruntimehelper");
+        dependency.setVersion("1.0.0-SNAPSHOT");
+        model.getDependencies().add(dependency);
+    }
+
+    private static boolean isDependencyAdded(Model model) {
+        if(model.getDependencies() == null) {
+            return false;
+        }
+        for(Dependency dependency : model.getDependencies()) {
+            if(dependency.getGroupId().equals("eg.edu.guc.csen") && dependency.getArtifactId().equals("localizationruntimehelper")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void addResource(Model model) {
+        if(model.getBuild() == null) {
+            model.setBuild(new org.apache.maven.model.Build());
+        }
+        if(model.getBuild().getResources() == null) {
+            model.getBuild().setResources(new ArrayList<>());
+        }
+        Resource resource = new Resource();
+        resource.setDirectory("${basedir}");
+        resource.setIncludes(new ArrayList<>());
+        resource.getIncludes().add("translations.guct");
+        resource.setExcludes(new ArrayList<>());
+        resource.getExcludes().add("**/*.guc");
+        model.getBuild().getResources().add(resource);
+    }
+
+    private static boolean isResourceAdded(Model model) {
+        if(model.getBuild() == null) {
+            return false;
+        }
+        if(model.getBuild().getResources() == null) {
+            return false;
+        }
+        for(Resource resource : model.getBuild().getResources()) {
+            if(resource.getDirectory().equals("${basedir}") && resource.getIncludes().contains("translations.guct") && resource.getExcludes().contains("**/*.guc")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void addPluginManagement(Model model) {
         if (model.getBuild() == null) {
             model.setBuild(new org.apache.maven.model.Build());
         }

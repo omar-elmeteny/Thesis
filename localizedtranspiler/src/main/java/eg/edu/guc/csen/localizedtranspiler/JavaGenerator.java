@@ -3,7 +3,6 @@ package eg.edu.guc.csen.localizedtranspiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -12,11 +11,15 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import eg.edu.guc.csen.keywordtranslator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.AnnotationContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.BlockStatementsContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.CatchClauseContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ClassTypeContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ConstructorDeclarationContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ExceptionTypeContext;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.IdentifierContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.LastFormalParameterContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.MethodDeclarationContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.Throws_Context;
+import eg.edu.guc.csen.localizedtranspiler.Java9Parser.VariableDeclaratorIdContext;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
@@ -134,6 +137,21 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         
     }
 
+    @Override
+    public StringBuilder visitConstructorDeclaration(ConstructorDeclarationContext ctx) {
+        methodThrownExceptions = getThrownExceptions(ctx);
+        StringBuilder result = super.visitConstructorDeclaration(ctx);
+        methodThrownExceptions = null;
+        return result;
+    }
+
+    private ArrayList<String> getThrownExceptions(ConstructorDeclarationContext ctx) {
+        if (ctx.throws_() == null) {
+            return null;
+        }
+        return getThrownExceptions(ctx.throws_());
+    }
+
     private ArrayList<String> getThrownExceptions(Throws_Context ctx) {
         if (ctx.exceptionTypeList() == null || ctx.exceptionTypeList().exceptionType() == null) {
             return null;
@@ -152,6 +170,44 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     private String getClassFullName(ClassTypeContext ctx) {
         TypeNameVisitor visitor = new TypeNameVisitor();
         return visitor.visitClassType(ctx).toString();
+    }
+    
+    private boolean visitingCatchClause = false;
+
+   @Override
+    public StringBuilder visitCatchClause(CatchClauseContext ctx) {
+        if(this.sourceLanguage.equals("en")) {
+            return super.visitCatchClause(ctx);
+        }
+        visitingCatchClause = true;
+        super.visitCatchClause(ctx);
+        visitingCatchClause = false;
+        return builder;
+    }
+
+    private boolean visitingCatchClauseVariableDeclatorId = false;
+    @Override
+    public StringBuilder visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+        if (visitingCatchClause) {
+            visitingCatchClauseVariableDeclatorId = true;
+            var result = super.visitVariableDeclaratorId(ctx);
+            visitingCatchClauseVariableDeclatorId = false;
+            return result;
+        }
+        return super.visitVariableDeclaratorId(ctx);
+    }
+
+    private String exceptionVariableName = null;
+    private String generatedExceptionVariableName = null;
+    private boolean shouldRenameExceptionVariable = false;
+    @Override
+    public StringBuilder visitIdentifier(IdentifierContext ctx) {
+        if (visitingCatchClauseVariableDeclatorId) {
+            exceptionVariableName = ctx.getText();
+            generatedExceptionVariableName = getExceptionVariableName();            
+            shouldRenameExceptionVariable = true;
+        }
+        return super.visitIdentifier(ctx);
     }
 
     private ArrayList<String> getThrownExceptions(MethodDeclarationContext ctx) {
@@ -217,6 +273,15 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
                 builder.append("();");
             }
         }
+        if (generatedExceptionVariableName != null && exceptionVariableName != null) {
+            builder.append("var ");
+            appendIdentifier(exceptionVariableName);
+            builder.append(" = eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedException(");
+            builder.append(generatedExceptionVariableName);
+            builder.append(", \"");
+            builder.append(this.sourceLanguage);
+            builder.append("\");");
+        }
         if (this.sourceLanguage.equals("en")) {
             return super.visitBlockStatements(ctx);
         }
@@ -269,7 +334,12 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         if (keywords.containsKey(tokenType)) {
             appendKeyword(keywords.get(tokenType));
         } else if (tokenType == Java9Lexer.Identifier) {
-            appendIdentifier(token.getText());
+            if (shouldRenameExceptionVariable && node.getText().equals(exceptionVariableName)) {
+                appendIdentifier(generatedExceptionVariableName);
+                shouldRenameExceptionVariable = false;
+            } else {
+                appendIdentifier(token.getText());
+            }
         } else {
             builder.append(token.getText());
         }
