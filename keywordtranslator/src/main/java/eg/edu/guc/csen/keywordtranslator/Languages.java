@@ -35,7 +35,8 @@ public class Languages {
                 String nativeName = langJson.getString("nativeName");
                 String script = langJson.getString("script");
                 boolean rtl = langJson.getBoolean("rtl");
-                Language lang = new Language(key, name, nativeName, script, rtl);
+                String atTranslation = langJson.getString("at");
+                Language lang = new Language(key, name, nativeName, script, rtl, atTranslation);
                 languages.add(lang);
             }
         } catch (IOException | JSONException e) {

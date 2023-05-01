@@ -6,13 +6,19 @@ public class Language {
 	private final String nativeName;
 	private final String script;
 	private final boolean rtl;
+	private final String atTranslation;
 
-	public Language(String key, String name, String nativeName, String script, boolean rtl) {
+	public String getAtTranslation() {
+		return atTranslation;
+	}
+
+	public Language(String key, String name, String nativeName, String script, boolean rtl, String atTranslation) {
 		this.key = key;
 		this.name = name;
 		this.nativeName = nativeName;
 		this.script = script;
 		this.rtl = rtl;
+		this.atTranslation = atTranslation;
 	}
 
 	public String getKey() {

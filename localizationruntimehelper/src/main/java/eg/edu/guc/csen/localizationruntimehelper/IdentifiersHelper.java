@@ -2,7 +2,16 @@ package eg.edu.guc.csen.localizationruntimehelper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import org.json.JSONObject;
@@ -14,37 +23,73 @@ import org.objectweb.asm.Opcodes;
 
 public class IdentifiersHelper {
 
-    private static final HashMap<Class<?>, HashMap<String, String>> identifiersMap = new HashMap<Class<?>, HashMap<String, String>>();
+    private static final HashMap<ClassLoader, HashMap<String, String>> identifiersMap = new HashMap<ClassLoader, HashMap<String, String>>();
 
     public static HashMap<String, String> getIdentifiersDictionary(Class<?> clazz) {
         synchronized (identifiersMap) {
-            if (identifiersMap.containsKey(clazz)) {
-                return identifiersMap.get(clazz);
-            }
-            HashMap<String, String> identifiers = new HashMap<String, String>();
             ClassLoader classLoader = clazz.getClassLoader();
-            String className = clazz.getName();
-            String streamName = className.replace('.', '/') + ".class";
+            if (identifiersMap.containsKey(classLoader)) {
+                return identifiersMap.get(classLoader);
+            }
+            HashMap<String, String> identifiers = new HashMap<>();
+            // Loop all classes in a class loader
 
             try {
-                try (InputStream inputStream = classLoader.getResourceAsStream(streamName)) {
-                    ClassReader classReader = new ClassReader(inputStream);
-                    // get attribute with type IdentifiersDictionary
-                    String idenfiersDictionayJson = readIdentifiersDictionaryAttribute(classReader);
-                    if (idenfiersDictionayJson != null) {
-                        // read the contents of the resource file
-                        JSONObject jsonObject = new JSONObject(idenfiersDictionayJson);
-                        for (String key : jsonObject.keySet()) {
-                            identifiers.put(key, jsonObject.getString(key));
+                Enumeration<URL> resources = classLoader.getResources("");
+
+                while (resources.hasMoreElements()) {
+                    URL resource = resources.nextElement();
+
+                    try {
+                        Path resourcePath = Paths.get(resource.toURI());
+
+                        if (Files.isDirectory(resourcePath)) {
+                            Files.walkFileTree(resourcePath, new SimpleFileVisitor<Path>() {
+                                @Override
+                                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                        throws IOException {
+                                    if (file.getFileName().toString().endsWith(".class")) {
+                                        String clazzPath = resourcePath.relativize(file).toString()
+                                            .replace('\\', '/');
+                                        identifiers.putAll(getClassIdentifiers(classLoader, clazzPath));
+                                    }
+
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            });
                         }
+                    } catch (URISyntaxException e) {
+                        // handle exception
                     }
                 }
             } catch (IOException e) {
-                // ignore exception
+                // handle exception
             }
-            identifiersMap.put(clazz, identifiers);
+
+            identifiersMap.put(classLoader, identifiers);
             return identifiers;
         }
+    }
+
+    private static HashMap<String, String> getClassIdentifiers(ClassLoader loader, String streamName) {
+        HashMap<String, String> identifiers = new HashMap<String, String>();
+        try {
+            try (InputStream inputStream = loader.getResourceAsStream(streamName)) {
+                ClassReader classReader = new ClassReader(inputStream);
+                // get attribute with type IdentifiersDictionary
+                String idenfiersDictionayJson = readIdentifiersDictionaryAttribute(classReader);
+                if (idenfiersDictionayJson != null) {
+                    // read the contents of the resource file
+                    JSONObject jsonObject = new JSONObject(idenfiersDictionayJson);
+                    for (String key : jsonObject.keySet()) {
+                        identifiers.put(key, jsonObject.getString(key));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore exception
+        }
+        return identifiers;
     }
 
     private static String readIdentifiersDictionaryAttribute(ClassReader classReader) {

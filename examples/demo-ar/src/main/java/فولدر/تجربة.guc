@@ -15,10 +15,10 @@
         نظام.خارج.اطبع_سطر(م[0]);
         نظام.خارج.اطبع_سطر(م[1]);
         نظام.خارج.اطبع_سطر(م[2]);
-        حاول {
+        //حاول {
         Files.readAllBytes(Paths.get("blablabla"));
-        } امسك (جافا.io.IOException الخطأ) {
-            الخطأ.printStackTrace();
-        }
+        //} امسك (جافا.io.IOException الخطأ) {
+            //الخطأ.printStackTrace();
+        //}
     }
 }

@@ -121,38 +121,38 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
     }
 
     private boolean isInsideMain = false;
-    ArrayList<String> methodThrownExceptions = new ArrayList<>();
+    ArrayList<String> methodThrownTypes = new ArrayList<>();
 
     @Override
     public StringBuilder visitMethodDeclaration(MethodDeclarationContext ctx) {
         if (this.sourceLanguage.equals("en")) {
             return super.visitMethodDeclaration(ctx);
         }
-        methodThrownExceptions = getThrownExceptions(ctx);
+        methodThrownTypes = getThrownTypes(ctx);
         isInsideMain = isMainMethod(ctx);
         StringBuilder result = super.visitMethodDeclaration(ctx);
         isInsideMain = false;
-        methodThrownExceptions = null;
+        methodThrownTypes = null;
         return result;
         
     }
 
     @Override
     public StringBuilder visitConstructorDeclaration(ConstructorDeclarationContext ctx) {
-        methodThrownExceptions = getThrownExceptions(ctx);
+        methodThrownTypes = getThrownTypes(ctx);
         StringBuilder result = super.visitConstructorDeclaration(ctx);
-        methodThrownExceptions = null;
+        methodThrownTypes = null;
         return result;
     }
 
-    private ArrayList<String> getThrownExceptions(ConstructorDeclarationContext ctx) {
+    private ArrayList<String> getThrownTypes(ConstructorDeclarationContext ctx) {
         if (ctx.throws_() == null) {
             return null;
         }
-        return getThrownExceptions(ctx.throws_());
+        return getThrownTypes(ctx.throws_());
     }
 
-    private ArrayList<String> getThrownExceptions(Throws_Context ctx) {
+    private ArrayList<String> getThrownTypes(Throws_Context ctx) {
         if (ctx.exceptionTypeList() == null || ctx.exceptionTypeList().exceptionType() == null) {
             return null;
         }
@@ -197,22 +197,22 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         return super.visitVariableDeclaratorId(ctx);
     }
 
-    private String exceptionVariableName = null;
-    private String generatedExceptionVariableName = null;
-    private boolean shouldRenameExceptionVariable = false;
+    private String throwableVariableName = null;
+    private String generatedThrowableVariableName = null;
+    private boolean shouldRenameThrowableVariable = false;
     @Override
     public StringBuilder visitIdentifier(IdentifierContext ctx) {
         if (visitingCatchClauseVariableDeclatorId) {
-            exceptionVariableName = ctx.getText();
-            generatedExceptionVariableName = getExceptionVariableName();            
-            shouldRenameExceptionVariable = true;
+            throwableVariableName = ctx.getText();
+            generatedThrowableVariableName = getThrowableVariableName();            
+            shouldRenameThrowableVariable = true;
         }
         return super.visitIdentifier(ctx);
     }
 
-    private ArrayList<String> getThrownExceptions(MethodDeclarationContext ctx) {
+    private ArrayList<String> getThrownTypes(MethodDeclarationContext ctx) {
         if (ctx.methodHeader() != null && ctx.methodHeader().throws_() != null) {
-            return getThrownExceptions(ctx.methodHeader().throws_());
+            return getThrownTypes(ctx.methodHeader().throws_());
         }
         return null;
     }
@@ -256,28 +256,35 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         return true;
     }
 
-    private int exceptionVariableIndex = 0;
-    private String getExceptionVariableName() {
-        return "______e" + exceptionVariableIndex++;
+    private int throwableVariableIndex = 0;
+    private String getThrowableVariableName() {
+        return "______e" + throwableVariableIndex++;
     }
 
     @Override
     public StringBuilder visitBlockStatements(BlockStatementsContext ctx) {
-        ArrayList<String> thrownExceptions = methodThrownExceptions;
-        if (thrownExceptions != null  && thrownExceptions.size() > 0) {
+        boolean wasInsideMain = isInsideMain;
+        if (isInsideMain) {
+            builder.append("eg.edu.guc.csen.localizationruntimehelper.Startup.initializeApplication();");
+            wasInsideMain = true;
             builder.append("try {");
-            methodThrownExceptions = null;
-            for (String exceptionType : thrownExceptions) {
+            isInsideMain = false;
+        }
+        ArrayList<String> thrownTypes = methodThrownTypes;
+        if (thrownTypes != null  && thrownTypes.size() > 0) {
+            builder.append("try {");
+            methodThrownTypes = null;
+            for (String type : thrownTypes) {
                 builder.append("if ((Object)Class.class == Object.class) throw new ");
-                builder.append(exceptionType);
+                builder.append(type);
                 builder.append("();");
             }
         }
-        if (generatedExceptionVariableName != null && exceptionVariableName != null) {
+        if (generatedThrowableVariableName != null && throwableVariableName != null) {
             builder.append("var ");
-            appendIdentifier(exceptionVariableName);
-            builder.append(" = eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedException(");
-            builder.append(generatedExceptionVariableName);
+            appendIdentifier(throwableVariableName);
+            builder.append(" = eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedThrowable(");
+            builder.append(generatedThrowableVariableName);
             builder.append(", \"");
             builder.append(this.sourceLanguage);
             builder.append("\");");
@@ -285,34 +292,41 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         if (this.sourceLanguage.equals("en")) {
             return super.visitBlockStatements(ctx);
         }
-        if (isInsideMain) {
-            builder.append("eg.edu.guc.csen.localizationruntimehelper.Startup.initializeApplication();");
-            isInsideMain = false;
-        }
+        
         builder.append("try {");
         super.visitBlockStatements(ctx);
         builder.append(
                 "} catch (RuntimeException ");
-        String exceptionVariableName = getExceptionVariableName();
-        builder.append(exceptionVariableName);
+        String throwableVariableName = getThrowableVariableName();
+        builder.append(throwableVariableName);
         builder.append(") { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedException(");
-        builder.append(exceptionVariableName);
+        builder.append(throwableVariableName);
         builder.append(", \"");
         builder.append(this.sourceLanguage);
         builder.append("\"); }");
-        if (thrownExceptions != null && thrownExceptions.size() > 0) {
-            exceptionVariableName = getExceptionVariableName();
+        if (thrownTypes != null && thrownTypes.size() > 0) {
+            throwableVariableName = getThrowableVariableName();
             builder.append("} catch (");
-            for (int i = 0; i < thrownExceptions.size(); i++) {
+            for (int i = 0; i < thrownTypes.size(); i++) {
                 if (i > 0) {
                     builder.append(" | ");
                 }
-                builder.append(thrownExceptions.get(i));
+                builder.append(thrownTypes.get(i));
             }
             builder.append(" ");
-            builder.append(exceptionVariableName);
-            builder.append(") { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedException(");
-            builder.append(exceptionVariableName);
+            builder.append(throwableVariableName);
+            builder.append(") { throw eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.getLocalizedCheckedThrowable(");
+            builder.append(throwableVariableName);
+            builder.append(", \"");
+            builder.append(this.sourceLanguage);
+            builder.append("\"); }");
+        }
+        if (wasInsideMain) {
+            throwableVariableName = getThrowableVariableName();
+            builder.append("} catch (Throwable ");
+            builder.append(throwableVariableName);
+            builder.append(") { eg.edu.guc.csen.localizationruntimehelper.ExceptionHelper.printStackTrace(");
+            builder.append(throwableVariableName);
             builder.append(", \"");
             builder.append(this.sourceLanguage);
             builder.append("\"); }");
@@ -334,9 +348,9 @@ public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
         if (keywords.containsKey(tokenType)) {
             appendKeyword(keywords.get(tokenType));
         } else if (tokenType == Java9Lexer.Identifier) {
-            if (shouldRenameExceptionVariable && node.getText().equals(exceptionVariableName)) {
-                appendIdentifier(generatedExceptionVariableName);
-                shouldRenameExceptionVariable = false;
+            if (shouldRenameThrowableVariable && node.getText().equals(throwableVariableName)) {
+                appendIdentifier(generatedThrowableVariableName);
+                shouldRenameThrowableVariable = false;
             } else {
                 appendIdentifier(token.getText());
             }

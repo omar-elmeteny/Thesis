@@ -68,7 +68,7 @@ public class ExceptionTranslations {
         return jsonObject;
     }
 
-    public Exception translateException(Exception e, String language, HashMap<String, String> identifiersDictionary) {
+    public Throwable translateThrowable(Throwable e, String language, HashMap<String, String> identifiersDictionary) {
         if (language == null || language.length() == 0 || language.equals("en")) {
             return e;
         }
@@ -97,22 +97,22 @@ public class ExceptionTranslations {
         // same cause and type
         if (e.getCause() != null) {
             try {
-                Exception translatedException = (Exception) e.getClass().getConstructor(String.class, Throwable.class)
+                Throwable translatedThrowable = (Throwable) e.getClass().getConstructor(String.class, Throwable.class)
                         .newInstance(translatedMessage, e.getCause());
-                translatedException
+                translatedThrowable
                         .setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
-                return translatedException;
+                return translatedThrowable;
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
                 return e;
             }
         }
         try {
-            Exception translatedException = (Exception) e.getClass().getConstructor(String.class)
+            Throwable translatedThrowable = (Throwable) e.getClass().getConstructor(String.class)
                     .newInstance(translatedMessage);
-            translatedException
+            translatedThrowable
                     .setStackTrace(translateStackTraceElements(e.getStackTrace(), language, identifiersDictionary));
-            return translatedException;
+            return translatedThrowable;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
             return e;
