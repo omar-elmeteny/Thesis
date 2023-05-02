@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.zip.ZipFile;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -328,7 +330,7 @@ public class IdentifiersTranslationPage extends Composite {
                 if (parentName == null || parentName.isEmpty())
                     return name;
                 else
-                    return parentName + "/" + name;
+                    return parentName + "." + name;
             }
         }
 
@@ -363,29 +365,48 @@ public class IdentifiersTranslationPage extends Composite {
             return false;
         }
 
+        public boolean hasChildren() {
+            return getChildren() != null && getChildren().length > 0;
+        }
     }
 
-    static ArrayList<String> srcZipEntries = initializeSrcZipEntries();
 
-    private static ArrayList<String> initializeSrcZipEntries() {
+    static HashMap<String, ArrayList<String>> srcZipEntries = initializeSrcZipEntries();
+
+    private static HashMap<String, ArrayList<String>> initializeSrcZipEntries() {
         String javaBaseLocation = System.getProperty("java.home");
         String srcLocation = Path.of(javaBaseLocation, "lib", "src.zip").toString();
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
         try {
             try (ZipFile zipFile = new ZipFile(srcLocation)) {
-                ArrayList<String> result = new ArrayList<>();
                 var entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     var entry = entries.nextElement();
-                    result.add(entry.getName());
+                    ArrayList<String> result;
+                    String name = entry.getName();
+                    if (!name.endsWith(".java") || name.endsWith("package-info.java") || name.endsWith("module-info.java") || name.endsWith("package.html") || name.endsWith("overview.html") || name.endsWith("module-info.java")) {
+                        continue;
+                    }
+                    int index = name.indexOf('/');
+                    if (index == -1) {
+                        continue;
+                    }
+
+                    String moduleName = entry.getName().substring(0, entry.getName().indexOf('/'));
+                    String typeFullName = name.substring(index + 1, name.length() - 5).replace('/', '.');
+                    if (map.containsKey(moduleName)) {
+                        result = map.get(moduleName);
+                    } else {
+                        result = new ArrayList<>();
+                        map.put(moduleName, result);
+                    }
+                    result.add(typeFullName);
                 }
 
-                return result;
             }
         } catch (IOException e) {
-            // print stacktrace
-            e.printStackTrace(System.err);
-            return null;
         }
+        return map;
     }
 
     private static class RootTreeObject extends BaseTreeObject {
@@ -400,115 +421,105 @@ public class IdentifiersTranslationPage extends Composite {
         public synchronized BaseTreeObject[] getChildren() {
             if (children == null) {
                 ArrayList<ModuleTreeObject> result = new ArrayList<>();
-                for (String entry : srcZipEntries) {
-                    if (entry.endsWith(".java")) {
-                        String[] parts = entry.split("/");
-                        String moduleName = parts[0];
-                        ModuleTreeObject module = null;
-                        for (ModuleTreeObject m : result) {
-                            if (m.getName().equals(moduleName)) {
-                                module = m;
-                                break;
-                            }
-                        }
-
-                        if (module == null) {
-                            module = new ModuleTreeObject(this, moduleName);
-                            result.add(module);
-                        }
-
-                    }
+                for (var entry : srcZipEntries.entrySet()) {
+                    String moduleName = entry.getKey();
+                    ModuleTreeObject module = null;
+                    module = new ModuleTreeObject(this, moduleName, entry.getValue());
+                    result.add(module);
                 }
                 children = result.toArray(new ModuleTreeObject[result.size()]);
+                Arrays.sort(children);
             }
             return children;
         }
+
+        @Override
+        public boolean hasChildren() {
+            return true;
+        }
     }
 
-    private static class ModuleTreeObject extends BaseTreeObject {
+    private static class ModuleTreeObject 
+        extends BaseTreeObject
+        implements Comparable<ModuleTreeObject>
+        {
         private PackageTreeObject[] children = null;
+        private ArrayList<String> types;
 
-        public ModuleTreeObject(RootTreeObject parent, String name) {
+        public ModuleTreeObject(RootTreeObject parent, String name, ArrayList<String> types) {
             super(parent, name);
+            this.types = types;
         }
 
         public synchronized BaseTreeObject[] getChildren() {
             if (children == null) {
                 ArrayList<PackageTreeObject> result = new ArrayList<>();
-                String fullName = this.getFullName() + "/";
-                for (String entry : srcZipEntries) {
-                    if (!entry.startsWith(fullName) || !entry.endsWith(".java")) {
+                HashMap<String, PackageTreeObject> map = new HashMap<>();
+                for (String entry : types) {
+                    int index = entry.indexOf('.');
+                    if (index < 0) {
                         continue;
                     }
-                    if (entry.endsWith("/package-info.java") || entry.endsWith("/module-info.java")) {
-                        continue;
-                    }
-                    String strippedName = entry.substring(fullName.length());
-                    String[] parts = strippedName.split("/");
-                    if (parts.length <= 1) {
-                        continue;
-                    }
-                    String packageName = parts[0];
-                    PackageTreeObject packageObject = null;
-                    for (PackageTreeObject p : result) {
-                        if (p.getName().equals(packageName)) {
-                            packageObject = p;
-                            break;
-                        }
-                    }
-
+                    String packageName = entry.substring(0, index);
+                    String typeName = entry.substring(index + 1);
+                    
+                    PackageTreeObject packageObject = map.get(packageName);
                     if (packageObject == null) {
                         packageObject = new PackageTreeObject(this, packageName);
                         result.add(packageObject);
+                        map.put(packageName, packageObject);
                     }
+                    packageObject.getTypes().add(typeName);
                 }
                 children = result.toArray(new PackageTreeObject[result.size()]);
             }
             return children;
         }
+
+        @Override
+        public int compareTo(ModuleTreeObject o) {
+            return this.getName().compareTo(o.getName());
+        }
+
+        @Override
+        public String getFullName() {
+            return "";
+        }
+
+        @Override
+        public boolean hasChildren() {
+            return true;
+        }
+
     }
 
     private static class PackageTreeObject extends BaseTreeObject {
 
         private BaseTreeObject[] children = null;
+        private ArrayList<String> types;
 
         public PackageTreeObject(BaseTreeObject parent, String name) {
             super(parent, name);
+            this.types = new ArrayList<>();
+        }
+
+        public ArrayList<String> getTypes() {
+            return types;
         }
 
         public synchronized BaseTreeObject[] getChildren() {
             if (children == null) {
                 ArrayList<PackageTreeObject> childPackages = new ArrayList<>();
                 ArrayList<TypeTreeObject> childTypes = new ArrayList<>();
-                String fullName = this.getFullName() + "/";
-                for (String entry : srcZipEntries) {
-                    if (!entry.startsWith(fullName) || !entry.endsWith(".java")) {
-                        continue;
-                    }
-                    if (entry.endsWith("/package-info.java") || entry.endsWith("/module-info.java")) {
-                        continue;
-                    }
-                    String strippedName = entry.substring(fullName.length());
-                    String[] parts = strippedName.split("/");
-                    if (parts.length < 1) {
-                        continue;
-                    }
-                    if (parts.length == 1) {
-                        String typeName = parts[0].substring(0, parts[0].length() - 5);
-                        TypeTreeObject typeObject = null;
-                        for (TypeTreeObject c : childTypes) {
-                            if (c.getName().equals(typeName)) {
-                                typeObject = c;
-                                break;
-                            }
-                        }
-
-                        if (typeObject == null) {
-                            typeObject = new TypeTreeObject(this, typeName);
-                            childTypes.add(typeObject);
-                        }
+                for (String entry : types) {
+                    int index = entry.indexOf('.');
+                    if (index == -1) {
+                        TypeTreeObject typeObject = new TypeTreeObject(this, entry);
+                        childTypes.add(typeObject);
+                        
                     } else {
-                        String packageName = parts[0];
+                        String packageName = entry.substring(0, index);
+                        String typeName = entry.substring(index + 1);
                         PackageTreeObject packageObject = null;
                         for (PackageTreeObject p : childPackages) {
                             if (p.getName().equals(packageName)) {
@@ -521,6 +532,7 @@ public class IdentifiersTranslationPage extends Composite {
                             packageObject = new PackageTreeObject(this, packageName);
                             childPackages.add(packageObject);
                         }
+                        packageObject.getTypes().add(typeName);
                     }
 
                 }
@@ -534,6 +546,11 @@ public class IdentifiersTranslationPage extends Composite {
                 }
             }
             return children;
+        }
+
+        @Override
+        public boolean hasChildren() {
+            return true;
         }
     }
 
@@ -552,9 +569,8 @@ public class IdentifiersTranslationPage extends Composite {
             }
             if (children == null) {
                 String fullName = this.getFullName();
-                String typeName = fullName.substring(fullName.indexOf('/') + 1).replace("/", ".");
                 try {
-                    Class<?> type = Class.forName(typeName);
+                    Class<?> type = Class.forName(fullName);
                     ArrayList<MemberTreeObject> result = new ArrayList<>();
                     for (Field f : type.getDeclaredFields()) {
                         if ((f.getModifiers() & Modifier.PUBLIC) == 0) {
@@ -590,6 +606,7 @@ public class IdentifiersTranslationPage extends Composite {
             }
             return children;
         }
+
     }
 
     private static class MemberTreeObject extends BaseTreeObject {
@@ -601,6 +618,11 @@ public class IdentifiersTranslationPage extends Composite {
 
         public BaseTreeObject[] getChildren() {
             return emptyArray;
+        }
+
+        @Override
+        public boolean hasChildren() {
+            return false;
         }
     }
 

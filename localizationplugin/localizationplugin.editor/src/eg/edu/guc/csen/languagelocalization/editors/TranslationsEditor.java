@@ -102,6 +102,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
                         keywordPage.updateTable();
                         identifierPage.updateTree();
                         defaultLanguagePage.updateCombo();
+                        exceptionsPage.updateExceptionsTree();
                     } catch (JSONException e) {
                     }
                 }

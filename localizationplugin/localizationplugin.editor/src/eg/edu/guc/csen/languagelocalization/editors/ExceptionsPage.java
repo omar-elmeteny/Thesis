@@ -2,6 +2,7 @@ package eg.edu.guc.csen.languagelocalization.editors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -68,7 +69,7 @@ public class ExceptionsPage extends Composite {
 
         TreeViewerColumn wordColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
         wordColumn.getColumn().setText("Exception Class Name");
-        wordColumn.getColumn().setWidth(200);
+        wordColumn.getColumn().setWidth(350);
         wordColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
@@ -79,7 +80,7 @@ public class ExceptionsPage extends Composite {
 
         TreeViewerColumn regexColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
         regexColumn.getColumn().setText("Regular Expression");
-        regexColumn.getColumn().setWidth(200);
+        regexColumn.getColumn().setWidth(400);
         regexColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
@@ -117,11 +118,18 @@ public class ExceptionsPage extends Composite {
                 if (translation == null || translation.isEmpty() && !regex.isEmpty()) {
                     translation = getDefaultTranslation(regex);
                 }
-                exceptionsTranslations.addTranslation(word, regex, currentLanguage.getKey(), translation);
-                p.setRegex(regex);
-                p.setTranslation(translation);
-                updateExceptionsTree();
-                parentEditor.updateEditor();
+                ModuleTreeObject parent = (ModuleTreeObject) p.getParent();
+                ExeptionTranslationTreeObject newObject = new ExeptionTranslationTreeObject(parent, p.getName(), regex,
+                        p.getTypeFullname(), translation);
+
+                if (parent.insertAfter(newObject)) {
+                    exceptionsTranslations.addTranslation(word, regex, currentLanguage.getKey(), translation);
+                    treeViewer.refresh(parent, true);
+                    parentEditor.updateEditor();
+                } else {
+                    MessageDialog.openError(treeViewer.getTree().getShell(), "Error",
+                            "The regular expression already exists");
+                }
             }
 
             @Override
@@ -141,7 +149,11 @@ public class ExceptionsPage extends Composite {
 
             @Override
             protected boolean canEdit(Object element) {
-                return element instanceof ExeptionTranslationTreeObject;
+                if (!(element instanceof ExeptionTranslationTreeObject)) {
+                    return false;
+                }
+                ExeptionTranslationTreeObject p = (ExeptionTranslationTreeObject) element;
+                return p.getRegex().isEmpty();
             }
         });
 
@@ -173,8 +185,14 @@ public class ExceptionsPage extends Composite {
                     return;
                 }
                 exceptionsTranslations.addTranslation(word, regex, currentLanguage.getKey(), translation);
-                p.setTranslation(translation);
-                treeViewer.update(element, null);
+                if (translation == null || translation.isEmpty() && !regex.isEmpty()) {
+                    ModuleTreeObject parent = (ModuleTreeObject) p.getParent();
+                    parent.removeChild(p);
+                    treeViewer.refresh(parent, true);
+                } else {
+                    p.setTranslation(translation);
+                    treeViewer.update(element, null);
+                }
                 parentEditor.updateEditor();
             }
 
@@ -220,7 +238,7 @@ public class ExceptionsPage extends Composite {
         }
         currentLanguage.setKey(TranslationsPage.languages.get(selectionIndex).getKey());
         currentLanguage.setValue(TranslationsPage.languages.get(selectionIndex).getName());
-        treeViewer.refresh(true);
+        treeViewer.setInput(new RootTreeObject());
     }
 
     private static final Pattern regexPattern = Pattern.compile("\\([^)]+\\)");
@@ -295,68 +313,95 @@ public class ExceptionsPage extends Composite {
         public synchronized IdentifiersTranslationPage.BaseTreeObject[] getChildren() {
             if (children == null) {
                 ArrayList<ModuleTreeObject> result = new ArrayList<>();
-                for (String entry : IdentifiersTranslationPage.srcZipEntries) {
-                    if (entry.endsWith(".java")) {
-                        String[] parts = entry.split("/");
-                        String moduleName = parts[0];
-                        ModuleTreeObject module = null;
-                        for (ModuleTreeObject m : result) {
-                            if (m.getName().equals(moduleName)) {
-                                module = m;
-                                break;
-                            }
-                        }
-
-                        if (module == null) {
-                            module = new ModuleTreeObject(this, moduleName);
-                            result.add(module);
-                        }
-
+                for (var entry : IdentifiersTranslationPage.srcZipEntries.entrySet()) {
+                    String moduleName = entry.getKey();
+                    ModuleTreeObject module = new ModuleTreeObject(this, moduleName, entry.getValue());
+                    if (module.typeNames.isEmpty()) {
+                        continue;
                     }
+                    result.add(module);
                 }
                 children = result.toArray(new ModuleTreeObject[result.size()]);
+                Arrays.sort(children);
             }
             return children;
         }
+
+        @Override
+        public boolean hasChildren() {
+            return true;
+        }
     }
 
-    private class ModuleTreeObject extends IdentifiersTranslationPage.BaseTreeObject {
+    private class ModuleTreeObject
+            extends IdentifiersTranslationPage.BaseTreeObject
+            implements Comparable<ModuleTreeObject> {
         private ExeptionTranslationTreeObject[] children = null;
+        private List<String> typeNames;
 
-        public ModuleTreeObject(RootTreeObject parent, String name) {
+        public ModuleTreeObject(RootTreeObject parent, String name, ArrayList<String> entries) {
             super(parent, name);
+
+            this.typeNames = entries.parallelStream()
+                    .filter(entry -> entry.endsWith("Error") || entry.endsWith("Exception"))
+                    .toList();
+        }
+
+        public void removeChild(ExeptionTranslationTreeObject p) {
+            int index = Arrays.binarySearch(children, p);
+            if (index < 0) {
+                return;
+            }
+            ExeptionTranslationTreeObject[] newChildren = new ExeptionTranslationTreeObject[children.length - 1];
+            if (index > 0) {
+                System.arraycopy(children, 0, newChildren, 0, index);
+            }
+            if (index < children.length - 1) {
+                System.arraycopy(children, index + 1, newChildren, index, children.length - index - 1);
+            }
+            children = newChildren;
+        }
+
+        public boolean insertAfter(ExeptionTranslationTreeObject newObject) {
+            int index = Arrays.binarySearch(children, newObject);
+            if (index < 0) {
+                index = -index - 1;
+            } else {
+                return false;
+            }
+            ExeptionTranslationTreeObject[] newChildren = new ExeptionTranslationTreeObject[children.length + 1];
+            if (index > 0) {
+                System.arraycopy(children, 0, newChildren, 0, index);
+            }
+            newChildren[index] = newObject;
+            if (index < children.length) {
+                System.arraycopy(children, index, newChildren, index + 1, children.length - index);
+            }
+            children = newChildren;
+            return true;
         }
 
         public synchronized IdentifiersTranslationPage.BaseTreeObject[] getChildren() {
             if (children == null) {
                 ArrayList<ExeptionTranslationTreeObject> result = new ArrayList<>();
-                ArrayList<PackageTreeObject> packages = new ArrayList<>();
-                String fullName = this.getFullName() + "/";
-                for (String entry : IdentifiersTranslationPage.srcZipEntries) {
-                    if (!entry.startsWith(fullName) || !entry.endsWith(".java")) {
-                        continue;
-                    }
-                    if (entry.endsWith("/package-info.java") || entry.endsWith("/module-info.java")) {
-                        continue;
-                    }
-                    String strippedName = entry.substring(fullName.length());
-                    String[] parts = strippedName.split("/");
-                    if (parts.length <= 1) {
-                        continue;
-                    }
-                    String packageName = parts[0];
-                    PackageTreeObject packageObject = null;
-                    for (PackageTreeObject p : packages) {
-                        if (p.getName().equals(packageName)) {
-                            packageObject = p;
-                            break;
+                for (String typeName : typeNames) {
+                    try {
+                        Class<?> type = Class.forName(typeName);
+                        if (!Throwable.class.isAssignableFrom(type)) {
+                            continue;
                         }
+                    } catch (ClassNotFoundException | NoClassDefFoundError | ExceptionInInitializerError
+                            | UnsatisfiedLinkError e) {
+                        continue;
                     }
-
-                    if (packageObject == null) {
-                        packageObject = new PackageTreeObject(this, packageName);
-                        packages.add(packageObject);
-                        traversePackageRecursively(packageObject, result);
+                    ArrayList<KeyValueRegex> entries = exceptionTranslations.getTranslationEntries(typeName,
+                            currentLanguage.getKey());
+                    if (entries == null) {
+                        continue;
+                    }
+                    for (KeyValueRegex entry : entries) {
+                        result.add(new ExeptionTranslationTreeObject(this, typeName, entry.getRegex(), typeName,
+                                entry.getValue()));
                     }
                 }
                 children = result.toArray(new ExeptionTranslationTreeObject[result.size()]);
@@ -365,112 +410,28 @@ public class ExceptionsPage extends Composite {
             return children;
         }
 
-        private void traversePackageRecursively(PackageTreeObject packageObject,
-                ArrayList<ExeptionTranslationTreeObject> result) {
-            for (IdentifiersTranslationPage.BaseTreeObject child : packageObject.getChildren()) {
-                if (child instanceof PackageTreeObject) {
-                    traversePackageRecursively((PackageTreeObject) child, result);
-                } else if (child instanceof ExeptionTranslationTreeObject) {
-                    result.add((ExeptionTranslationTreeObject) child);
-                }
-            }
+        @Override
+        public int compareTo(ModuleTreeObject o) {
+            return getName().compareTo(o.getName());
+        }
+
+        @Override
+        public boolean hasChildren() {
+            return this.typeNames.size() > 0;
         }
     }
 
-    private class PackageTreeObject extends IdentifiersTranslationPage.BaseTreeObject {
-
-        private IdentifiersTranslationPage.BaseTreeObject[] children = null;
-
-        public PackageTreeObject(IdentifiersTranslationPage.BaseTreeObject parent, String name) {
-            super(parent, name);
-        }
-
-        public synchronized IdentifiersTranslationPage.BaseTreeObject[] getChildren() {
-            if (children == null) {
-                ArrayList<PackageTreeObject> childPackages = new ArrayList<>();
-                ArrayList<ExeptionTranslationTreeObject> childTypes = new ArrayList<>();
-                String fullName = this.getFullName() + "/";
-                for (String entry : IdentifiersTranslationPage.srcZipEntries) {
-                    if (!entry.startsWith(fullName) || !entry.endsWith(".java")) {
-                        continue;
-                    }
-                    if (entry.endsWith("/package-info.java") || entry.endsWith("/module-info.java")) {
-                        continue;
-                    }
-                    String strippedName = entry.substring(fullName.length());
-                    String[] parts = strippedName.split("/");
-                    if (parts.length < 1) {
-                        continue;
-                    }
-                    if (parts.length == 1) {
-                        String typeName = parts[0].substring(0, parts[0].length() - 5);
-                        String typeFullName = fullName.substring(fullName.indexOf('/') + 1).replace("/", ".")
-                                + typeName;
-                        try {
-                            Class<?> type = Class.forName(typeFullName);
-                            if (!Throwable.class.isAssignableFrom(type)) {
-                                continue;
-                            }
-                        } catch (ClassNotFoundException | NoClassDefFoundError | ExceptionInInitializerError
-                                | UnsatisfiedLinkError e) {
-                            continue;
-                        }
-                        ArrayList<KeyValueRegex> entries = exceptionTranslations.getTranslationEntries(typeFullName,
-                                fullName);
-                        if (entries == null) {
-                            continue;
-                        }
-                        for (KeyValueRegex e : entries) {
-                            childTypes.add(new ExeptionTranslationTreeObject(this, typeName, e.getRegex(), typeFullName,
-                                    e.getValue()));
-                        }
-
-                    } else {
-                        String packageName = parts[0];
-                        PackageTreeObject packageObject = null;
-                        for (PackageTreeObject p : childPackages) {
-                            if (p.getName().equals(packageName)) {
-                                packageObject = p;
-                                break;
-                            }
-                        }
-
-                        if (packageObject == null) {
-                            packageObject = new PackageTreeObject(this, packageName);
-                            childPackages.add(packageObject);
-                        }
-                    }
-
-                }
-                children = new IdentifiersTranslationPage.BaseTreeObject[childTypes.size() + childPackages.size()];
-                int i = 0;
-                for (PackageTreeObject p : childPackages) {
-                    children[i++] = p;
-                }
-                for (ExeptionTranslationTreeObject t : childTypes) {
-                    children[i++] = t;
-                }
-            }
-            return children;
-        }
-
-    }
-
-    private static class ExeptionTranslationTreeObject 
+    private static class ExeptionTranslationTreeObject
             extends IdentifiersTranslationPage.BaseTreeObject
             implements
             Comparable<ExeptionTranslationTreeObject> {
 
-        private String regex;
+        private final String regex;
         private final String typeFullname;
         private String translation;
 
         public String getRegex() {
             return regex == null ? "" : regex;
-        }
-
-        public void setRegex(String regex) {
-            this.regex = regex;
         }
 
         public String getTypeFullname() {
@@ -485,7 +446,7 @@ public class ExceptionsPage extends Composite {
             this.translation = translation;
         }
 
-        public ExeptionTranslationTreeObject(PackageTreeObject parent, String name, String regex, String typeFullname,
+        public ExeptionTranslationTreeObject(ModuleTreeObject parent, String name, String regex, String typeFullname,
                 String translation) {
             super(parent, name);
             this.regex = regex;
@@ -509,6 +470,11 @@ public class ExceptionsPage extends Composite {
                 result = this.getRegex().compareTo(o.getRegex());
             }
             return result;
+        }
+
+        @Override
+        public boolean hasChildren() {
+            return false;
         }
     }
 
