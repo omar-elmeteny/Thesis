@@ -299,7 +299,7 @@ public class IdentifiersTranslationPage extends Composite {
 
     }
 
-    private static abstract class BaseTreeObject {
+    static abstract class BaseTreeObject {
 
         private final BaseTreeObject parent;
         private final String name;
