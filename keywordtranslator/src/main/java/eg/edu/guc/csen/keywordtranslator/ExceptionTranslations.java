@@ -187,13 +187,9 @@ public class ExceptionTranslations {
 
         String[] classNameSplit = className.split("\\.");
         for (int i = 0; i < classNameSplit.length; i++) {
-            if (identifiersDictionary.containsKey(classNameSplit[i])) {
-                classNameSplit[i] = translateIdentifier(classNameSplit[i], language, identifiersDictionary);
-            }
+            classNameSplit[i] = translateIdentifier(classNameSplit[i], language, identifiersDictionary);
         }
-        if (identifiersDictionary.containsKey(methodName)) {
-            methodName = translateIdentifier(methodName, language, identifiersDictionary);
-        }
+        methodName = translateIdentifier(methodName, language, identifiersDictionary);
         StackTraceElement translatedEl = new StackTraceElement(String.join(".", classNameSplit), methodName,
                 el.getFileName(), el.getLineNumber());
         return translatedEl;

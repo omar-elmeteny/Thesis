@@ -105,11 +105,11 @@
         "es": "en"
     },
     "io": {
-        "ar": "io",
-        "de": "io",
-        "it": "io",
-        "fr": "io",
-        "es": "yo"
+        "ar": "الإدخال_والإخراج",
+        "de": "EingangAusgang",
+        "it": "IngressoUscita",
+        "fr": "EntréeSortie",
+        "es": "EntradaSalida"
     },
     "format": {
         "ar": "تنسيق",
@@ -245,7 +245,7 @@
         "es": "imprimir"
     },
     "get": {
-        "ar": "تحصيل",
+        "ar": "جلب",
         "de": "erhalten",
         "it": "Ottenere",
         "fr": "obtenir",
@@ -341,5 +341,180 @@
         "it": "awt",
         "fr": "awt",
         "es": "awt"
+    },
+    "ArrayIndexOutOfBoundsException": {
+        "ar": "مؤشر_المصفوفة_خارج_الحدود",
+        "de": "ArrayIndexOutOfBoundsException",
+        "it": "ArrayIndexOutOfBoundsException",
+        "fr": "ArrayIndexOutOfBoundsException",
+        "es": "ArrayIndexOutOfBoundsException"
+    },
+    "sun": {
+        "ar": "صن",
+        "de": "sun",
+        "it": "sun",
+        "fr": "sun",
+        "es": "sun"
+    },
+    "main": {
+        "ar": "رئيسي",
+        "de": "Haupt",
+        "it": "principale",
+        "fr": "principal",
+        "es": "principal"
+    },
+    "IOException": {
+        "ar": "استثناء_الإدخال_والإخراج",
+        "de": "IOException",
+        "it": "IOException",
+        "fr": "IOException",
+        "es": "IOException"
+    },
+    "nio": {
+        "ar": "نيو",
+        "de": "nio",
+        "it": "nio",
+        "fr": "nio",
+        "es": "nio"
+    },
+    "printStackTrace": {
+        "ar": "طباعة_المتابعة",
+        "de": "printStackTrace",
+        "it": "printStackTrace",
+        "fr": "printStackTrace",
+        "es": "printStackTrace"
+    },
+    "file": {
+        "ar": "ملف",
+        "de": "Datei",
+        "it": "file",
+        "fr": "fichier",
+        "es": "archivo"
+    },
+    "Paths": {
+        "ar": "المسارات",
+        "de": "Pfade",
+        "it": "percorsi",
+        "fr": "chemins",
+        "es": "caminos"
+    },
+    "Files": {
+        "ar": "الملفات",
+        "de": "Dateien",
+        "it": "file",
+        "fr": "fichiers",
+        "es": "archivos"
+    },
+    "fs": {
+        "ar": "نم",
+        "de": "fs",
+        "it": "fs",
+        "fr": "fs",
+        "es": "fs"
+    },
+    "readAllBytes": {
+        "ar": "اقرأ_جميع_البايتات",
+        "de": "readAllBytes",
+        "it": "readAllBytes",
+        "fr": "readAllBytes",
+        "es": "readAllBytes"
+    },      
+    "newByteChannel": {
+        "ar": "قناة_بايت_جديدة",
+        "de": "newByteChannel",
+        "it": "newByteChannel",
+        "fr": "newByteChannel",
+        "es": "newByteChannel"
+    },
+    "WindowsException": {
+        "ar": "استثناء_النوافذ",
+        "de": "WindowsException",
+        "it": "WindowsException",
+        "fr": "WindowsException",
+        "es": "WindowsException"
+    },
+    "rethrowAsIOException": {
+        "ar": "إعادة_إلقاء_كما_استثناء_الإدخال_والإخراج",
+        "de": "rethrowAsIOException",
+        "it": "rethrowAsIOException",
+        "fr": "rethrowAsIOException",
+        "es": "rethrowAsIOException"
+    },
+    "WindowsFileSystemProvider": {
+        "ar": "مزود_نظام_الملفات_ويندوز",
+        "de": "WindowsFileSystemProvider",
+        "it": "WindowsFileSystemProvider",
+        "fr": "WindowsFileSystemProvider",
+        "es": "WindowsFileSystemProvider"
+    },
+    "NoSuchFileException": {
+        "ar": "استثناء_عدم_وجود_الملف",
+        "de": "NoSuchFileException",
+        "it": "NoSuchFileException",
+        "fr": "NoSuchFileException",
+        "es": "NoSuchFileException"
+    },
+    "translateToIOException": {
+        "ar": "ترجمة_إلى_استثناء_الإدخال_والإخراج",
+        "de": "translateToIOException",
+        "it": "translateToIOException",
+        "fr": "translateToIOException",
+        "es": "translateToIOException"
+    },
+    "IndexOutOfBoundsException": {
+        "ar": "استثناء_مؤشر_خارج_الحدود",
+        "de": "IndexOutOfBoundsException",
+        "it": "IndexOutOfBoundsException",
+        "fr": "IndexOutOfBoundsException",
+        "es": "IndexOutOfBoundsException"
+    },
+    "StringIndexOutOfBoundsException": {
+        "ar": "استثناء_مؤشر_السلسلة_خارج_الحدود",
+        "de": "StringIndexOutOfBoundsException",
+        "it": "StringIndexOutOfBoundsException",
+        "fr": "StringIndexOutOfBoundsException",
+        "es": "StringIndexOutOfBoundsException"
+    },
+    "ArithmeticException": {
+        "ar": "استثناء_حسابي",
+        "de": "ArithmeticException",
+        "it": "ArithmeticException",
+        "fr": "ArithmeticException",
+        "es": "ArithmeticException"
+    },
+    "ClassCastException": {
+        "ar": "استثناء_تحويل_الصنف",
+        "de": "ClassCastException",
+        "it": "ClassCastException",
+        "fr": "ClassCastException",
+        "es": "ClassCastException"
+    },
+    "IllegalArgumentException": {
+        "ar": "استثناء_وسيط_غير_صالح",
+        "de": "IllegalArgumentException",
+        "it": "IllegalArgumentException",
+        "fr": "IllegalArgumentException",
+        "es": "IllegalArgumentException"
+    },
+    "IllegalStateException": {
+        "ar": "استثناء_حالة_غير_صالحة",
+        "de": "IllegalStateException",
+        "it": "IllegalStateException",
+        "fr": "IllegalStateException",
+        "es": "IllegalStateException"
+    },
+    "FileNotFoundException": {
+        "ar": "استثناء_عدم_وجود_الملف",
+        "de": "FileNotFoundException",
+        "it": "FileNotFoundException",
+        "fr": "FileNotFoundException",
+        "es": "FileNotFoundException"
+    },
+    "InterruptedException": {
+        "ar": "استثناء_الانقطاع",
+        "de": "InterruptedException",
+        "it": "InterruptedException",
+        "fr": "InterruptedException",
+        "es": "InterruptedException"
     }
 }

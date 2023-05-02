@@ -16,19 +16,27 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
 import eg.edu.guc.csen.keywordtranslator.ExceptionTranslations;
 import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
 import eg.edu.guc.csen.keywordtranslator.KeyValueRegex;
+import eg.edu.guc.csen.languagelocalization.editors.IdentifiersTranslationPage.BaseTreeObject;
 
 public class ExceptionsPage extends Composite {
 
@@ -46,6 +54,54 @@ public class ExceptionsPage extends Composite {
                 TranslationsPage.languages.get(0).getName());
         GridLayout layout = new GridLayout(1, false);
         this.setLayout(layout);
+
+
+         // Search composite
+         Composite searchComposite = new Composite(this, SWT.NONE);
+         searchComposite.setLayout(new GridLayout(4, false));
+         Label searchLabel = new Label(searchComposite, SWT.NONE);
+         searchLabel.setText("Search:");
+         final Text searchText = new Text(searchComposite, SWT.SEARCH);
+         searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+         searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+         Button exactSearch = new Button(searchComposite, SWT.CHECK);
+         exactSearch.setText("Exact match");
+         exactSearch.setSelection(true);
+         Button caseSensitive = new Button(searchComposite, SWT.CHECK);
+         caseSensitive.setText("Case sensitive");
+         caseSensitive.setSelection(true);
+         
+         searchText.addModifyListener(new ModifyListener() {
+             @Override
+             public void modifyText(ModifyEvent e) {
+                 updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+             }
+         });
+ 
+         exactSearch.addSelectionListener(new SelectionListener() {
+             @Override
+             public void widgetSelected(SelectionEvent e) {
+                 updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+             }
+ 
+             @Override
+             public void widgetDefaultSelected(SelectionEvent e) {
+                 updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+             }
+         });
+ 
+         caseSensitive.addSelectionListener(new SelectionListener() {
+             @Override
+             public void widgetSelected(SelectionEvent e) {
+                 updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+             }
+ 
+             @Override
+             public void widgetDefaultSelected(SelectionEvent e) {
+                 updateSearch(searchText.getText().trim(), exactSearch.getSelection(), caseSensitive.getSelection());
+             }
+         });
+         
 
         Composite languageComposite = new Composite(this, SWT.NONE);
         languageComposite.setLayout(new GridLayout(3, false));
@@ -231,6 +287,22 @@ public class ExceptionsPage extends Composite {
         treeViewer.setInput(new RootTreeObject());
     }
 
+    private void updateSearch(String searchTerm, boolean exact, boolean caseSensitive) {
+        if (searchTerm.length() == 0) {
+            treeViewer.setFilters(new ViewerFilter[0]);
+            return;
+        }
+        final String searchTermFinal = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+        treeViewer.setFilters(new ViewerFilter() {
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                BaseTreeObject obj = (BaseTreeObject) element;
+                return obj.hasTerm(searchTermFinal, exact, caseSensitive);
+            }
+        });
+        treeViewer.expandAll();
+    }
+
     protected void updateExceptionsTree() {
         int selectionIndex = languageCombo.getSelectionIndex();
         if (selectionIndex == -1) {
@@ -399,8 +471,14 @@ public class ExceptionsPage extends Composite {
                     if (entries == null) {
                         continue;
                     }
+                    int index = typeName.lastIndexOf('.');
+                    String name = typeName;
+                    if (index > 0) {
+                        name = typeName.substring(index + 1);
+                    }
                     for (KeyValueRegex entry : entries) {
-                        result.add(new ExeptionTranslationTreeObject(this, typeName, entry.getRegex(), typeName,
+                        
+                        result.add(new ExeptionTranslationTreeObject(this, name, entry.getRegex(), typeName,
                                 entry.getValue()));
                     }
                 }
