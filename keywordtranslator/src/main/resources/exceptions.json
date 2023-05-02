@@ -1,0 +1,158 @@
+{
+    "java.lang.ArrayIndexOutOfBoundsException": [
+        {
+            "regex": "String index out of range: (\\d+)",
+            "messages": {
+                "ar": "مؤشر السلسلة خارج النطاق: $1",
+                "es": "Índice de cadena fuera de rango: $1"
+            }
+        },
+        {
+            "regex": "Index (\\d+) out of bounds for length (\\d+)",
+            "messages": {
+                "ar": "الفهرس $1 خارج الحدود لطول $2",
+                "es": "Índice $1 fuera de los límites para la longitud $2"
+            }
+        },
+        {
+            "messages": {
+                "ar": "مؤشر السلسلة خارج النطاق",
+                "es": "Índice de cadena fuera de rango"
+            }
+        }
+    ],
+    "java.lang.StringIndexOutOfBoundsException": [
+        {
+            "regex": "String index out of range: (\\d+)",
+            "messages": {
+                "ar": "مؤشر السلسلة خارج النطاق: $1",
+                "es": "Índice de cadena fuera de rango: $1"
+            }
+        },
+        {
+            "regex": "Index (\\d+) out of bounds for length (\\d+)",
+            "messages": {
+                "ar": "الفهرس $1 خارج الحدود لطول $2",
+                "es": "Índice $1 fuera de los límites para la longitud $2"
+            }
+        },
+        {
+            "messages": {
+                "ar": "مؤشر السلسلة خارج النطاق",
+                "es": "Índice de cadena fuera de rango"
+            }
+        }
+    ],
+    "java.lang.IndexOutOfBoundsException": [
+        {
+            "regex": "Index: (\\d+), Size: (\\d+)",
+            "messages": {
+                "ar": "الفهرس: $1، الحجم: $2",
+                "es": "Índice: $1, Tamaño: $2"
+            }
+        },
+        {
+            "regex": "Index: (\\d+)",
+            "messages": {
+                "ar": "الفهرس: $1",
+                "es": "Índice: $1"
+            }
+        },
+        {
+            "regex": "index (\\d+) out of bounds for length (\\d+)",
+            "messages": {
+                "ar": "الفهرس $1 خارج الحدود لطول $2",
+                "es": "Índice $1 fuera de los límites para la longitud $2"
+            }
+        },
+        {
+            "messages": {
+                "ar": "مؤشر السلسلة خارج النطاق",
+                "es": "Índice de cadena fuera de rango"
+            }
+        }
+    ],
+    "java.io.IOException": [
+        {
+            "regex": "Stream closed",
+            "messages": {
+                "ar": "تم إغلاق التدفق",
+                "es": "Secuencia cerrada"
+            }
+        },
+        {
+            "regex": "Bad file descriptor",
+            "messages": {
+                "ar": "وصف الملف غير صالح",
+                "es": "Descriptor de archivo no válido"
+            }
+        },
+        {
+            "regex": "Broken pipe",
+            "messages": {
+                "ar": "أنبوب مكسور",
+                "es": "Tubo roto"
+            }
+        },
+        {
+            "regex": "Connection reset by peer",
+            "messages": {
+                "ar": "تم إعادة تعيين الاتصال بواسطة النظير",
+                "es": "Conexión restablecida por pares"
+            }
+        },
+        {
+            "regex": "Connection timed out",
+            "messages": {
+                "ar": "انتهت مهلة الاتصال",
+                "es": "Tiempo de espera de conexión agotado"
+            }
+        },
+        {
+            "regex": "Connection refused",
+            "messages": {
+                "ar": "تم رفض الاتصال",
+                "es": "Conexión rechazada"
+            }
+        },
+        {
+            "regex": "Connection refused: connect",
+            "messages": {
+                "ar": "تم رفض الاتصال: اتصال",
+                "es": "Conexión rechazada: conectar"
+            }
+        },
+        {
+            "regex": "Connection refused: no further information",
+            "messages": {
+                "ar": "تم رفض الاتصال: لا معلومات إضافية",
+                "es": "Conexión rechazada: no hay más información"
+            }
+        },
+        {
+            "regex": "Connection refused: connect; No available router to destination",
+            "messages": {
+                "ar": "تم رفض الاتصال: اتصال؛ لا يوجد موجه متاح إلى الوجهة",
+                "es": "Conexión rechazada: conectar; No hay enrutador disponible para el destino"
+            }
+        }
+    ],
+    "java.lang.ArithmeticException": [
+        {
+            "regex": "Non-terminating decimal expansion; no exact representable decimal result",
+            "messages": {
+                "ar": "توسيع عشري غير متوقف ؛ لا يوجد نتيجة عشرية قابلة للتمثيل بالضبط",
+                "es": "Expansión decimal no terminante; no hay resultado decimal exacto representable"
+            }
+        }
+    ],
+    "java.io.NoSuchFileException": [
+        {
+            "regex": "No such file or directory",
+            "messages": {
+                "ar": "لا يوجد ملف أو دليل",
+                "es": "No existe tal archivo o directorio"
+            }
+        }
+    ]
+}

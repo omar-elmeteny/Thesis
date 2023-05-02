@@ -1,21 +1,59 @@
 package eg.edu.guc.csen.keywordtranslator;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ExceptionTranslations {
 
     private HashMap<String, ArrayList<ExceptionTranslationEntry>> exceptionTranslations = new HashMap<String, ArrayList<ExceptionTranslationEntry>>();
     private Translations translations;
+    private static ExceptionTranslations defaults;
 
     public ExceptionTranslations(Translations translations) {
         super();
         this.translations = translations;
+    }
+
+    public ExceptionTranslations(String resourcePath) {
+        try {
+            String jsonString = ResourceHelper.readResourceFile(resourcePath);
+            loadFromJSONString(jsonString);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<String> getExceptions(String language) {
+        ArrayList<String> exceptions = new ArrayList<String>();
+        for (String exception : exceptionTranslations.keySet()) {
+            ArrayList<ExceptionTranslationEntry> translationEntries = exceptionTranslations.get(exception);
+            for (ExceptionTranslationEntry translationEntry : translationEntries) {
+                if (translationEntry.getMessages().containsKey(language)) {
+                    exceptions.add(exception);
+                    break;
+                }
+            }
+        }
+        return exceptions;
+    }
+
+    private void loadFromJSONString(String jsonString) {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        loadFromJSONObject(jsonObject);
+    }
+
+    public synchronized static ExceptionTranslations getDefaults() {
+        if (defaults == null) {
+            defaults = new ExceptionTranslations("exceptions.json");
+        }
+        return defaults;
     }
 
     void updateFromJSONObject(JSONObject jsonObject) {
@@ -97,6 +135,18 @@ public class ExceptionTranslations {
             translationEntries.add(new KeyValueRegex(exceptionClassName, "", ""));
         }
         return translationEntries;
+    }
+
+    public boolean hasAnyTranslationsForLanguage(String language) {
+        for (String exceptionClassName : this.exceptionTranslations.keySet()) {
+            ArrayList<ExceptionTranslationEntry> translationEntries = this.exceptionTranslations.get(exceptionClassName);
+            for (ExceptionTranslationEntry translationEntry : translationEntries) {
+                if (translationEntry.getMessages().containsKey(language)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     JSONObject toJSON() {

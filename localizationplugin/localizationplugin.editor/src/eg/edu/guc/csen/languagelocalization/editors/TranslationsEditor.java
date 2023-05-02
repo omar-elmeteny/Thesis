@@ -16,6 +16,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.json.JSONException;
 
+import eg.edu.guc.csen.keywordtranslator.ExceptionTranslations;
 import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
 import eg.edu.guc.csen.keywordtranslator.KeywordTranslations;
 import eg.edu.guc.csen.keywordtranslator.Translations;
@@ -130,7 +131,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
         index = addPage(defaultLanguagePage);
         setPageText(index, "Project Language");
 
-        exceptionsPage = new ExceptionsPage(getContainer(), this,  getTranslations().getExceptionTranslations());
+        exceptionsPage = new ExceptionsPage(getContainer(), this,  getTranslations().getExceptionTranslations(), ExceptionTranslations.getDefaults());
         index = addPage(exceptionsPage);
         setPageText(index, "Exceptions Translation");
 

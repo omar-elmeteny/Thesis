@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Tree;
 import eg.edu.guc.csen.keywordtranslator.ExceptionTranslations;
 import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
 import eg.edu.guc.csen.keywordtranslator.KeyValueRegex;
+import eg.edu.guc.csen.keywordtranslator.Language;
 import eg.edu.guc.csen.languagelocalization.editors.IdentifiersTranslationPage.BaseTreeObject;
 
 public class ExceptionsPage extends Composite {
@@ -44,11 +46,14 @@ public class ExceptionsPage extends Composite {
     private final KeyValuePair currentLanguage;
     private final TreeViewer treeViewer;
     private final ExceptionTranslations exceptionTranslations;
+    private ExceptionTranslations defaultExceptionsTranslations;
+	private final Button addDefaultsButton;
 
     public ExceptionsPage(Composite parent, TranslationsEditor parentEditor,
-            ExceptionTranslations exceptionsTranslations) {
+            ExceptionTranslations exceptionsTranslations, ExceptionTranslations defaultExceptionsTranslations) {
         super(parent, SWT.NONE);
         this.exceptionTranslations = exceptionsTranslations;
+        this.defaultExceptionsTranslations = defaultExceptionsTranslations;
         parentEditor.getTranslations();
         currentLanguage = new KeyValuePair(TranslationsPage.languages.get(0).getKey(),
                 TranslationsPage.languages.get(0).getName());
@@ -109,6 +114,27 @@ public class ExceptionsPage extends Composite {
         languageLabel.setText("Language:");
         languageCombo = new Combo(languageComposite, SWT.READ_ONLY);
         languageCombo.setItems(TranslationsPage.languageNames);
+        addDefaultsButton = new Button(languageComposite, SWT.PUSH);
+		addDefaultsButton.setText("Add Defaults");
+		addDefaultsButton.setEnabled(false);
+
+		// Add click listener to the add defaults button
+		addDefaultsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(org.eclipse.swt.events.MouseEvent e) {
+				String lang = currentLanguage.getKey();
+				for(String exception : defaultExceptionsTranslations.getExceptions(lang)) {
+                    for (KeyValueRegex tuple : defaultExceptionsTranslations.getTranslationEntries(exception, lang)) {
+                        String regex = tuple.getRegex();
+                        String translation = tuple.getValue();
+                        exceptionTranslations.addTranslation(exception, regex, translation, lang);
+                    }
+                }
+
+				updateExceptionsTree();
+				parentEditor.updateEditor();
+			};
+		});
 
         treeViewer = new TreeViewer(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
         treeViewer.setContentProvider(new ExceptionsTreeContentProvider());
@@ -310,7 +336,11 @@ public class ExceptionsPage extends Composite {
         }
         currentLanguage.setKey(TranslationsPage.languages.get(selectionIndex).getKey());
         currentLanguage.setValue(TranslationsPage.languages.get(selectionIndex).getName());
+        Language lang = TranslationsPage.languages.get(languageCombo.getSelectionIndex());
+
+		addDefaultsButton.setEnabled(defaultExceptionsTranslations.hasAnyTranslationsForLanguage(lang.getKey()));
         treeViewer.setInput(new RootTreeObject());
+        treeViewer.refresh(true);
     }
 
     private static final Pattern regexPattern = Pattern.compile("\\([^)]+\\)");

@@ -21,7 +21,7 @@ public class Translations {
     private String defaultLanguage = "ar";
 
     public Translations() {
-        
+        super();
     }
 
     public Translations(File jsonFile) throws IOException {
