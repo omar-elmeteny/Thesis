@@ -47,6 +47,58 @@ public class ExceptionTranslations {
         }
     }
 
+    public void addTranslation(String exception, String regex, String language, String translated) {
+        if (!this.exceptionTranslations.containsKey(exception)) {
+            this.exceptionTranslations.put(exception, new ArrayList<ExceptionTranslationEntry>());
+        }
+        ArrayList<ExceptionTranslationEntry> translationEntries = this.exceptionTranslations.get(exception);
+        ExceptionTranslationEntry translationEntry = null;
+
+        for (ExceptionTranslationEntry entry : translationEntries) {
+            if (entry.getRegex() != null && entry.getRegex().equals(regex)
+                    || entry.getRegex() == null && regex == null) {
+                translationEntry = entry;
+                break;
+            }
+        }
+        if (translated == null || translated.isEmpty()) {
+            if (translationEntry != null) {
+                translationEntries.remove(translationEntry);
+            }
+            return;
+        }
+        if (translationEntry == null) {
+            translationEntry = new ExceptionTranslationEntry();
+            translationEntries.add(translationEntry);
+        }
+        translationEntry.setRegex(regex);
+        translationEntry.getMessages().put(language, translated);
+
+    }
+
+    public ArrayList<KeyValueRegex> getTranslationEntries(String exceptionClassName, String language) {
+        ArrayList<KeyValueRegex> translationEntries = new ArrayList<KeyValueRegex>();
+        boolean foundEmptyRegex = false;
+        if (this.exceptionTranslations.containsKey(exceptionClassName)) {
+
+            for (ExceptionTranslationEntry translationEntry : this.exceptionTranslations.get(exceptionClassName)) {
+                if (!translationEntry.getMessages().containsKey(language)) {
+                    continue;
+                }
+                String regex = translationEntry.getRegex();
+                if (regex == null || regex.length() == 0) {
+                    foundEmptyRegex = true;
+                }
+                String translated = translationEntry.getMessages().get(language);
+                translationEntries.add(new KeyValueRegex(exceptionClassName, translated, regex));
+            }
+        }
+        if (!foundEmptyRegex) {
+            translationEntries.add(new KeyValueRegex(exceptionClassName, "", ""));
+        }
+        return translationEntries;
+    }
+
     JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         for (String exceptionClassName : this.exceptionTranslations.keySet()) {
@@ -147,7 +199,8 @@ public class ExceptionTranslations {
         return translatedEl;
     }
 
-    private String translateIdentifier(String identifier, String language, HashMap<String, String> identifiersDictionary) {
+    private String translateIdentifier(String identifier, String language,
+            HashMap<String, String> identifiersDictionary) {
         if (identifiersDictionary.containsKey(identifier)) {
             return identifiersDictionary.get(identifier);
         }

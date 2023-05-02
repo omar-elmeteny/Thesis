@@ -365,7 +365,7 @@ public class IdentifiersTranslationPage extends Composite {
 
     }
 
-    private static ArrayList<String> srcZipEntries = initializeSrcZipEntries();
+    static ArrayList<String> srcZipEntries = initializeSrcZipEntries();
 
     private static ArrayList<String> initializeSrcZipEntries() {
         String javaBaseLocation = System.getProperty("java.home");

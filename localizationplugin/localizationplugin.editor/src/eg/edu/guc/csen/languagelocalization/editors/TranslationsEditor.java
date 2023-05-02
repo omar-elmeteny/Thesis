@@ -29,6 +29,7 @@ public class TranslationsEditor extends MultiPageEditorPart {
     private TranslationsPage keywordPage;
     private IdentifiersTranslationPage identifierPage;
     private DefaultLanguagePage defaultLanguagePage;
+    private ExceptionsPage exceptionsPage;
 
     public TranslationsEditor() {
     }
@@ -127,6 +128,10 @@ public class TranslationsEditor extends MultiPageEditorPart {
         defaultLanguagePage = new DefaultLanguagePage(getContainer(), this);
         index = addPage(defaultLanguagePage);
         setPageText(index, "Project Language");
+
+        exceptionsPage = new ExceptionsPage(getContainer(), this,  getTranslations().getExceptionTranslations());
+        index = addPage(exceptionsPage);
+        setPageText(index, "Exceptions Translation");
 
         createTextEditorPage();
     }
