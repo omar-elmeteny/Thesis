@@ -9,7 +9,7 @@
             "command": "mvn org.antlr:antlr4-maven-plugin:antlr4",
             "group": "build",
             "options": {
-                "cwd": "${workspaceFolder}/localizedtranspiler"
+                "cwd": "${workspaceFolder}/transpiler"
             }
         }
     ]

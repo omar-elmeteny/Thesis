@@ -117,8 +117,8 @@
             </goals>
             <configuration>
               <sourceFile>
-                ${settings.localRepository}/eg/edu/guc/csen/localizedtranspiler/1.0.0-SNAPSHOT/localizedtranspiler-1.0.0-SNAPSHOT.jar</sourceFile>
-              <destinationFile>${project.basedir}/lib/localizedtranspiler-1.0.jar</destinationFile>
+                ${settings.localRepository}/eg/edu/guc/csen/transpiler/1.0.0-SNAPSHOT/transpiler-1.0.0-SNAPSHOT.jar</sourceFile>
+              <destinationFile>${project.basedir}/lib/transpiler-1.0.jar</destinationFile>
             </configuration>
           </execution>
         </executions>

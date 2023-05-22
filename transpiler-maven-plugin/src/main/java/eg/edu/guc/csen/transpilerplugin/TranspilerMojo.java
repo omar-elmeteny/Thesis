@@ -27,9 +27,9 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import eg.edu.guc.csen.translator.Translations;
-import eg.edu.guc.csen.localizedtranspiler.Transpiler;
-import eg.edu.guc.csen.localizedtranspiler.TranspilerException;
-import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
+import eg.edu.guc.csen.transpiler.Transpiler;
+import eg.edu.guc.csen.transpiler.TranspilerException;
+import eg.edu.guc.csen.transpiler.TranspilerOptions;
 
 @Mojo(name = "transpile", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = false)
 public class TranspilerMojo extends AbstractMojo {

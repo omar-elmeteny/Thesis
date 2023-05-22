@@ -21,7 +21,7 @@
     </repository>
   </repositories>
   <modules>
-    <module>localizedtranspiler</module>
+    <module>transpiler</module>
     <module>translator</module>
     <module>localizationplugin</module>
     <module>transpiler-maven-plugin</module>

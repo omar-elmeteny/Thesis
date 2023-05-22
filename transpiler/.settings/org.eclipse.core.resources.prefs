@@ -2,5 +2,5 @@ eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
 encoding//src/test/java=UTF-8
 encoding//target/generated-sources/antlr4=UTF-8
-encoding//target/generated-sources/antlr4/eg/edu/guc/csen/localizedtranspiler=UTF-8
+encoding//target/generated-sources/antlr4/eg/edu/guc/csen/transpiler=UTF-8
 encoding/<project>=UTF-8

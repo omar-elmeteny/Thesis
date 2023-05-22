@@ -1,10 +1,8 @@
-package eg.edu.guc.csen.localizedlanguage;
+package eg.edu.guc.csen.transpiler;
 
 import org.junit.Test;
 
 import eg.edu.guc.csen.translator.Translations;
-import eg.edu.guc.csen.localizedtranspiler.Transpiler;
-import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
 
 public class TranspilerTest {
 

@@ -1,4 +1,4 @@
-package eg.edu.guc.csen.localizedtranspiler;
+package eg.edu.guc.csen.transpiler;
 
 /*
  * [The "BSD license"]

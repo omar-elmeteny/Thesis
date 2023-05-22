@@ -1,4 +1,4 @@
-package eg.edu.guc.csen.localizedtranspiler;
+package eg.edu.guc.csen.transpiler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,17 +9,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import eg.edu.guc.csen.translator.Translations;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.AnnotationContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.BlockStatementsContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.CatchClauseContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ClassTypeContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ConstructorDeclarationContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.ExceptionTypeContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.IdentifierContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.LastFormalParameterContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.MethodDeclarationContext;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.Throws_Context;
-import eg.edu.guc.csen.localizedtranspiler.Java9Parser.VariableDeclaratorIdContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.AnnotationContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.BlockStatementsContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.CatchClauseContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.ClassTypeContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.ConstructorDeclarationContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.ExceptionTypeContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.IdentifierContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.LastFormalParameterContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.MethodDeclarationContext;
+import eg.edu.guc.csen.transpiler.Java9Parser.Throws_Context;
+import eg.edu.guc.csen.transpiler.Java9Parser.VariableDeclaratorIdContext;
 
 public class JavaGenerator extends Java9ParserBaseVisitor<StringBuilder> {
 
