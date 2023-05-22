@@ -28,9 +28,10 @@
         },
         {
             "type": "java",
-            "name": "Ecliplse Plugin",
+            "name": "Eclipse Plugin",
             "request": "launch",
             "mainClass": "org.eclipse.equinox.launcher.Main",
+            "projectName": "translator",
             "args": [
                 "-launcher", "${env:USERPROFILE}\\eclipse\\java-2022-12\\eclipse\\eclipse.exe",
                 "-name", "Eclipse",

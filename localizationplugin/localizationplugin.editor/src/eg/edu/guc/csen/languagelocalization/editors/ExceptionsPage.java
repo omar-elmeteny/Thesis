@@ -127,7 +127,7 @@ public class ExceptionsPage extends Composite {
                     for (KeyValueRegex tuple : defaultExceptionsTranslations.getTranslationEntries(exception, lang)) {
                         String regex = tuple.getRegex();
                         String translation = tuple.getValue();
-                        exceptionTranslations.addTranslation(exception, regex, translation, lang);
+                        exceptionTranslations.addTranslation(exception, regex, lang, translation);
                     }
                 }
 
