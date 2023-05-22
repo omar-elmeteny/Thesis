@@ -98,15 +98,15 @@
         <version>1.0</version>
         <executions>
           <execution>
-            <id>copy-keywordtranslator-dep</id>
+            <id>copy-translator-dep</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy</goal>
             </goals>
             <configuration>
               <sourceFile>
-                ${settings.localRepository}/eg/edu/guc/csen/keywordtranslator/1.0.0-SNAPSHOT/keywordtranslator-1.0.0-SNAPSHOT.jar</sourceFile>
-              <destinationFile>${project.basedir}/lib/keywordtranslator-1.0.jar</destinationFile>
+                ${settings.localRepository}/eg/edu/guc/csen/translator/1.0.0-SNAPSHOT/translator-1.0.0-SNAPSHOT.jar</sourceFile>
+              <destinationFile>${project.basedir}/lib/translator-1.0.jar</destinationFile>
             </configuration>
           </execution>
           <execution>

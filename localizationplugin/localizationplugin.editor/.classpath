@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="lib/json-20230227.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/keywordtranslator-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/translator-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/localizedtranspiler-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.11.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-model-3.9.1.jar"/>

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Transpiler;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
 

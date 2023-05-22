@@ -26,7 +26,7 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Transpiler;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerException;
 import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;

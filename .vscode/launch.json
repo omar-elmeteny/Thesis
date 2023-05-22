@@ -13,7 +13,7 @@
             "cwd": "${workspaceFolder}/dictionary-generator",
             "console": "internalConsole",
             "args": [
-                "${workspaceFolder}/keywordtranslator/src/main/resources/identifiers.json",
+                "${workspaceFolder}/translator/src/main/resources/identifiers.json",
             ]
         },
         {

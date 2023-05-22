@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Translations;
 
 
 public class TranslationsWindowHandler extends AbstractHandler {

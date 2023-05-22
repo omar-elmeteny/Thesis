@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 
-import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
-import eg.edu.guc.csen.keywordtranslator.Identifiers;
+import eg.edu.guc.csen.translator.IdentifierTranslations;
+import eg.edu.guc.csen.translator.Identifiers;
 
 /**
  * Hello world!

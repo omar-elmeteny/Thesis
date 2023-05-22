@@ -24,11 +24,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.swt.widgets.Table;
-import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
-import eg.edu.guc.csen.keywordtranslator.Language;
-import eg.edu.guc.csen.keywordtranslator.Languages;
-import eg.edu.guc.csen.keywordtranslator.Translations;
-import eg.edu.guc.csen.keywordtranslator.TranslationsBase;
+import eg.edu.guc.csen.translator.KeyValuePair;
+import eg.edu.guc.csen.translator.Language;
+import eg.edu.guc.csen.translator.Languages;
+import eg.edu.guc.csen.translator.Translations;
+import eg.edu.guc.csen.translator.TranslationsBase;
 
 class TranslationsPage extends Composite {
 	final static ArrayList<Language> languages = initializeLanguages();

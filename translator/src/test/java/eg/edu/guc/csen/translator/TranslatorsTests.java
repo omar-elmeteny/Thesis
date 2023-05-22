@@ -1,43 +1,43 @@
-package eg.edu.guc.csen.localizedlanguage;
+package eg.edu.guc.csen.translator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import eg.edu.guc.csen.translator.Translations;
-import eg.edu.guc.csen.localizedtranspiler.Transpiler;
-import eg.edu.guc.csen.localizedtranspiler.TranspilerOptions;
+public class TranslatorsTests {
+    
+    @Test
+    public void testShouldNotAddExistingTranslation() {
+        Translations translations = new Translations();
 
-public class TranspilerTest {
+        boolean result = translations.canAddTranslation("abstract", "ar", "assert");
+        assertFalse("Should not be able to use an existing keyword as translation for another keyword", result);
+    }
 
     @Test
-    public void testEnglishToArabicTranspilation() {
-        String javaCode = """
-        package test2;
+    public void testCanAddTranslations() {
+        Translations translations = new Translations();
 
-        public class Test {
-            
-            public static Integer test3() {
-                return 0;
-            }
-            
-            public static int test2() {
-                return 0;
-            }
-            
-            public static String test() {
-                return "";
-            }
-        
-            public static void main(String[] args) {
-                System.out.println("Hello World!");
-            }
-        
-        }
-        """;
-        TranspilerOptions options = new TranspilerOptions();
-        options.setOutputEncoding("UTF-8");
-        options.setSourceEncoding("UTF-8");
-        options.setSourceLanguage("en");
-        options.setTargetLanguage("ar");
+        boolean result = translations.canAddTranslation("abstract", "ar", "abstractar");
+        assertTrue("Should be able to translate keyword", result);
+    }
+
+    @Test
+    public void testShouldNotAddDuplicateTranslations() {
+        Translations translations = new Translations();
+
+        boolean result = translations.canAddTranslation("abstract", "ar", "abstractar");
+        assertTrue("Should be able to translate keyword", result);
+        translations.getKeywordTranslations().addTranslation("abstract", "ar", "abstractar");
+        result = translations.canAddTranslation("assert", "ar", "abstractar");
+
+        assertFalse("Should not be able to add duplicate translations", result);
+    }
+
+    @Test
+    public void testTranslateIdentifier() {
         Translations translations = new Translations();
         translations.updateFromJSONString("""
             {
@@ -162,9 +162,7 @@ public class TranspilerTest {
                 }
             }
         """);
-        options.setTranslations(translations);
-        String arabicCode = Transpiler.transpile(options, javaCode);
-        System.out.println(arabicCode);
+        String arabic = translations.translateIdentifier("String", "en", "ar");
+        assertEquals("سلسلة", arabic);
     }
-    
 }

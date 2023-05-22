@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
-import eg.edu.guc.csen.keywordtranslator.Language;
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.KeyValuePair;
+import eg.edu.guc.csen.translator.Language;
+import eg.edu.guc.csen.translator.Translations;
 
 public class DefaultLanguagePage extends Composite{
 

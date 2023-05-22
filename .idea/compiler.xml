@@ -14,7 +14,7 @@
         <module name="localizedtranspiler" />
         <module name="eg.edu.guc.csen.localizationplugin.editor" />
         <module name="localizationplugin.product" />
-        <module name="keywordtranslator" />
+        <module name="translator" />
       </profile>
     </annotationProcessing>
   </component>

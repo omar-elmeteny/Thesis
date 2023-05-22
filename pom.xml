@@ -22,7 +22,7 @@
   </repositories>
   <modules>
     <module>localizedtranspiler</module>
-    <module>keywordtranslator</module>
+    <module>translator</module>
     <module>localizationplugin</module>
     <module>transpiler-maven-plugin</module>
     <module>examples</module>

@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
-import eg.edu.guc.csen.keywordtranslator.Language;
-import eg.edu.guc.csen.keywordtranslator.Translations;
-import eg.edu.guc.csen.keywordtranslator.TranslationsBase;
+import eg.edu.guc.csen.translator.KeyValuePair;
+import eg.edu.guc.csen.translator.Language;
+import eg.edu.guc.csen.translator.Translations;
+import eg.edu.guc.csen.translator.TranslationsBase;
 
 public class IdentifiersTranslationPage extends Composite {
 

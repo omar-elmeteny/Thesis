@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import org.apache.commons.io.input.BOMInputStream;
 
-import eg.edu.guc.csen.keywordtranslator.Languages;
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Languages;
+import eg.edu.guc.csen.translator.Translations;
 
 public class ExceptionHelper {
 

@@ -34,10 +34,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
-import eg.edu.guc.csen.keywordtranslator.ExceptionTranslations;
-import eg.edu.guc.csen.keywordtranslator.KeyValuePair;
-import eg.edu.guc.csen.keywordtranslator.KeyValueRegex;
-import eg.edu.guc.csen.keywordtranslator.Language;
+import eg.edu.guc.csen.translator.ExceptionTranslations;
+import eg.edu.guc.csen.translator.KeyValuePair;
+import eg.edu.guc.csen.translator.KeyValueRegex;
+import eg.edu.guc.csen.translator.Language;
 import eg.edu.guc.csen.languagelocalization.editors.IdentifiersTranslationPage.BaseTreeObject;
 
 public class ExceptionsPage extends Composite {

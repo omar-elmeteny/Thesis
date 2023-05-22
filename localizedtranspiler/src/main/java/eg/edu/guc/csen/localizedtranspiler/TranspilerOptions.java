@@ -1,6 +1,6 @@
 package eg.edu.guc.csen.localizedtranspiler;
 
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Translations;
 
 public class TranspilerOptions {
 

@@ -16,10 +16,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.json.JSONException;
 
-import eg.edu.guc.csen.keywordtranslator.ExceptionTranslations;
-import eg.edu.guc.csen.keywordtranslator.IdentifierTranslations;
-import eg.edu.guc.csen.keywordtranslator.KeywordTranslations;
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.ExceptionTranslations;
+import eg.edu.guc.csen.translator.IdentifierTranslations;
+import eg.edu.guc.csen.translator.KeywordTranslations;
+import eg.edu.guc.csen.translator.Translations;
 
 public class TranslationsEditor extends MultiPageEditorPart {
 

@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import eg.edu.guc.csen.keywordtranslator.Translations;
+import eg.edu.guc.csen.translator.Translations;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.AnnotationContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.BlockStatementsContext;
 import eg.edu.guc.csen.localizedtranspiler.Java9Parser.CatchClauseContext;
