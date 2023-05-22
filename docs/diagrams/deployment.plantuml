@@ -1,0 +1,12 @@
+@startuml deployment
+
+frame "linode virtual machine" as linone_vm {
+    node "reposilite"
+    node "nginx HTTP server" as nginx
+    folder "eclipse plugin files" as eclipse_plugin
+    database "reposilite.db" as db
+    nginx --> reposilite : proxy_pass
+    reposilite --> db : read/write
+    nginx --> eclipse_plugin : serve files
+}
+@enduml

@@ -1,0 +1,33 @@
+{
+    "defaultLanguage": "ar",
+    "keywords": {
+        "import": {"ar": "استورد", "es": "importar"}
+    },
+    "identifiers": {
+        "file": {"ar": "ملف", "de": "datei"}
+    },
+    "exceptions": {
+        "java.lang.ArrayIndexOutOfBoundsException": [
+            {
+                "regex": "String index out of range: (\\d+)",
+                "messages": {
+                    "ar": "مؤشر السلسلة خارج النطاق: $1",
+                    "es": "Índice de cadena fuera de rango: $1"
+                }
+            },
+            {
+                "regex": "Index (\\d+) out of bounds for length (\\d+)",
+                "messages": {
+                    "ar": "الفهرس $1 خارج الحدود لطول $2",
+                    "es": "Índice $1 fuera de los límites para la longitud $2"
+                }
+            },
+            {
+                "messages": {
+                    "ar": "مؤشر السلسلة خارج النطاق",
+                    "es": "Índice de cadena fuera de rango"
+                }
+            }
+        ]
+    }
+}

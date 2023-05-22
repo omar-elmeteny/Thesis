@@ -1,0 +1,9 @@
+@startuml compilation
+
+(*) --> "Read Project Configuration"
+--> "Transpile Code to Java"
+--> "Generate Source Maps"
+--> "Compile Java to .class"
+--> "Post-Process .class file"
+
+@enduml

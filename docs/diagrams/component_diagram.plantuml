@@ -1,0 +1,50 @@
+@startuml "Component Diagram"
+
+package "translator" {
+    [KeywordTranslator]
+    [IdentifierTranslator]
+    [ExceptionsTranslator]
+    file "keywords.json"
+    file "identifiers.json"
+    file "exceptions.json"
+}
+
+package "transpiler" {
+    [Lexer] --> [KeywordTranslator]
+    [Parser]
+    [JavaGenerator] --> [IdentifierTranslator]
+    [JavaGenerator] --> [KeywordTranslator]
+    [Transpiler] --> [Lexer]
+    [Transpiler] --> [Parser]
+    [Transpiler] --> [JavaGenerator]
+}
+
+package "maven-plugin" {
+    [TranspilerMojo] --> [Transpiler]
+    [PostProcessorMojo] --> [IdentifierTranslator]
+}
+
+package "runtime-helper" {
+    [ExceptionHelper] --> [ExceptionsTranslator]
+}
+
+package "ecplise-plugin" {
+    [TranslationsEditor] --> [KeywordTranslator]
+    [TranslationsEditor] --> [IdentifierTranslator]
+    [TranslationsEditor] --> [ExceptionsTranslator]
+    [TranslationsEditor] --> [keywords.json]
+    [TranslationsEditor] --> [identifiers.json]
+    [TranslationsEditor] --> [exceptions.json]
+    [ProjectConfigurator]
+    [JavaToLocalizedLanguage] -> [Transpiler]
+}
+
+file "translations.guct" {
+    [KeywordTranslator] --> [translations.guct]
+    [IdentifierTranslator] --> [translations.guct]
+    [ExceptionsTranslator] --> [translations.guct]
+    [TranslationsEditor] --> [translations.guct]
+}
+@enduml
+
+
