@@ -59,10 +59,10 @@ public class PomHelper {
             addBuildHelperPlugin(model);
             writeFile = true;
         }
-        if(!isPluginManagementInstalled(model)) {
-            addPluginManagement(model);
-            writeFile = true;
-        }
+        // if(!isPluginManagementInstalled(model)) {
+        //     addPluginManagement(model);
+        //     writeFile = true;
+        // }
         if (!checkPluginRepository(model, "central", "https://repo1.maven.org/maven2")) {
             writeFile = true;
             addPluginRepository(model, "central", "https://repo1.maven.org/maven2", false);
@@ -216,6 +216,12 @@ public class PomHelper {
         execution.setGoals(new ArrayList<>());
         execution.getGoals().add("transpile");
         plugin.getExecutions().add(execution);
+        PluginExecution execution2 = new PluginExecution();
+        execution2.setId("sourcemap-postprocess");
+        execution2.setPhase("compile");
+        execution2.setGoals(new ArrayList<>());
+        execution2.getGoals().add("sourcemap-postprocessor");
+        plugin.getExecutions().add(execution2);
         // add <?m2e execute onConfiguration?>
 
         model.getBuild().getPlugins().add(plugin);
