@@ -90,6 +90,10 @@ public class PomHelper {
         String content = contentWriter.toString();
         String toMatch = "(\\s*)(<id>transpiler-generate-sources</id>)";
         content = content.replaceAll(toMatch, "$1<?m2e execute onConfiguration?>$1$2");
+        
+        toMatch = "(\\s*)(<id>sourcemap-postprocess</id>)";
+        content = content.replaceAll(toMatch, "$1<?m2e execute onConfiguration?>$1$2");
+        
         try(FileWriter writer = new FileWriter(path)) {
             writer.write(content);
         }

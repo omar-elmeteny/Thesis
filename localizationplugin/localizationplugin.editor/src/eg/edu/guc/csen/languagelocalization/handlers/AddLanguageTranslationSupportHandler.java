@@ -31,6 +31,48 @@ public class AddLanguageTranslationSupportHandler extends AbstractHandler{
             MessageDialog.openError(HandlerUtil.getActiveShell(event), "Error",
                     result);
         }
+
+        // addTranslationsToEclipseClassPath(project);
+        new TranslationsWindowHandler().execute(event);
+        
         return null;
     }
+
+    // private void addTranslationsToEclipseClassPath(IProject project) {
+    //     try {
+    //         IJavaProject javaProject = JavaCore.create(project);
+    //         IClasspathEntry[] classpath = javaProject.getRawClasspath();
+    //         boolean found = false;
+    //         for (IClasspathEntry entry : classpath) {
+    //             var patterns = entry.getInclusionPatterns();
+    //             if(patterns != null){
+    //                 for (var pattern : patterns) {
+    //                     if(pattern.toString().equals("**/*.guct")){
+    //                         found = true;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         if(!found){
+    //             IClasspathEntry newEntry = JavaCore.newSourceEntry(
+    //                 javaProject.getPath(), 
+    //                 new IPath[] { 
+    //                     new Path("**/*.guct")
+    //                 },
+    //                 null,
+    //             null);
+    //             IClasspathEntry[] newClasspath = new IClasspathEntry[classpath.length + 1];
+    //             System.arraycopy(classpath, 0, newClasspath, 1, classpath.length);
+    //             newClasspath[0] = newEntry;
+    //             javaProject.setRawClasspath(newClasspath, null);
+    //             javaProject.save(null, true);
+                
+    //         }
+
+    //     } catch (JavaModelException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }

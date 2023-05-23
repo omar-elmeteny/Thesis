@@ -118,22 +118,25 @@ public class TranslationsEditor extends MultiPageEditorPart {
 
     @Override
     protected void createPages() {
+        defaultLanguagePage = new DefaultLanguagePage(getContainer(), this);
+        int index = addPage(defaultLanguagePage);
+        setPageText(index, "Language");
+
         keywordPage = new TranslationsPage(getContainer(), getTranslations().getKeywordTranslations(), KeywordTranslations.getDefaults(),
             this, false);
+        index = addPage(keywordPage);
+        setPageText(index, "Keywords");
+        
+        
         identifierPage = new IdentifiersTranslationPage(getContainer(),
                 getTranslations().getIdentifierTranslations(), IdentifierTranslations.getDefaults(), this);
-        int index = addPage(keywordPage);
-        setPageText(index, "Keywords");
         index = addPage(identifierPage);
         setPageText(index, "Identifiers");
 
-        defaultLanguagePage = new DefaultLanguagePage(getContainer(), this);
-        index = addPage(defaultLanguagePage);
-        setPageText(index, "Project Language");
-
+        
         exceptionsPage = new ExceptionsPage(getContainer(), this,  getTranslations().getExceptionTranslations(), ExceptionTranslations.getDefaults());
         index = addPage(exceptionsPage);
-        setPageText(index, "Exceptions Translation");
+        setPageText(index, "Exceptions");
 
         createTextEditorPage();
     }
