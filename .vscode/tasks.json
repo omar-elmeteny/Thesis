@@ -11,6 +11,54 @@
             "options": {
                 "cwd": "${workspaceFolder}/transpiler"
             }
-        }
+        },
+        {
+            "label": "Deploy translator",
+            "type": "shell",
+            "command": "mvn deploy",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/translator"
+            }
+        },
+        {
+            "label": "Deploy transpiler",
+            "type": "shell",
+            "command": "mvn deploy",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/transpiler"
+            }
+        },
+        {
+            "label": "Deploy transpiler-maven-plugin",
+            "type": "shell",
+            "command": "mvn deploy",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/transpiler-maven-plugin"
+            }
+        },
+        {
+            "label": "Deploy localizationruntimehelper",
+            "type": "shell",
+            "command": "mvn deploy",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/localizationruntimehelper"
+            }
+        },
+        {
+            "label": "Deploy ALL",
+            "type": "shell",
+            "group": "build",
+            "dependsOn": [
+                "Deploy translator",
+                "Deploy transpiler",
+                "Deploy transpiler-maven-plugin",
+                "Deploy localizationruntimehelper"
+            ],
+            "dependsOrder": "sequence"
+        },
     ]
 }

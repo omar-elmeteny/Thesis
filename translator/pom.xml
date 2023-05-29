@@ -5,11 +5,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>languagelocalization</artifactId>
-    <groupId>eg.edu.guc.csen</groupId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
+  <groupId>eg.edu.guc.csen</groupId>
   <artifactId>translator</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
@@ -71,7 +67,7 @@
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        
+
         <!-- default lifecycle, jar packaging: see
         https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
@@ -111,4 +107,16 @@
       </plugins>
     </pluginManagement>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>linode-thesis-releases</id>
+      <name>Linode Omar Elmeteny Apache Maven Packages (Releases)</name>
+      <url>https://maven.languageslocalization.com/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>linode-thesis-snapshots</id>
+      <name>Linode Omar Elmeteny Apache Maven Packages (Snapshots)</name>
+      <url>https://maven.languageslocalization.com/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/localizationplugin.feature_1.0.0.202304182310.jar" id="localizationplugin.feature" version="1.0.0.202304182310">
+   <feature url="features/localizationplugin.feature_1.0.0.202305232133.jar" id="localizationplugin.feature" version="1.0.0.202305232133">
       <category name="eg.edu.guc.csen"/>
    </feature>
    <category-def name="eg.edu.guc.csen" label="GUC CSEN">

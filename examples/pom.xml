@@ -15,4 +15,6 @@
   <modules>
     <module>demo-ar</module>
   </modules>
+  <distributionManagement>
+  </distributionManagement>
 </project>

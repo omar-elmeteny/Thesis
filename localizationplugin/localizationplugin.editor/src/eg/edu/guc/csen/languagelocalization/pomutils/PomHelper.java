@@ -71,6 +71,14 @@ public class PomHelper {
             writeFile = true;
             addPluginRepository(model, "linode-thesis-snapshots", "https://maven.languageslocalization.com/snapshots", true);
         }
+        if (!checkRepository(model, "central", "https://repo1.maven.org/maven2")) {
+            writeFile = true;
+            addRepository(model, "central", "https://repo1.maven.org/maven2", false);
+        }
+        if (!checkRepository(model, "linode-thesis-snapshots", "https://maven.languageslocalization.com/snapshots")) {
+            writeFile = true;
+            addRepository(model, "linode-thesis-snapshots", "https://maven.languageslocalization.com/snapshots", true);
+        }
         try {
             if (writeFile) {
                 writeMavenPomModelToPomXmlFile(model, pomXmlPath);
@@ -280,6 +288,32 @@ public class PomHelper {
         if (model.getPluginRepositories() != null) {
             for (int i = 0; i < model.getPluginRepositories().size(); i++) {
                 org.apache.maven.model.Repository repository = model.getPluginRepositories().get(i);
+                if (repository.getId().equals(id) && repository.getUrl().equals(url)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void addRepository(Model model, String id, String url, boolean snapshots) {
+        if (model.getRepositories() == null) {
+            model.setRepositories(new java.util.ArrayList<org.apache.maven.model.Repository>());
+        }
+        org.apache.maven.model.Repository repository = new org.apache.maven.model.Repository();
+        repository.setId(id);
+        repository.setUrl(url);
+        if (snapshots) {
+            repository.setSnapshots(new org.apache.maven.model.RepositoryPolicy());
+            repository.getSnapshots().setEnabled(true);
+        }
+        model.getRepositories().add(repository);
+    }
+
+    private static boolean checkRepository(Model model, String id, String url) {
+        if (model.getRepositories() != null) {
+            for (int i = 0; i < model.getRepositories().size(); i++) {
+                org.apache.maven.model.Repository repository = model.getRepositories().get(i);
                 if (repository.getId().equals(id) && repository.getUrl().equals(url)) {
                     return true;
                 }

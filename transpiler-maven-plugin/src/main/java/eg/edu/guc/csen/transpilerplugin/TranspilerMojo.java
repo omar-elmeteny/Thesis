@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -145,7 +146,8 @@ public class TranspilerMojo extends AbstractMojo {
             dir.mkdirs();
             try {
                 Files.copy(Paths.get(translationsFile.getAbsolutePath()), 
-                    Paths.get(targetDirectory.getAbsolutePath(),  "classes", "translations.guct")
+                        Paths.get(targetDirectory.getAbsolutePath(),  "classes", "translations.guct"),
+                        StandardCopyOption.REPLACE_EXISTING
                 );
             } catch (IOException e) {
                 throw new MojoExecutionException("Fatal error occured while copying the translations file", e);
