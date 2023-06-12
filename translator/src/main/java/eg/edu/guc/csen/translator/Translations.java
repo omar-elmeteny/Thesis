@@ -137,6 +137,9 @@ public class Translations {
         if (sourceLanguage.equals(targetLanguage)) {
             return identifier;
         }
+        if (identifier.equals("main")) {
+            return "main";
+        }
         if (sourceLanguage.equals("en")) {
             identifier = restoreAlphaNumeric(identifier);
             if (identifierTranslations.hasTranslationFromEnglish(identifier, targetLanguage)) {

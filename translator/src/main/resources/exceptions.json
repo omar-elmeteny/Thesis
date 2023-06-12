@@ -1,9 +1,9 @@
 {
     "java.lang.ArrayIndexOutOfBoundsException": [
         {
-            "regex": "String index out of range: (\\d+)",
+            "regex": "Array index out of range: (\\d+)",
             "messages": {
-                "ar": "مؤشر السلسلة خارج النطاق: $1",
+                "ar": "مؤشر المصفوفة خارج النطاق: $1",
                 "es": "Índice de cadena fuera de rango: $1"
             }
         },

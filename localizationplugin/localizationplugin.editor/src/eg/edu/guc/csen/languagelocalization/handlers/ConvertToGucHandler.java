@@ -98,6 +98,33 @@ public class ConvertToGucHandler extends AbstractHandler{
         }
     }
 
+    private String getTranslatedPath(IFile file, TranspilerOptions options) {
+        String path = file.getProjectRelativePath().toString();
+        String[] segments = path.split("/");
+        String[] translatedSegments = new String[segments.length];
+        boolean srcFound = false;
+        for(int i = 0; i < segments.length; i++) {
+            if(!srcFound) {
+                if(segments[i].equals("src")) {
+                    srcFound = true;
+                }
+                translatedSegments[i] = segments[i];
+                continue;
+            }
+            boolean addExtension = false;
+            if (segments[i].endsWith(".java")) {
+                segments[i] = segments[i].substring(0, segments[i].length() - 5);
+                addExtension = true;
+            }
+
+            translatedSegments[i] = options.getTranslations().translateIdentifier(segments[i], options.getSourceLanguage(), options.getTargetLanguage());
+            if(addExtension) {
+                translatedSegments[i] += ".guc";
+            }
+        }
+        return String.join("/", translatedSegments);
+    }
+
     private void convertFile(IFile file, TranspilerOptions options) throws IOException, CoreException {
         // ignore non java files
         if(!file.getName().endsWith(".java")) {
@@ -107,11 +134,16 @@ public class ConvertToGucHandler extends AbstractHandler{
         if(file.getProjectRelativePath().toString().startsWith("target")) {
             return;
         }
-        IFile gucFile = file.getProject().getFile(file.getProjectRelativePath().toString().replaceAll("\\.java", ".guc"));
+        IFile gucFile = file.getProject().getFile(getTranslatedPath(file, options));
         // read the file
         try(InputStream inputStream = file.getContents()) {
             String contents = new String(inputStream.readAllBytes(), options.getSourceEncoding());
             String result = Transpiler.transpile(options, contents);
+            String filePath = gucFile.getProjectRelativePath().toString();
+            IFolder folder = file.getProject().getFolder(filePath.substring(0, filePath.lastIndexOf("/")));
+            if(!folder.exists()) {
+                folder.create(true, true, null);
+            }
             gucFile.create(new ByteArrayInputStream(result.getBytes()), true, null);
         }
         String backupPath = file.getProjectRelativePath().lastSegment().replaceAll("\\.java", ".java.bak");

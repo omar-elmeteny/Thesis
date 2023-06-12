@@ -268,6 +268,9 @@ public class TranspilerMojo extends AbstractMojo {
             if (generateSourceMap) {
                 generatedFiles.add(new File(outputFile.getParent(), outputFile.getName() + ".smap"));
             }
+            if (options.isWriteIdentifiersDictionary()) {
+                generatedFiles.add(new File(outputFile.getParent(), outputFile.getName() + ".identifiers"));
+            }
         }
         return generatedFiles;
     }
@@ -329,7 +332,10 @@ public class TranspilerMojo extends AbstractMojo {
                 javaFiles.add(file);
             } else if (includeSmap && file.getName().endsWith(".java.smap")) {
                 javaFiles.add(file);
+            } else if (includeSmap && file.getName().endsWith(".identifiers")) {
+                javaFiles.add(file);
             }
+
         }
     }
 
