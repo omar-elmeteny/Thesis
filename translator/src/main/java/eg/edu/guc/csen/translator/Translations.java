@@ -182,7 +182,19 @@ public class Translations {
         }
         if (sourceScript.equals("Latin")) {
             Transliterator transliterator = Transliterator.getInstance( "Latin-" + targetScript);
-            return transliterator.transliterate(word);
+            String result =  transliterator.transliterate(word);
+            if (targetScript.equals("Arabic")) {
+                result = result
+                .replaceAll("ء", "ئ")
+                .replaceAll("\u0650", "ي") // kasra
+                .replaceAll("\u064e", "أ") // fatha
+                .replaceAll("\u064f", "و") // damma
+                .replaceAll("\u0652", "ؤ") // sukuun
+                .replaceAll("\u064b", "ن") // fathatan
+                .replaceAll("\u064c", "ن") // dammatan
+                .replaceAll("\u064d", "ن"); // kasratan
+            }
+            return result;
         } else if (targetScript.equals("Latin")) {
             Transliterator transliterator = Transliterator.getInstance(sourceScript + "-Latin");
             return transliterator.transliterate(word);

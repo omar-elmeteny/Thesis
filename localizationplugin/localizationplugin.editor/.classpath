@@ -9,6 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/maven-model-3.9.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/plexus-utils-3.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr4-runtime-4.12.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/icu4j-70.1.jar"/>
 	<classpathentry kind="src" path="src/"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

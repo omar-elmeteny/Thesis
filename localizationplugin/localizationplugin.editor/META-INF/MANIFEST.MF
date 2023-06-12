@@ -22,5 +22,6 @@ Bundle-ClassPath: lib/json-20230227.jar,
   lib/commons-io-2.11.0.jar,
   lib/maven-model-3.9.1.jar,
   lib/plexus-utils-3.5.1.jar,
+  lib/icu4j-70.1.jar,
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-18

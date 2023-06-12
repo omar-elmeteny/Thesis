@@ -29,6 +29,11 @@
       <version>2.11.0</version>
     </dependency>
     <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j</artifactId>
+      <version>70.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.core.runtime</artifactId>
       <version>3.19.0</version>
@@ -88,6 +93,11 @@
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-utils</artifactId>
               <version>3.5.1</version>
+            </artifactItem>
+            <artifactItem>
+              <groupId>com.ibm.icu</groupId>
+              <artifactId>icu4j</artifactId>
+              <version>70.1</version>
             </artifactItem>
           </artifactItems>
         </configuration>
