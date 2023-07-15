@@ -1,5 +1,5 @@
 \documentclass[12pt, a4paper]{book}%, oneside
-
+\usepackage[printonlyused,withpage]{acronym}
 \usepackage[headings]{fullpage}
 \usepackage{setspace}
 
@@ -11,6 +11,9 @@
 \usepackage{float}
 \usepackage{subfig}
 \usepackage{array}
+\usepackage{arabtex}
+\usepackage{utf8}
+\setcode{utf8}
 % \usepackage{xtab}
 \usepackage{multirow}
 \usepackage{booktabs}
@@ -20,6 +23,10 @@
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{ifpdf}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{color}
 % \setlength{\parindent}{0pt}
 
 \newcommand{\submissionDay}{XX}
@@ -71,7 +78,19 @@
 	/CreationDate (D:20090707085533)
 }
 \fi
-
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mymauve},     % string literal style
+}
 \begin{document}
 % \overfullrule=5pt
 \pagestyle{plain}
@@ -94,14 +113,14 @@
 	minus .4\baselineskip}
 % \setlength\parskip{.5\baselineskip \@plus .1\baselineskip \@minus ..1\baselineskip}
 
-
 \include{introduction}
-\include{background}
 
 % add more chapters here
 
+
+\include{literature_review}
+\include{design_and_implementation}
 \include{conclusion}
-\include{future_work}
 \include{appendix}
 
 \bibliographystyle{plain}
